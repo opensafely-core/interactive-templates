@@ -1,0 +1,21 @@
+[tool.coverage.run]
+branch = true
+dynamic_context = "test_function"
+omit = [
+  ".venv/*",
+]
+
+[tool.coverage.report]
+fail_under = 100
+skip_covered = true
+show_missing = true
+
+[tool.coverage.html]
+show_contexts = true
+
+[tool.isort]
+profile = "black"
+lines_after_imports = 2
+skip_glob = [".direnv", "venv", ".venv"]
+
+[tool.pytest.ini_options]
