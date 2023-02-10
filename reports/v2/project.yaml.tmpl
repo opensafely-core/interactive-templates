@@ -94,7 +94,7 @@ actions:
     needs: [generate_measures]
     outputs:
       moderately_sensitive:
-        measure: output/{{ id }}/plot_measure*.jpeg
+        measure: output/{{ id }}/plot_measure*.png
 
   event_counts:
     run: >
@@ -116,7 +116,7 @@ actions:
       --measure-description="Medication Review"
       --population="{{ filterPopulation }}"
       --demographics="sex"
-      --demographics="age_band"
+      --demographics="age"
     outputs:
       moderately_sensitive:
         notebook: output/{{ id }}/report.ipynb

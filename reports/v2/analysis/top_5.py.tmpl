@@ -171,35 +171,14 @@ def main():
 
     # TODO: support vpids?
     codelist_2 = pd.read_csv(f"{codelist_2_path}")
-
-    # map snomed_id to vpid using codelist_2
-    #code_df_2 = code_df_2.merge(codelist_2, left_on="event_2_code",right_on="code", how="left")
-
-
-    # set vpid to index
-    #code_df_2 = code_df_2.set_index("vpid")
-
-    # group code_df_2 by vpid
-    #code_df_2 = code_df_2.groupby("vpid")[["event_measure", "population"]].sum().reset_index()
-
-    # drop all columns except event_2_code and event_measure
-    #code_df_2 = code_df_2[["vpid", "event_measure"]]
-    # events_per_code = code_df_2.groupby("event_2_code")[["event_measure"]].sum().reset_index()
-    #code_df_2.columns = ["code", "num"]
-
-
-    # group codelist_2 by vpid
-    #codelist_2 = codelist_2.groupby("vpid")[["bnf_name"]].first().reset_index()
-
-
-    #codelist_2 = codelist_2.rename(columns={"vpid": "code"})
-
+    events_per_code = code_df_2.groupby("event_2_code")[["event_measure"]].sum().reset_index()
+    events_per_code.columns = ["code", "num"]
 
     top_5_code_table = create_top_5_code_table(
-        df=code_df_2,
+        df=events_per_code,
         code_df=codelist_2,
         code_column="code",
-        term_column="bnf_name",
+        term_column="term",
         low_count_threshold=7,
         rounding_base=7,
     )
