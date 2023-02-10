@@ -46,7 +46,7 @@ study = StudyDefinition(
         "incidence": 0.1,
     },
     population=selected_population,
-    age=patients.age_as_of(
+    age_years=patients.age_as_of(
         "index_date",
         return_expectations={
             "rate": "universal",

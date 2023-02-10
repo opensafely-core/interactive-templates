@@ -102,7 +102,7 @@ def main():
         'ethnicity': 'Ethnicity',
         'region': 'Region',
         'imd': 'Index of Multiple Deprivation',
-        'age_band': 'Age band',
+        'age': 'Age band',
     }}
 
 
