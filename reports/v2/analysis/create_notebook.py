@@ -126,7 +126,7 @@ def main():
     display(
     md(f"## Measure summary"),
     )
-    display(Image(filename=f'../../analysis/report/measure_diagram.png'))
+    #display(Image(filename=f'../../analysis/report/measure_diagram.png'))
     with open(f'event_counts.json') as f:
         events_summary = json.load(f)
     events_summary = pd.DataFrame(events_summary, index=[0])
