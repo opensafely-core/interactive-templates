@@ -1,0 +1,129 @@
+version: '3.0'
+
+expectations:
+  population_size: 1000
+
+actions:
+
+  generate_study_population_ethnicity:
+    run: cohortextractor:latest generate_cohort
+      --study-definition study_definition_ethnicity --output-dir output/{{ id }} --output-format=csv.gz
+    outputs:
+      highly_sensitive:
+        cohort: output/{{ id }}/input_ethnicity.csv.gz
+
+
+  generate_study_population:
+    run: cohortextractor:latest generate_cohort
+      --study-definition study_definition
+      --param codelist_1_path="{{ codelistA.path }}"
+      --param codelist_1_system="snomed"
+      --param codelist_1_type="medication"
+      --param codelist_2_path="{{ codelistB.path }}"
+      --param codelist_2_system="snomed"
+      --param codelist_2_type="medication"
+      --param codelist_1_frequency="monthly"
+      --param codelist_2_comparison_date="event_1_date"
+      --param codelist_2_period_start="- 365"
+      --param codelist_2_period_end="+ 0"
+      --param operator="AND"
+      --param population="registered_adults"
+      --param breakdowns="{{ demographics|join(',') }}"
+      --index-date-range="2019-01-01 to 2022-11-01 by month"
+      --output-dir=output/{{ id }}
+      --output-format=csv.gz
+    outputs:
+      highly_sensitive:
+        cohort: output/{{ id }}/input_*.csv.gz
+
+  join_cohorts:
+    run: >
+      cohort-joiner:v0.0.38
+        --lhs output/{{ id }}/input_20*.csv.gz
+        --rhs output/{{ id }}/input_ethnicity.csv.gz
+        --output-dir output/{{ id }}/joined
+    needs: [generate_study_population, generate_study_population_ethnicity]
+    outputs:
+      highly_sensitive:
+        cohort: output/{{ id }}/joined/input_20*.csv.gz
+
+  generate_measures:
+    run: >
+      python:latest python analysis/measures.py
+        --breakdowns="{{ demographics|join(',') }}"
+        --input_dir="output/{{ id }}/joined"
+        --measure="med_review"
+
+    needs: [join_cohorts]
+    outputs:
+      moderately_sensitive:
+        measure: output/{{ id }}/joined/measure*rate.csv
+        decile_measure: output/{{ id }}/joined/measure*rate_deciles.csv
+
+  top_5_table:
+    run: >
+      python:latest python analysis/top_5.py
+      --codelist-1-path="{{ codelistA.path }}"
+      --codelist-2-path="{{ codelistB.path }}"
+    needs: [generate_measures]
+    outputs:
+      moderately_sensitive:
+        tables: output/{{ id }}/joined/top_5*.csv
+
+  deciles_chart:
+    run: >
+      deciles-charts:v0.0.33
+        --input-files output/{{ id }}/joined/measure_practice_rate_deciles.csv
+        --output-dir output/{{ id }}/joined
+    config:
+      show_outer_percentiles: true
+      tables:
+        output: true
+      charts:
+        output: true
+    needs: [generate_measures]
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/{{ id }}/joined/deciles_*.*
+
+  plot_measure:
+    run: >
+      python:latest python analysis/plot_measures.py
+        --breakdowns="{{ demographics|join(',') }}"
+        --output-dir output/{{ id }}
+    needs: [generate_measures]
+    outputs:
+      moderately_sensitive:
+        measure: output/{{ id }}/plot_measure*.jpeg
+
+  event_counts:
+    run: >
+      python:latest python analysis/event_counts.py --input_dir="output/{{ id }}/joined" --output_dir="output/{{ id }}"
+    needs: [join_cohorts]
+    outputs:
+      moderately_sensitive:
+        measure: output/{{ id }}/event_counts.json
+
+  create_notebook:
+    run: >
+      python:latest python analysis/create_notebook.py
+      --output-dir "output/{{ id }}"
+      --codelist-1-description="{{ codelistA.description }}"
+      --codelist-2-description="{{ codelistB.description }}"
+      --codelist-1-link="https://codelists.opensafely.org/codelist/{{ codelistA.value }}"
+      --codelist-2-link="https://codelists.opensafely.org/codelist/{{ codelistB.value }}"
+      --report-title="Medication Review Report"
+      --measure-description="Medication Review"
+      --population="{{ filterPopulation }}"
+      --demographics="sex"
+      --demographics="age_band"
+    outputs:
+      moderately_sensitive:
+        notebook: output/{{ id }}/report.ipynb
+
+  generate_notebook:
+    run: jupyter:latest jupyter nbconvert /workspace/output/{{ id }}/report.ipynb --execute --to html --output-dir=/workspace/output/{{ id }} --ExecutePreprocessor.timeout=86400 --no-input
+    needs: [create_notebook, event_counts, deciles_chart, top_5_table, plot_measure]
+    outputs:
+      moderately_sensitive:
+        notebook: output/{{ id }}/report.html

@@ -14,3 +14,9 @@ isort
 pip-tools
 pre-commit
 pytest
+
+# functional tests requirements
+opensafely  # because jobrunner cannot currently be installed in --require-hashes
+pipeline@https://github.com/opensafely-core/pipeline/archive/refs/tags/v0.0.3.zip
+requests
+jinja2

@@ -1,5 +1,5 @@
 [flake8]
-extend-exclude = .direnv,.github,.ipynb_checkpoints,.pytest_cache,.venv,coverage,htmlcov,venv
+extend-exclude = .direnv,.github,.ipynb_checkpoints,.pytest_cache,.venv,coverage,htmlcov,venv,rendered
 extend-select = \
     W504  # match black&PEP8 putting binary operators after new lines
 ignore =

@@ -3,6 +3,7 @@ branch = true
 dynamic_context = "test_function"
 omit = [
   ".venv/*",
+  "reports/*",
 ]
 
 [tool.coverage.report]
@@ -16,6 +17,6 @@ show_contexts = true
 [tool.isort]
 profile = "black"
 lines_after_imports = 2
-skip_glob = [".direnv", "venv", ".venv"]
+skip_glob = [".direnv", "venv", ".venv", "rendered"]
 
 [tool.pytest.ini_options]

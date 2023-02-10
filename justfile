@@ -107,8 +107,8 @@ fix: devenv
 
 
 # Run the dev project
-run: devenv
-    echo "Not implemented yet"
+run *args: devenv
+    $BIN/python smush.py {{ args }}
 
 
 
