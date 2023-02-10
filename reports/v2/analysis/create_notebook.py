@@ -168,7 +168,7 @@ def main():
     display(
     md(f"## Population level rate"),
     )
-    display(Image(filename=f'plot_measures.jpeg'))
+    display(Image(filename=f'plot_measures.png'))
     """
 
     nb["cells"] = [
@@ -209,7 +209,7 @@ def main():
         nb["cells"].append(nbf.v4.new_code_cell(cell_counts))
 
         cell_plot = """\
-        display(Image(filename=f'plot_measures_{demographics[i]}.jpeg'))
+        display(Image(filename=f'plot_measures_{demographics[i]}.png'))
         i+=1
         """
         nb["cells"].append(nbf.v4.new_code_cell(cell_plot))

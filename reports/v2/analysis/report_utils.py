@@ -76,7 +76,7 @@ def plot_measures(
 
     plt.tight_layout()
 
-    plt.savefig(f"{filename}.jpeg")
+    plt.savefig(f"{filename}.png")
     plt.close()
 
 
