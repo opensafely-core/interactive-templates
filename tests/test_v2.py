@@ -1,12 +1,12 @@
 from pathlib import Path
 
+# this is not nice, but will do until we can sort jobrunner out
+from opensafely._vendor.jobrunner.cli import local_run
+
 import smush
 
 
 # import pytest
-
-# this is not nice, but will do until we can sort jobrunner out
-# from opensafely._vendor.jobrunner.cli import local_run
 
 
 def test_v2(tmp_path):
@@ -35,9 +35,9 @@ def test_v2(tmp_path):
     }
 
     report = smush.InteractiveReportTemplate(
-        Path("reports/v2"), ["codelistA", "codelistB"]
+        Path("templates/v2"), ["codelistA", "codelistB"]
     )
     report.render(tmp_path, form_data)
 
     # failing currently
-    # assert local_run.main(tmp_path, ["run_all"])
+    assert local_run.main(tmp_path, ["run_all"])

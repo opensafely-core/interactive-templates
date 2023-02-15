@@ -1,10 +1,13 @@
-import pandas as pd
-import numpy as np
 import argparse
+
+import numpy as np
+import pandas as pd
+
 
 def write_csv(df, path, **kwargs):
     path.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(path, **kwargs)
+
 
 def group_low_values(df, count_column, code_column, threshold):
     """Suppresses low values and groups suppressed values into
@@ -28,7 +31,6 @@ def group_low_values(df, count_column, code_column, threshold):
     if (suppressed_count > 0) | (
         (suppressed_count == 0) & (len(suppressed_df) != len(df))
     ):
-
         # redact counts <= threshold
         df.loc[df[count_column] <= threshold, count_column] = np.nan
 
@@ -52,6 +54,7 @@ def group_low_values(df, count_column, code_column, threshold):
 
     return df
 
+
 def round_values(x, base=5):
     rounded = x
     if isinstance(x, (int, float)):
@@ -60,6 +63,7 @@ def round_values(x, base=5):
         else:
             rounded = int(base * round(x / base))
     return rounded
+
 
 def create_top_5_code_table(
     df, code_df, code_column, term_column, low_count_threshold, rounding_base, nrows=5
@@ -82,8 +86,6 @@ def create_top_5_code_table(
     df[code_column] = df[code_column].astype(int).astype(str)
     code_df[code_column] = code_df[code_column].astype(int).astype(str)
 
-
-
     # sum event counts over patients
     event_counts = df.sort_values(ascending=False, by="num")
 
@@ -102,7 +104,6 @@ def create_top_5_code_table(
     event_counts["Proportion of codes (%)"] = round(
         (event_counts["num"] / total_events) * 100, 2
     )
-
 
     # Gets the human-friendly description of the code for the given row
     # e.g. "Systolic blood pressure".
@@ -126,6 +127,7 @@ def create_top_5_code_table(
     # return top n rows
     return event_counts.head(5)
 
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -138,6 +140,7 @@ def parse_args():
         type=str,
         help="Path to codelist for event 2",
     )
+    parser.add_argument("--output-dir", type=str, required=True)
     args = parser.parse_args()
     return args
 
@@ -147,12 +150,13 @@ def main():
     codelist_1_path = args.codelist_1_path
     codelist_2_path = args.codelist_2_path
 
-    code_df = pd.read_csv(f"output/{{ id }}/joined/measure_event_1_code_rate.csv")
+    code_df = pd.read_csv(f"{args.output_dir}/joined/measure_event_1_code_rate.csv")
     codelist = pd.read_csv(f"{codelist_1_path}")
 
-    events_per_code = code_df.groupby("event_1_code")[["event_measure"]].sum().reset_index()
+    events_per_code = (
+        code_df.groupby("event_1_code")[["event_measure"]].sum().reset_index()
+    )
     events_per_code.columns = ["code", "num"]
-
 
     top_5_code_table = create_top_5_code_table(
         df=events_per_code,
@@ -162,16 +166,16 @@ def main():
         low_count_threshold=7,
         rounding_base=7,
     )
-    top_5_code_table.to_csv(f"output/{{ id }}/joined/top_5_code_table_1.csv", index=False)
-
-
-    code_df_2 = pd.read_csv(f"output/{{ id }}/joined/measure_event_2_code_rate.csv")
-
-
+    top_5_code_table.to_csv(
+        f"{args.output_dir}/joined/top_5_code_table_1.csv", index=False
+    )
+    code_df_2 = pd.read_csv(f"{args.output_dir}/joined/measure_event_2_code_rate.csv")
 
     # TODO: support vpids?
     codelist_2 = pd.read_csv(f"{codelist_2_path}")
-    events_per_code = code_df_2.groupby("event_2_code")[["event_measure"]].sum().reset_index()
+    events_per_code = (
+        code_df_2.groupby("event_2_code")[["event_measure"]].sum().reset_index()
+    )
     events_per_code.columns = ["code", "num"]
 
     top_5_code_table = create_top_5_code_table(
@@ -183,7 +187,9 @@ def main():
         rounding_base=7,
     )
 
-    top_5_code_table.to_csv(f"output/{{ id }}/joined/top_5_code_table_2.csv", index=False)
+    top_5_code_table.to_csv(
+        f"{args.output_dir}/joined/top_5_code_table_2.csv", index=False
+    )
 
 
 if __name__ == "__main__":

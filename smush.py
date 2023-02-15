@@ -102,5 +102,5 @@ if __name__ == "__main__":  # pragma: no cover
         "demographics": ["age", "sex", "ethnicity"],
     }
 
-    report = InteractiveReportTemplate(Path("reports/v2"), ["codelistA", "codelistB"])
+    report = InteractiveReportTemplate(Path("templates/v2"), ["codelistA", "codelistB"])
     report.render(output_dir, inputs)

@@ -65,6 +65,7 @@ actions:
       python:latest python analysis/top_5.py
       --codelist-1-path="{{ codelistA.path }}"
       --codelist-2-path="{{ codelistB.path }}"
+      --output-dir="output/{{ id }}"
     needs: [generate_measures]
     outputs:
       moderately_sensitive:
