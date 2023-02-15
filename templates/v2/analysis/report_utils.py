@@ -92,7 +92,7 @@ def calculate_variable_windows(
     if codelist_1_frequency == "weekly":
         codelist_1_date_range = ["index_date", "index_date + 7 days"]
     else:
-        codelist_1_date_range = ["index_date", "last_day_of_month(index_date"]
+        codelist_1_date_range = ["index_date", "last_day_of_month(index_date)"]
 
     if codelist_2_comparison_date == "start_date":
         codelist_2_date_range = [

@@ -60,8 +60,8 @@ class InteractiveReportTemplate:  # pragma: no cover
 
         for codelist_key in self.codelist_keys:
             codelist = context[codelist_key]
-            assert "value" in codelist
-            path = self.write_codelist(output_dir, codelist_key, codelist["value"])
+            assert "slug" in codelist
+            path = self.write_codelist(output_dir, codelist_key, codelist["slug"])
 
             # add path to context
             codelist["path"] = str(path.relative_to(output_dir))
@@ -80,27 +80,31 @@ if __name__ == "__main__":  # pragma: no cover
 
     inputs = {
         "id": "foo",
-        "codelistA": {
+        "codelist_1": {
             "label": "Abdominal aortic aneurysm diagnosis codes",
-            "organisation": "NHSD Primary Care Domain Refsets",
-            "value": "nhsd-primary-care-domain-refsets/aaa_cod/20210127",
+            # "organisation": "NHSD Primary Care Domain Refsets",
+            "slug": "nhsd-primary-care-domain-refsets/aaa_cod/20210127",
             "type": "codelist_event",
             "system": "snomed",
+            "description": "Codelist 1 Description",
         },
-        "codelistB": {
+        "codelist_2": {
             "label": "Active and inactive ethnicity codes",
-            "organisation": "NHSD Primary Care Domain Refsets",
-            "value": "nhsd-primary-care-domain-refsets/ethnall_cod/20210127",
+            # "organisation": "NHSD Primary Care Domain Refsets",
+            "slug": "nhsd-primary-care-domain-refsets/ethnall_cod/20210127",
             "type": "codelist_medication",
             "system": "snomed",
+            "description": "Codelist 1 Description",
         },
         "frequency": "monthly",
-        "timeValue": "12",
-        "timeScale": "months",
-        "timeEvent": "before",
-        "filterPopulation": "adults",
+        "time_value": "12",
+        "time_scale": "months",
+        "time_event": "before",
+        "filter_population": "adults",
         "demographics": ["age", "sex", "ethnicity"],
     }
 
-    report = InteractiveReportTemplate(Path("templates/v2"), ["codelistA", "codelistB"])
+    report = InteractiveReportTemplate(
+        Path("templates/v2"), ["codelist_1", "codelist_2"]
+    )
     report.render(output_dir, inputs)

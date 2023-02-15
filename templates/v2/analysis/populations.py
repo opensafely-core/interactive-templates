@@ -2,7 +2,7 @@ from cohortextractor import patients
 
 
 population_filters = {
-    "registered_adults": (
+    "adults": (
         patients.satisfying(
             """
         registered AND
@@ -21,7 +21,7 @@ population_filters = {
             ),
         )
     ),
-    "registered_children": (
+    "children": (
         patients.satisfying(
             """
         registered AND
@@ -39,7 +39,7 @@ population_filters = {
             ),
         )
     ),
-    "all_registered": (
+    "all": (
         patients.satisfying(
             """
         registered AND
