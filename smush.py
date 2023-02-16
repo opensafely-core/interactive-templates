@@ -5,7 +5,7 @@ from functools import cached_property
 from pathlib import Path
 
 import requests
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
 
 @dataclass
@@ -17,7 +17,7 @@ class InteractiveReportTemplate:  # pragma: no cover
 
     @cached_property
     def environment(self):
-        return Environment(loader=FileSystemLoader([str(self.directory), "."]))
+        return Environment(loader=FileSystemLoader([str(self.directory), "."]), undefined=StrictUndefined)
 
     def write_codelist(self, output_dir, key, value):
         path = output_dir / "codelists" / f"{key}.csv"
@@ -94,7 +94,7 @@ if __name__ == "__main__":  # pragma: no cover
             "slug": "nhsd-primary-care-domain-refsets/ethnall_cod/20210127",
             "type": "codelist_medication",
             "system": "snomed",
-            "description": "Codelist 1 Description",
+            "description": "Codelist 2 Description",
         },
         "frequency": "monthly",
         "time_value": "12",

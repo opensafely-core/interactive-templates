@@ -52,8 +52,7 @@ def parse_args():
     )
     # demographics argument - allow multiple and append
     parser.add_argument(
-        "--demographics",
-        action="append",
+        "--breakdowns",
         type=str,
         help="Demographics to include in report",
         required=True,
@@ -69,8 +68,8 @@ def main():
     codelist_2_description = args.codelist_2_description
     codelist_2_link = args.codelist_2_link
     title = args.report_title
-    demographics = args.demographics
-    demographics_string = ", ".join(demographics)
+    demographics_list = args.breakdowns.split(",")
+    demographics_string = ", ".join(demographics_list)
     population = args.population
     measure_description = args.measure_description
 
@@ -87,7 +86,7 @@ def main():
 
 
     title = '{title}'
-    demographics = {demographics}
+    demographics_list = {demographics_list}
     codelist_1_description = '{codelist_1_description}'
     codelist_2_description = '{codelist_2_description}'
     codelist_1_link = '{codelist_1_link}'
@@ -111,7 +110,6 @@ def main():
 
     header = """\
 
-    demographics_string = demographics_string.replace("age_band", "age band")
     display(
     md(f"# {title}"),
     md(f"The below analysis shows the rate of coding of **{codelist_1_description} AND {codelist_2_description}** in **{population}**. This analysis uses data available in OpenSAFELY-TPP (~40% of England) between 2019-01-01 and 2022-11-01."),
@@ -174,7 +172,7 @@ def main():
     nb["cells"] = [
         nbf.v4.new_code_cell(
             imports.format(
-                demographics=demographics,
+                demographics_list=demographics_list,
                 demographics_string=demographics_string,
                 title=title,
                 codelist_1_description=codelist_1_description,
@@ -199,17 +197,17 @@ def main():
 
     nb["cells"].append(nbf.v4.new_code_cell(counter))
 
-    for d in range(len(demographics)):
+    for d in range(len(demographics_list)):
         cell_counts = """\
         display(
-        md(f"## Breakdown by {demographics_map[demographics[i]]}"),
+        md(f"## Breakdown by {demographics_map[demographics_list[i]]}"),
         )
 
         """
         nb["cells"].append(nbf.v4.new_code_cell(cell_counts))
 
         cell_plot = """\
-        display(Image(filename=f'plot_measures_{demographics[i]}.png'))
+        display(Image(filename=f'plot_measures_{demographics_list[i]}.png'))
         i+=1
         """
         nb["cells"].append(nbf.v4.new_code_cell(cell_plot))

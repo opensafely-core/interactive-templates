@@ -111,13 +111,12 @@ actions:
       --output-dir "output/{{ id }}"
       --codelist-1-description="{{ codelist_1.description }}"
       --codelist-2-description="{{ codelist_2.description }}"
-      --codelist-1-link="https://codelists.opensafely.org/codelist/{{ codelist_1.value }}"
-      --codelist-2-link="https://codelists.opensafely.org/codelist/{{ codelist_2.value }}"
+      --codelist-1-link="https://codelists.opensafely.org/codelist/{{ codelist_1.slug }}"
+      --codelist-2-link="https://codelists.opensafely.org/codelist/{{ codelist_2.slug }}"
       --report-title="Medication Review Report"
       --measure-description="Medication Review"
       --population="{{ filter_population }}"
-      --demographics="sex"
-      --demographics="age"
+      --breakdowns="{{ demographics|join(',') }}"
     outputs:
       moderately_sensitive:
         notebook: output/{{ id }}/report.ipynb
