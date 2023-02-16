@@ -17,7 +17,10 @@ class InteractiveReportTemplate:  # pragma: no cover
 
     @cached_property
     def environment(self):
-        return Environment(loader=FileSystemLoader([str(self.directory), "."]), undefined=StrictUndefined)
+        return Environment(
+            loader=FileSystemLoader([str(self.directory), "."]),
+            undefined=StrictUndefined,
+        )
 
     def write_codelist(self, output_dir, key, value):
         path = output_dir / "codelists" / f"{key}.csv"
