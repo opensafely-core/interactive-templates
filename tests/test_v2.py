@@ -12,30 +12,32 @@ import smush
 def test_v2(tmp_path):
     form_data = {
         "id": "foo",
-        "codelistA": {
+        "codelist_1": {
             "label": "Abdominal aortic aneurysm diagnosis codes",
-            "organisation": "NHSD Primary Care Domain Refsets",
-            "value": "nhsd-primary-care-domain-refsets/aaa_cod/20210127",
+            # "organisation": "NHSD Primary Care Domain Refsets",
+            "slug": "nhsd-primary-care-domain-refsets/aaa_cod/20210127",
             "type": "codelist_event",
             "system": "snomed",
+            "description": "Codelist 1 Description",
         },
-        "codelistB": {
+        "codelist_2": {
             "label": "Active and inactive ethnicity codes",
-            "organisation": "NHSD Primary Care Domain Refsets",
-            "value": "nhsd-primary-care-domain-refsets/ethnall_cod/20210127",
+            # "organisation": "NHSD Primary Care Domain Refsets",
+            "slug": "nhsd-primary-care-domain-refsets/ethnall_cod/20210127",
             "type": "codelist_medication",
             "system": "snomed",
+            "description": "Codelist 2 Description",
         },
         "frequency": "monthly",
-        "timeValue": "12",
-        "timeScale": "months",
-        "timeEvent": "before",
-        "filterPopulation": "adults",
+        "time_value": "12",
+        "time_scale": "months",
+        "time_event": "before",
+        "filter_population": "adults",
         "demographics": ["age", "sex", "ethnicity"],
     }
 
     report = smush.InteractiveReportTemplate(
-        Path("templates/v2"), ["codelistA", "codelistB"]
+        Path("templates/v2"), ["codelist_1", "codelist_2"]
     )
     report.render(tmp_path, form_data)
 
