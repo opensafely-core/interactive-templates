@@ -1,8 +1,10 @@
-# interactive-reports
+# interactive-templates
 
-This is a template for an OpenSAFELY Core repository.
+This repo contains the templates analysis code for OpenSAFELY Interactive actions.
 
-Put your project description here.
+Each analysis is found in templates/$NAME directory. Files in this directory
+are copied (or rendered if a template) into code that is actualy committed and
+run.
 
 ## Developer docs
 
