@@ -1,8 +1,15 @@
-from cohortextractor import StudyDefinition, patients, Measure, params, codelist_from_csv
-from populations import population_filters
+from cohortextractor import (
+    Measure,
+    StudyDefinition,
+    codelist_from_csv,
+    params,
+    patients,
+)
 from demographics import demographics
 from event_variables import generate_event_variables
+from populations import population_filters
 from report_utils import calculate_variable_windows
+
 
 codelist_1_path = params["codelist_1_path"]
 codelist_1_system = params["codelist_1_system"]
@@ -37,13 +44,7 @@ elif time_event == "after":
     codelist_2_period_end = f"+ {days}"
 
 
-
-
-codelist_1 = codelist_from_csv(
-    codelist_1_path,
-    system=codelist_1_system,
-    column="code"
-)
+codelist_1 = codelist_from_csv(codelist_1_path, system=codelist_1_system, column="code")
 
 codelist_2 = codelist_from_csv(
     codelist_2_path,
@@ -84,7 +85,14 @@ study = StudyDefinition(
             "incidence": 0.5,
         },
     ),
-    **generate_event_variables(codelist_1_type, codelist_1, codelist_1_date_range, codelist_2_type, codelist_2, codelist_2_date_range)
+    **generate_event_variables(
+        codelist_1_type,
+        codelist_1,
+        codelist_1_date_range,
+        codelist_2_type,
+        codelist_2,
+        codelist_2_date_range,
+    ),
 )
 
 measures = [
