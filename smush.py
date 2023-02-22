@@ -105,6 +105,8 @@ if __name__ == "__main__":  # pragma: no cover
         "time_event": "before",
         "filter_population": "adults",
         "demographics": ["age", "sex", "ethnicity"],
+        "start_date": "2019-09-01",
+        "end_date": "2023-01-01",
     }
 
     report = InteractiveReportTemplate(
