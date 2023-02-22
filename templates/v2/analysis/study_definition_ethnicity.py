@@ -1,4 +1,4 @@
-from cohortextractor import StudyDefinition, codelist_from_csv, patients
+from cohortextractor import StudyDefinition, codelist_from_csv, params, patients
 
 
 ethnicity_codes = codelist_from_csv(
@@ -9,7 +9,7 @@ ethnicity_codes = codelist_from_csv(
 )
 
 
-end_date = "2022-11-01"
+end_date = params["end_date"]
 
 study = StudyDefinition(
     index_date=end_date,

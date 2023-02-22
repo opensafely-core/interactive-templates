@@ -97,19 +97,19 @@ study = StudyDefinition(
 
 measures = [
     Measure(
-        id=f"event_rate",
+        id="event_rate",
         numerator="event_measure",
         denominator="population",
         group_by=["practice"],
     ),
     Measure(
-        id=f"event_code_1_rate",
+        id="event_code_1_rate",
         numerator="event_measure",
         denominator="population",
         group_by=["event_1_code"],
     ),
     Measure(
-        id=f"event_code_2_rate",
+        id="event_code_2_rate",
         numerator="event_measure",
         denominator="population",
         group_by=["event_2_code"],

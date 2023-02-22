@@ -7,7 +7,9 @@ actions:
 
   generate_study_population_ethnicity:
     run: cohortextractor:latest generate_cohort
-      --study-definition study_definition_ethnicity --output-dir output/{{ id }} --output-format=csv.gz
+      --study-definition study_definition_ethnicity 
+      --param end_date="{{ end_date }}"
+      --output-dir output/{{ id }} --output-format=csv.gz
     outputs:
       highly_sensitive:
         cohort: output/{{ id }}/input_ethnicity.csv.gz
@@ -30,7 +32,7 @@ actions:
       --param operator="AND"
       --param population="{{ filter_population }}"
       --param breakdowns="{{ demographics|join(',') }}"
-      --index-date-range="2019-01-01 to 2022-11-01 by month"
+      --index-date-range="{{ start_date }} to {{ end_date }} by month"
       --output-dir=output/{{ id }}
       --output-format=csv.gz
     outputs:
