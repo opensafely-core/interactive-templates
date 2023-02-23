@@ -13,10 +13,8 @@ from report_utils import calculate_variable_windows
 
 codelist_1_path = params["codelist_1_path"]
 codelist_1_system = params["codelist_1_system"]
-codelist_1_type = params["codelist_1_type"]
 codelist_2_path = params["codelist_2_path"]
 codelist_2_system = params["codelist_2_system"]
-codelist_2_type = params["codelist_2_type"]
 time_value = params["time_value"]
 time_scale = params["time_scale"]
 time_event = params["time_event"]
@@ -86,10 +84,10 @@ study = StudyDefinition(
         },
     ),
     **generate_event_variables(
-        codelist_1_type,
+        codelist_1_system,
         codelist_1,
         codelist_1_date_range,
-        codelist_2_type,
+        codelist_2_system,
         codelist_2,
         codelist_2_date_range,
     ),

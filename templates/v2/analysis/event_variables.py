@@ -83,22 +83,26 @@ def medication_event(codelist, date_range, event_name):
 
 
 def generate_event_variables(
-    codelist_1_type,
+    codelist_1_system,
     codelist_1,
     codelist_1_date_range,
-    codelist_2_type,
+    codelist_2_system,
     codelist_2,
     codelist_2_date_range,
 ):
-    if codelist_1_type == "clinical":
+    if codelist_1_system == "snomed":
         event_1 = clinical_event(codelist_1, codelist_1_date_range, "event_1")
-    else:
+    elif codelist_1_system == "dmd":
         event_1 = medication_event(codelist_1, codelist_1_date_range, "event_1")
-
-    if codelist_2_type == "clinical":
-        event_2 = clinical_event(codelist_2, codelist_2_date_range, "event_2")
     else:
+        raise Exception(f"unknown codelist_1_system: {codelist_1_system}")
+
+    if codelist_2_system == "snomed":
+        event_2 = clinical_event(codelist_2, codelist_2_date_range, "event_2")
+    elif codelist_2_system == "dmd":
         event_2 = medication_event(codelist_2, codelist_2_date_range, "event_2")
+    else:
+        raise Exception(f"unknown codelist_2_system: {codelist_2_system}")
 
     measure_variable = {
         "event_measure": (
