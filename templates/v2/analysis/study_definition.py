@@ -15,7 +15,7 @@ codelist_1_path = params["codelist_1_path"]
 codelist_1_system = params["codelist_1_system"]
 codelist_2_path = params["codelist_2_path"]
 codelist_2_system = params["codelist_2_system"]
-time_value = params["time_value"]
+time_value = int(params["time_value"])
 time_scale = params["time_scale"]
 time_event = params["time_event"]
 codelist_2_comparison_date = params["codelist_2_comparison_date"]
@@ -25,6 +25,7 @@ breakdowns = [x for x in params["breakdowns"].split(",")]
 
 # handle dates
 # TODO: handle events in the same period (week, day, month). Requires form changes
+
 
 if time_scale == "weeks":
     days = time_value * 7
