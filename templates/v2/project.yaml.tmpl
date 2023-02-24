@@ -5,7 +5,7 @@ expectations:
 
 actions:
 
-  generate_study_population_ethnicity:
+  generate_study_population_ethnicity_{{ id }}:
     run: cohortextractor:latest generate_cohort
       --study-definition study_definition_ethnicity 
       --param end_date="{{ end_date }}"
@@ -15,7 +15,7 @@ actions:
         cohort: output/{{ id }}/input_ethnicity.csv.gz
 
 
-  generate_study_population:
+  generate_study_population_{{ id }}:
     run: cohortextractor:latest generate_cohort
       --study-definition study_definition
       --param codelist_1_path="{{ codelist_1.path }}"
@@ -37,42 +37,42 @@ actions:
       highly_sensitive:
         cohort: output/{{ id }}/input_*.csv.gz
 
-  join_cohorts:
+  join_cohorts_{{ id }}:
     run: >
       cohort-joiner:v0.0.38
         --lhs output/{{ id }}/input_20*.csv.gz
         --rhs output/{{ id }}/input_ethnicity.csv.gz
         --output-dir output/{{ id }}/joined
-    needs: [generate_study_population, generate_study_population_ethnicity]
+    needs: [generate_study_population_{{ id }}, generate_study_population_ethnicity_{{ id }}]
     outputs:
       highly_sensitive:
         cohort: output/{{ id }}/joined/input_20*.csv.gz
 
-  generate_measures:
+  generate_measures_{{ id }}:
     run: >
       python:latest python analysis/measures.py
         --breakdowns="{{ demographics|join(',') }}"
         --input_dir="output/{{ id }}/joined"
         --measure="med_review"
 
-    needs: [join_cohorts]
+    needs: [join_cohorts_{{ id }}]
     outputs:
       moderately_sensitive:
         measure: output/{{ id }}/joined/measure*rate.csv
         decile_measure: output/{{ id }}/joined/measure*rate_deciles.csv
 
-  top_5_table:
+  top_5_table_{{ id }}:
     run: >
       python:latest python analysis/top_5.py
       --codelist-1-path="{{ codelist_1.path }}"
       --codelist-2-path="{{ codelist_2.path }}"
       --output-dir="output/{{ id }}"
-    needs: [generate_measures]
+    needs: [generate_measures_{{ id }}]
     outputs:
       moderately_sensitive:
         tables: output/{{ id }}/joined/top_5*.csv
 
-  deciles_chart:
+  deciles_chart_{{ id }}:
     run: >
       deciles-charts:v0.0.33
         --input-files output/{{ id }}/joined/measure_practice_rate_deciles.csv
@@ -83,30 +83,30 @@ actions:
         output: true
       charts:
         output: true
-    needs: [generate_measures]
+    needs: [generate_measures_{{ id }}]
     outputs:
       moderately_sensitive:
         deciles_charts: output/{{ id }}/joined/deciles_*.*
 
-  plot_measure:
+  plot_measure_{{ id }}:
     run: >
       python:latest python analysis/plot_measures.py
         --breakdowns="{{ demographics|join(',') }}"
         --output-dir output/{{ id }}
-    needs: [generate_measures]
+    needs: [generate_measures_{{ id }}]
     outputs:
       moderately_sensitive:
         measure: output/{{ id }}/plot_measure*.png
 
-  event_counts:
+  event_counts_{{ id }}:
     run: >
       python:latest python analysis/event_counts.py --input_dir="output/{{ id }}/joined" --output_dir="output/{{ id }}"
-    needs: [join_cohorts]
+    needs: [join_cohorts_{{ id }}]
     outputs:
       moderately_sensitive:
         measure: output/{{ id }}/event_counts.json
 
-  create_notebook:
+  create_notebook_{{ id }}:
     run: >
       python:latest python analysis/create_notebook.py
       --output-dir "output/{{ id }}"
@@ -122,9 +122,9 @@ actions:
       moderately_sensitive:
         notebook: output/{{ id }}/report.ipynb
 
-  generate_notebook:
+  generate_notebook_{{ id }}:
     run: jupyter:latest jupyter nbconvert /workspace/output/{{ id }}/report.ipynb --execute --to html --output-dir=/workspace/output/{{ id }} --ExecutePreprocessor.timeout=86400 --no-input
-    needs: [create_notebook, event_counts, deciles_chart, top_5_table, plot_measure]
+    needs: [create_notebook_{{ id }}, event_counts_{{ id }}, deciles_chart_{{ id }}, top_5_table_{{ id }}, plot_measure_{{ id }}]
     outputs:
       moderately_sensitive:
         notebook: output/{{ id }}/report.html
