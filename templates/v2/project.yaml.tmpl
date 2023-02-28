@@ -7,7 +7,7 @@ actions:
 
   generate_study_population_ethnicity_{{ id }}:
     run: cohortextractor:latest generate_cohort
-      --study-definition study_definition_ethnicity 
+      --study-definition study_definition_ethnicity
       --param end_date="{{ end_date }}"
       --output-dir output/{{ id }} --output-format=csv.gz
     outputs:
@@ -114,7 +114,7 @@ actions:
       --codelist-2-description="{{ codelist_2.description }}"
       --codelist-1-link="https://codelists.opensafely.org/codelist/{{ codelist_1.slug }}"
       --codelist-2-link="https://codelists.opensafely.org/codelist/{{ codelist_2.slug }}"
-      --report-title="Medication Review Report"
+      --report-title="{{ title }}"
       --measure-description="Medication Review"
       --population="{{ filter_population }}"
       --breakdowns="{{ demographics|join(',') }}"
