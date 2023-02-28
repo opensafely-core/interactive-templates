@@ -12,6 +12,7 @@ import smush
 def test_v2(tmp_path):
     form_data = {
         "id": "foo",
+        "title": "AAA and ethnicity codes",
         "codelist_1": {
             "label": "Abdominal aortic aneurysm diagnosis codes",
             # "organisation": "NHSD Primary Care Domain Refsets",
