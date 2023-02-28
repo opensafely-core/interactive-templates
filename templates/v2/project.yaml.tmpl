@@ -7,7 +7,7 @@ actions:
 
   generate_study_population_ethnicity_{{ id }}:
     run: cohortextractor:latest generate_cohort
-      --study-definition study_definition_ethnicity 
+      --study-definition study_definition_ethnicity
       --param end_date="{{ end_date }}"
       --output-dir output/{{ id }} --output-format=csv.gz
     outputs:
@@ -19,7 +19,7 @@ actions:
     run: cohortextractor:latest generate_cohort
       --study-definition study_definition
       --param codelist_1_path="{{ codelist_1.path }}"
-      --param codelist_1_type="{{ codelist_2.type }}"
+      --param codelist_1_type="{{ codelist_1.type }}"
       --param codelist_2_path="{{ codelist_2.path }}"
       --param codelist_2_type="{{ codelist_2.type }}"
       --param codelist_1_frequency="{{ frequency }}"
