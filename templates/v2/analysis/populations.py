@@ -7,8 +7,8 @@ population_filters = {
             """
         registered AND
         NOT died AND
-        age >= 18 AND
-        age <= 120
+        age_years >= 18 AND
+        age_years <= 120
         """,
             registered=patients.registered_as_of(
                 "index_date",
@@ -26,7 +26,7 @@ population_filters = {
             """
         registered AND
         NOT died AND
-        age < 18
+        age_years < 18
         """,
             registered=patients.registered_as_of(
                 "index_date",
