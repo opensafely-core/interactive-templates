@@ -67,6 +67,10 @@ def get_data(
 
     breakdowns = breakdowns.split(",")
 
+    codelist_url_root = "https://opencodelists.org/codelist/"
+    codelist_1_link = codelist_url_root + codelist_1_link
+    codelist_2_link = codelist_url_root + codelist_2_link
+
     top_5_1_path = "output/foo/joined/top_5_code_table_1.csv"
     top_5_2_path = "output/foo/joined/top_5_code_table_2.csv"
     summary_table_path = "output/foo/event_counts.json"
