@@ -32,7 +32,6 @@ def data_from_json(path):
 
 def get_data(
     report_title="",
-    report_description="",
     population="all",
     breakdowns="",
     codelist_1_name="",
@@ -50,7 +49,6 @@ def get_data(
     Get data to render the report
     Args:
         report_title (str): title of the report
-        report_description (str): description of the report
         population (str): population of the report
         breakdowns (str): comma delimited string of demographic breakdowns
         codelist_1_name (str): name of the first codelist
@@ -129,7 +127,6 @@ def get_data(
 
     report_data = {
         "title": report_title,
-        "description": report_description,
         "population": population_definition,
         "decile": figure_paths["decile"],
         "population_plot": figure_paths["population"],
@@ -180,7 +177,6 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--output-dir", type=str, default="output/foo")
     parser.add_argument("--report-title", type=str, default="Report Title")
-    parser.add_argument("--report-description", type=str, default="Report Description")
     parser.add_argument("--population", type=str, default="all")
     parser.add_argument("--breakdowns", type=str, default="")
     parser.add_argument("--start-date", type=str, default="")
@@ -203,7 +199,6 @@ if __name__ == "__main__":
 
     report_data = get_data(
         report_title=args.report_title,
-        report_description=args.report_description,
         population=args.population,
         breakdowns=args.breakdowns,
         codelist_1_name=args.codelist_1_name,

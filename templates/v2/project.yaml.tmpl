@@ -110,7 +110,6 @@ actions:
     run: >
       python:latest python analysis/render_report.py
       --report-title="{{ title }}"
-      --report-description="Medication Review"
       --population="{{ filter_population }}"
       --breakdowns="{{ demographics|join(',') }}"
       --codelist-1-name="codelist 1 name"
