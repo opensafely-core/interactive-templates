@@ -113,6 +113,16 @@ actions:
       --report-description="Medication Review"
       --population="{{ filter_population }}"
       --breakdowns="{{ demographics|join(',') }}"
+      --codelist-1-name="codelist 1 name"
+      --codelist-2-name="codelist 2 name"
+      --codelist-1-link="link to codelist 1"
+      --codelist-2-link="link to codelist 2"
+      --time-value="{{ time_value }}"
+      --time-scale="{{ time_scale }}"
+      --time-event="{{ time_event }}"
+      --start-date="{{ start_date }}"
+      --end-date="{{ end_date }}"
+      --num-practices=1000
     needs: [event_counts_{{ id }}, deciles_chart_{{ id }}, top_5_table_{{ id }}, plot_measure_{{ id }}]
     outputs:
       moderately_sensitive:

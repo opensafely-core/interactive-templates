@@ -30,7 +30,22 @@ def data_from_json(path):
         return json.load(f)
 
 
-def get_data(report_title, report_description, population, breakdowns):
+def get_data(
+    report_title="",
+    report_description="",
+    population="all",
+    breakdowns="",
+    codelist_1_name="",
+    codelist_1_link="",
+    codelist_2_name="",
+    codelist_2_link="",
+    time_value="",
+    time_scale="",
+    time_event="",
+    start_date="",
+    end_date="",
+    num_practices=0,
+):
     """
     Get data to render the report
     Args:
@@ -38,6 +53,16 @@ def get_data(report_title, report_description, population, breakdowns):
         report_description (str): description of the report
         population (str): population of the report
         breakdowns (str): comma delimited string of demographic breakdowns
+        codelist_1_name (str): name of the first codelist
+        codelist_1_link (str): link to the first codelist (OpenCodelists)
+        codelist_2_name (str): name of the second codelist
+        codelist_2_link (str): link to the second codelist (OpenCodelists)
+        time_value (str): time value for the report
+        time_scale (str): time scale for the report
+        time_event (str): time event for the report
+        start_date (str): start date for the report
+        end_date (str): end date for the report
+        num_practices (int): number of practices in the report
     Returns:
         dict containing the data
     """
@@ -91,10 +116,21 @@ def get_data(report_title, report_description, population, breakdowns):
     # open file from roort directory
     breakdowns = [breakdowns_options[breakdown] for breakdown in breakdowns]
 
+    # population logic
+
+    if population == "adults":
+        population_definition = "all registered patients aged 18 and over"
+
+    elif population == "children":
+        population_definition = "all registered patients aged under 18"
+
+    else:
+        population_definition = "all registered patients"
+
     report_data = {
         "title": report_title,
         "description": report_description,
-        "population": population,
+        "population": population_definition,
         "decile": figure_paths["decile"],
         "population_plot": figure_paths["population"],
         "breakdowns": breakdowns,
@@ -102,6 +138,16 @@ def get_data(report_title, report_description, population, breakdowns):
         "top_5_2_data": top_5_2_data,
         "summary_table_data": summary_table_data,
         "figures": figure_paths,
+        "codelist_1_link": codelist_1_link,
+        "codelist_2_link": codelist_2_link,
+        "codelist_1_name": codelist_1_name,
+        "codelist_2_name": codelist_2_name,
+        "start_date": start_date,
+        "end_date": end_date,
+        "time_value": time_value,
+        "time_scale": time_scale,
+        "time_event": time_event,
+        "num_practices": num_practices,
     }
     return report_data
 
@@ -137,18 +183,40 @@ def parse_args():
     parser.add_argument("--report-description", type=str, default="Report Description")
     parser.add_argument("--population", type=str, default="all")
     parser.add_argument("--breakdowns", type=str, default="")
+    parser.add_argument("--start-date", type=str, default="")
+    parser.add_argument("--end-date", type=str, default="")
+    parser.add_argument("--codelist-1-name", type=str, default="")
+    parser.add_argument("--codelist-2-name", type=str, default="")
+    parser.add_argument("--codelist-1-link", type=str, default="")
+    parser.add_argument("--codelist-2-link", type=str, default="")
+    parser.add_argument("--time-value", type=str, default="")
+    parser.add_argument("--time-scale", type=str, default="")
+    parser.add_argument("--time-event", type=str, default="")
+    parser.add_argument("--num-practices", type=int, default=0)
+
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     args = parse_args()
     output_dir = args.output_dir
-    report_title = args.report_title
-    report_description = args.report_description
-    population = args.population
-    breakdowns = args.breakdowns
 
-    report_data = get_data(report_title, report_description, population, breakdowns)
+    report_data = get_data(
+        report_title=args.report_title,
+        report_description=args.report_description,
+        population=args.population,
+        breakdowns=args.breakdowns,
+        codelist_1_name=args.codelist_1_name,
+        codelist_1_link=args.codelist_1_link,
+        codelist_2_name=args.codelist_2_name,
+        codelist_2_link=args.codelist_2_link,
+        time_value=args.time_value,
+        time_scale=args.time_scale,
+        time_event=args.time_event,
+        start_date=args.start_date,
+        end_date=args.end_date,
+        num_practices=args.num_practices,
+    )
 
     html = render_report("analysis/report_template.html", report_data)
     write_html(html, args.output_dir)
