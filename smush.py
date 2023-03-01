@@ -97,6 +97,7 @@ if __name__ == "__main__":  # pragma: no cover
             "type": "medication",
             "description": "Codelist 2 Description",
         },
+        "title": "Report Title",
         "frequency": "monthly",
         "time_value": "12",
         "time_scale": "months",
