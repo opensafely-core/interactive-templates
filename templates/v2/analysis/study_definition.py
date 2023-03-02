@@ -103,13 +103,13 @@ measures = [
     ),
     Measure(
         id="event_code_1_rate",
-        numerator="event_measure",
+        numerator="event_1",
         denominator="population",
         group_by=["event_1_code"],
     ),
     Measure(
         id="event_code_2_rate",
-        numerator="event_measure",
+        numerator="event_2",
         denominator="population",
         group_by=["event_2_code"],
     ),
