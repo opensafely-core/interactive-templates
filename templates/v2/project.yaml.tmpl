@@ -106,25 +106,23 @@ actions:
       moderately_sensitive:
         measure: output/{{ id }}/event_counts.json
 
-  create_notebook_{{ id }}:
+  generate_report_{{ id }}:
     run: >
-      python:latest python analysis/create_notebook.py
-      --output-dir "output/{{ id }}"
-      --codelist-1-description="{{ codelist_1.description }}"
-      --codelist-2-description="{{ codelist_2.description }}"
-      --codelist-1-link="https://codelists.opensafely.org/codelist/{{ codelist_1.slug }}"
-      --codelist-2-link="https://codelists.opensafely.org/codelist/{{ codelist_2.slug }}"
+      python:latest python analysis/render_report.py
       --report-title="{{ title }}"
-      --measure-description="Medication Review"
       --population="{{ filter_population }}"
       --breakdowns="{{ demographics|join(',') }}"
-    outputs:
-      moderately_sensitive:
-        notebook: output/{{ id }}/report.ipynb
-
-  generate_notebook_{{ id }}:
-    run: jupyter:latest jupyter nbconvert /workspace/output/{{ id }}/report.ipynb --execute --to html --output-dir=/workspace/output/{{ id }} --ExecutePreprocessor.timeout=86400 --no-input
-    needs: [create_notebook_{{ id }}, event_counts_{{ id }}, deciles_chart_{{ id }}, top_5_table_{{ id }}, plot_measure_{{ id }}]
+      --codelist-1-name="{{ codelist_1.label }}"
+      --codelist-2-name="{{ codelist_2.label }}"
+      --codelist-1-link="{{ codelist_1.slug }}"
+      --codelist-2-link="{{ codelist_2.slug }}"
+      --time-value="{{ time_value }}"
+      --time-scale="{{ time_scale }}"
+      --time-event="{{ time_event }}"
+      --start-date="{{ start_date }}"
+      --end-date="{{ end_date }}"
+      --num-practices=1000
+    needs: [event_counts_{{ id }}, deciles_chart_{{ id }}, top_5_table_{{ id }}, plot_measure_{{ id }}]
     outputs:
       moderately_sensitive:
         notebook: output/{{ id }}/report.html
