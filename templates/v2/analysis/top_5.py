@@ -120,12 +120,14 @@ def create_top_5_code_table(
     # Rename the code column to something consistent
     event_counts.rename(columns={code_column: "Code"}, inplace=True)
 
+    event_counts_with_counts = event_counts.copy()
+
     # drop events column
     event_counts = event_counts.loc[
         :, ["Code", "Description", "Proportion of codes (%)"]
     ]
     # return top n rows
-    return event_counts.head(5)
+    return event_counts.head(5), event_counts_with_counts
 
 
 def parse_args():
@@ -158,7 +160,7 @@ def main():
     )
     events_per_code.columns = ["code", "num"]
 
-    top_5_code_table = create_top_5_code_table(
+    top_5_code_table, top_5_code_table_with_counts = create_top_5_code_table(
         df=events_per_code,
         code_df=codelist,
         code_column="code",
@@ -169,6 +171,10 @@ def main():
     top_5_code_table.to_csv(
         f"{args.output_dir}/joined/top_5_code_table_1.csv", index=False
     )
+    top_5_code_table_with_counts.to_csv(
+        f"{args.output_dir}/joined/top_5_code_table_with_counts_1.csv", index=False
+    )
+
     code_df_2 = pd.read_csv(f"{args.output_dir}/joined/measure_event_2_code_rate.csv")
 
     # TODO: support vpids?
@@ -178,7 +184,7 @@ def main():
     )
     events_per_code.columns = ["code", "num"]
 
-    top_5_code_table = create_top_5_code_table(
+    top_5_code_table, top_5_code_table_with_counts = create_top_5_code_table(
         df=events_per_code,
         code_df=codelist_2,
         code_column="code",
@@ -189,6 +195,9 @@ def main():
 
     top_5_code_table.to_csv(
         f"{args.output_dir}/joined/top_5_code_table_2.csv", index=False
+    )
+    top_5_code_table_with_counts.to_csv(
+        f"{args.output_dir}/joined/top_5_code_table_with_counts_2.csv", index=False
     )
 
 
