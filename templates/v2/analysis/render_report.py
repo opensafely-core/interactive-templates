@@ -115,7 +115,7 @@ def get_data(
             "figure": figure_paths["region"],
         },
     }
-    # open file from roort directory
+    # open file from root directory
     breakdowns = [breakdowns_options[breakdown] for breakdown in breakdowns]
 
     # population logic
