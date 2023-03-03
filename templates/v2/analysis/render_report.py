@@ -44,6 +44,7 @@ def get_data(
     start_date="",
     end_date="",
     num_practices=0,
+    request_id="",
 ):
     """
     Get data to render the report
@@ -61,6 +62,7 @@ def get_data(
         start_date (str): start date for the report
         end_date (str): end date for the report
         num_practices (int): number of practices in the report
+        request_id (str): request id - this dictates the path to the data
     Returns:
         dict containing the data
     """
@@ -71,9 +73,9 @@ def get_data(
     codelist_1_link = codelist_url_root + codelist_1_link
     codelist_2_link = codelist_url_root + codelist_2_link
 
-    top_5_1_path = "output/foo/joined/top_5_code_table_1.csv"
-    top_5_2_path = "output/foo/joined/top_5_code_table_2.csv"
-    summary_table_path = "output/foo/event_counts.json"
+    top_5_1_path = f"output/{request_id}/joined/top_5_code_table_1.csv"
+    top_5_2_path = f"output/{request_id}/joined/top_5_code_table_2.csv"
+    summary_table_path = f"output/{request_id}/event_counts.json"
     figure_paths = {
         "decile": "joined/deciles_chart_practice_rate_deciles.png",
         "population": "plot_measures.png",
@@ -193,6 +195,7 @@ def parse_args():
     parser.add_argument("--time-scale", type=str, default="")
     parser.add_argument("--time-event", type=str, default="")
     parser.add_argument("--num-practices", type=int, default=0)
+    parser.add_argument("--request-id", type=str, default="")
 
     return parser.parse_args()
 
@@ -215,6 +218,7 @@ if __name__ == "__main__":
         start_date=args.start_date,
         end_date=args.end_date,
         num_practices=args.num_practices,
+        request_id=args.request_id,
     )
 
     html = render_report("analysis/report_template.html", report_data)
