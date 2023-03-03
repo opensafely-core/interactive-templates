@@ -76,6 +76,11 @@ def get_data(
     top_5_1_path = f"output/{request_id}/joined/top_5_code_table_1.csv"
     top_5_2_path = f"output/{request_id}/joined/top_5_code_table_2.csv"
     summary_table_path = f"output/{request_id}/event_counts.json"
+
+    top_5_1_data = data_from_csv(top_5_1_path)
+    top_5_2_data = data_from_csv(top_5_2_path)
+    summary_table_data = data_from_json(summary_table_path)
+
     figure_paths = {
         "decile": "joined/deciles_chart_practice_rate_deciles.png",
         "population": "plot_measures.png",
@@ -85,10 +90,6 @@ def get_data(
         "region": "plot_measures_region.png",
         "ethnicity": "plot_measures_ethnicity.png",
     }
-
-    top_5_1_data = data_from_csv(top_5_1_path)
-    top_5_2_data = data_from_csv(top_5_2_path)
-    summary_table_data = data_from_json(summary_table_path)
 
     breakdowns_options = {
         "age": {
