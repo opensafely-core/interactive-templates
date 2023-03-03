@@ -181,7 +181,6 @@ def write_html(html, output_dir):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--output-dir", type=str, default="output/foo")
     parser.add_argument("--report-title", type=str, default="Report Title")
     parser.add_argument("--population", type=str, default="all")
     parser.add_argument("--breakdowns", type=str, default="")
@@ -202,7 +201,8 @@ def parse_args():
 
 if __name__ == "__main__":
     args = parse_args()
-    output_dir = args.output_dir
+
+    output_dir = f"output/{args.request_id}"
 
     report_data = get_data(
         report_title=args.report_title,
@@ -222,4 +222,4 @@ if __name__ == "__main__":
     )
 
     html = render_report("analysis/report_template.html", report_data)
-    write_html(html, args.output_dir)
+    write_html(html, output_dir)
