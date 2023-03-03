@@ -44,6 +44,7 @@ def get_data(
     start_date="",
     end_date="",
     num_practices=0,
+    request_id="",
 ):
     """
     Get data to render the report
@@ -61,6 +62,7 @@ def get_data(
         start_date (str): start date for the report
         end_date (str): end date for the report
         num_practices (int): number of practices in the report
+        request_id (str): request id - this dictates the path to the data
     Returns:
         dict containing the data
     """
@@ -71,9 +73,14 @@ def get_data(
     codelist_1_link = codelist_url_root + codelist_1_link
     codelist_2_link = codelist_url_root + codelist_2_link
 
-    top_5_1_path = "output/foo/joined/top_5_code_table_1.csv"
-    top_5_2_path = "output/foo/joined/top_5_code_table_2.csv"
-    summary_table_path = "output/foo/event_counts.json"
+    top_5_1_path = f"output/{request_id}/joined/top_5_code_table_1.csv"
+    top_5_2_path = f"output/{request_id}/joined/top_5_code_table_2.csv"
+    summary_table_path = f"output/{request_id}/event_counts.json"
+
+    top_5_1_data = data_from_csv(top_5_1_path)
+    top_5_2_data = data_from_csv(top_5_2_path)
+    summary_table_data = data_from_json(summary_table_path)
+
     figure_paths = {
         "decile": "joined/deciles_chart_practice_rate_deciles.png",
         "population": "plot_measures.png",
@@ -83,10 +90,6 @@ def get_data(
         "region": "plot_measures_region.png",
         "ethnicity": "plot_measures_ethnicity.png",
     }
-
-    top_5_1_data = data_from_csv(top_5_1_path)
-    top_5_2_data = data_from_csv(top_5_2_path)
-    summary_table_data = data_from_json(summary_table_path)
 
     breakdowns_options = {
         "age": {
@@ -179,7 +182,6 @@ def write_html(html, output_dir):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--output-dir", type=str, default="output/foo")
     parser.add_argument("--report-title", type=str, default="Report Title")
     parser.add_argument("--population", type=str, default="all")
     parser.add_argument("--breakdowns", type=str, default="")
@@ -193,13 +195,15 @@ def parse_args():
     parser.add_argument("--time-scale", type=str, default="")
     parser.add_argument("--time-event", type=str, default="")
     parser.add_argument("--num-practices", type=int, default=0)
+    parser.add_argument("--request-id", type=str, default="")
 
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     args = parse_args()
-    output_dir = args.output_dir
+
+    output_dir = f"output/{args.request_id}"
 
     report_data = get_data(
         report_title=args.report_title,
@@ -215,7 +219,8 @@ if __name__ == "__main__":
         start_date=args.start_date,
         end_date=args.end_date,
         num_practices=args.num_practices,
+        request_id=args.request_id,
     )
 
     html = render_report("analysis/report_template.html", report_data)
-    write_html(html, args.output_dir)
+    write_html(html, output_dir)
