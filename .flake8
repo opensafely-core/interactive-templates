@@ -9,4 +9,6 @@ ignore =
     E501
     # line break before binary operator (black disagrees)
     W503
+per-file-ignores = \
+    tests/test_measures.py:E402
 max-line-length = 88

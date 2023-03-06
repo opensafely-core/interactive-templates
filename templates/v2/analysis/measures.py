@@ -5,10 +5,12 @@ import pandas as pd
 from report_utils import get_date_input_file, match_input_files
 
 
-# round column to nearest 10 and redact any values <10
 def round_column(df, col, decimals=-1):
+    """Redact values less-than or equal-to 10 and then round values to nearest 10."""
     df[col] = df[col].apply(lambda x: x if x > 10 else 0)
-    df[col] = df[col].round(decimals)
+    # `Series.round` introduces scaling and precision errors, meaning some numbers
+    # aren't rounded. This isn't the case for the `round` builtin.
+    df[col] = df[col].apply(round, ndigits=decimals)
     return df
 
 
