@@ -94,27 +94,31 @@ def get_data(
     breakdowns_options = {
         "age": {
             "title": "Age",
-            "description": "Age breakdown",
+            "description": "Age is divided into 10 year age bands.",
             "figure": figure_paths["age"],
         },
         "ethnicity": {
             "title": "Ethnicity",
-            "description": "Ethnicity breakdown",
+            "description": "Ethnicity is categorised into 6 high-level groups, as defined by the codelist below.",
+            "link": "https://www.opencodelists.org/codelist/opensafely/ethnicity-snomed-0removed/2e641f61/",
+            "link_description": "Ethnicity codelist",
             "figure": figure_paths["ethnicity"],
         },
         "sex": {
             "title": "Sex",
-            "description": "Sex breakdown",
+            "description": "",
             "figure": figure_paths["sex"],
         },
         "imd": {
             "title": "Index of Multiple Deprivation",
-            "description": "Index of Multiple Deprivation breakdown",
+            "description": "Index of Multiple Deprivation breakdown is presented as quintiles, based on English indices of deprivation 2019. These quintile range from 1 (most deprived) to 5 (least deprived See the link below for more details.",
+            "link": "https://www.gov.uk/government/statistics/english-indices-of-deprivation-2019",
+            "link_description": "English Indices of Deprivation 2019",
             "figure": figure_paths["imd"],
         },
         "region": {
             "title": "Region",
-            "description": "Region breakdown",
+            "description": "Region is categorised into 9 regions in England. A patients' region is determined as the region of the practice they are registered at.",
             "figure": figure_paths["region"],
         },
     }

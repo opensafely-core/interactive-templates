@@ -186,6 +186,8 @@
                     {% for b in breakdowns %}
                     <div id="{{ b.title }}">
                         <h3>Breakdown by {{ b.title }}</h3>
+                        <p>{{ b.description }}</p>
+                        <p><a href="{{ b.link }}">{{ b.link_description }}</a></p>
                         <img src="{{ b.figure }}" alt="">
                         <p><strong>Figure {{ i.value }}</strong>. The rate per 1000 patients in the selected population for the measure of interest, broken down by {{b.title}}</p>
                     {% set i.value = i.value +1 %}
