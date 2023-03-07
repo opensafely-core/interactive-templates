@@ -12,9 +12,9 @@
             <h1>{{ title }}</h1>
             <div>
                 <p>The below analysis shows the number of people who had <strong>{{ codelist_1_name }}</strong> added
-                    to their health record in the period between {{start_date}} and {{ end_date }} who also had
-                    <strong>{{ codelist_2_name }}</strong> added to ther health record from <strong>{{ time_value }} {{ time_scale }}
-                    {{ time_event }}</strong>. This analysis uses data for <strong>{{ population }}</strong> in OpenSAFELY-TPP
+                    to their health record each month in the period between {{start_date}} and {{ end_date }} who also had
+                    <strong>{{ codelist_2_name }}</strong> added to their health record in the same month or up to <strong>{{ time_value }} {{ time_scale }}
+                    {{ time_event }}</strong> the last day of the month. This analysis uses data for <strong>{{ population }}</strong> in OpenSAFELY-TPP
                     (~40% of England) between <strong>{{ start_date }}</strong> and <strong>{{ end_date }}</strong>.</p>
                 <p>A {{ codelist_1_name }} is defined each month as all patients with a code recorded from <a href={{
                         codelist_1_link }}>this codelist</a>. A {{ codelist_2_name }} is defined each month
