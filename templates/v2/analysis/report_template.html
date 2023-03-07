@@ -81,6 +81,7 @@
                 <p>The decile chart below is based on data from <strong>{{ num_practices }}</strong> practices.</p>
                 <div>
                     <img src="{{ decile }}" alt="">
+                    <p><strong>Figure 1</strong>. Decile chart showing practice level variation for the measure of interest.</p>
                 </div>
             </div>
             <div id="most-common-codes">
@@ -88,6 +89,7 @@
                     Most common codes
                 </h2>
                 <div>
+                    <p><strong>Table 1</strong>. The top 5 most common codes recorded for {{ codelist_1_name }}.</p>
                     <table border="1">
                         {% for row in top_5_1_data %}
 
@@ -113,6 +115,7 @@
                     </table>
                 </div>
                 <div>
+                    <p><strong>Table 2</strong>. The top 5 most common codes recorded for {{ codelist_2_name }}.</p>
                     <table border="1">
                         {% for row in top_5_2_data %}
 
@@ -144,6 +147,7 @@
                 </h2>
                 <div>
                     <img src="{{ population_plot }}" alt="">
+                    <p><strong>Figure 2</strong>. The rate per 1000 patients in the selected population for the measure of interest.</p>
                 </div>
             </div>
             <div id="breakdowns">
@@ -152,11 +156,15 @@
                 </h2>
                 <div>
                     Breakdowns content
+                    {% set i=namespace(value=3) %}
                     {% for b in breakdowns %}
                     <div id="{{ b.title }}">
                         <h3>Breakdown by {{ b.title }}</h3>
                         <img src="{{ b.figure }}" alt="">
+                        <p><strong>Figure {{ i.value }}</strong>. The rate per 1000 patients in the selected population for the measure of interest, broken down by {{b.title}}</p>
+                    {% set i.value = i.value +1 %}
                     </div>
+
                     {% endfor %}
                 </div>
             </div>
