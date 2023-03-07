@@ -169,10 +169,19 @@
             </div>
             <div id="breakdowns">
                 <h2>
-                    Breakdowns
+                    Demographic breakdowns
                 </h2>
+                <p>
+                    The figures below show the monthly rate per 1000 patients for the measure described above, broken down by {% for b in breakdowns %}
+                    <span>
+                        {{ b.title|lower }}
+                        {% if not loop.last %},
+                        {% endif %}
+                    </span>
+                    {% endfor %}.
+                </p>
                 <div>
-                    Breakdowns content
+
                     {% set i=namespace(value=3) %}
                     {% for b in breakdowns %}
                     <div id="{{ b.title }}">
