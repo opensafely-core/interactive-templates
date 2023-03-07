@@ -11,29 +11,44 @@
         <div>
             <h1>{{ title }}</h1>
             <div>
-                <p>The below analysis shows the number of people who had <strong>{{ codelist_1_name }}</strong> added
-                    to their health record each month in the period between {{start_date}} and {{ end_date }} who also had
-                    <strong>{{ codelist_2_name }}</strong> added to their health record in the same month or up to <strong>{{ time_value }} {{ time_scale }}
-                    {{ time_event }}</strong> the last day of the month. This analysis uses data for <strong>{{ population }}</strong> in OpenSAFELY-TPP
-                    (~40% of England) between <strong>{{ start_date }}</strong> and <strong>{{ end_date }}</strong>.</p>
-                <p>A {{ codelist_1_name }} is defined each month as all patients with a code recorded from <a href={{
-                        codelist_1_link }}>this codelist</a>. A {{ codelist_2_name }} is defined each month
-                    as anyone with a code recorded from <a href={{ codelist_2_link }}>this codelist</a>.
-                <p>A practice level decile chart of this measure is provided, as well as a plot of the
-                    population level rate and a breakdown of this measure by
+                <p>The below analysis shows the number of people who had a code recorded in their primary care record from <a href="{{ codelist_1_link }}"> this <strong>{{ codelist_1_name }}</strong>
+                    codelist</a> each month in the period between {{ start_date }} and {{ end_date }} who also had a code recorded from <a href="{{ codelist_2_link }}"> this codelist for
+                    <strong>{{ codelist_2_name }}</strong></a> in the same month or up to <strong>{{ time_value }} {{ time_scale }} {{ time_event }}</strong> the last day of the month.
+                    {% if breakdowns|length >0 %}
+                    A breakdown of this measure by
                     {% for b in breakdowns %}
                     <span>
-                        <strong>{{ b.title }}</strong>
+                        <strong>{{ b.title|lower }}</strong>
                         {% if not loop.last %},{% endif %}
                     </span>
-                    {% endfor %}.
+                    {% endfor %} is also provided.
+                    {% endif %}
+
+                    For each month between {{ start_date }} and {{ end_date }}, <strong>{{ population }}</strong> at the start of the month in OpenSAFELY-TPP (~40% of England) are included.
                     </p>
-                <p>The top 5 codes for both codelists across the entire study period is also shown.</p>
+
+
+            </div>
+
+            <div>
+                <h2>Table of contents</h2>
+                <ul>
+                    <li><a href="#measure-summary">Measure summary counts</a></li>
+                    <li><a href="#practice-level-variation">Practice level variation</a></li>
+                    <li><a href="#most-common-codes">Most common codes</a></li>
+                    <li><a href="#population-level">Population level chart</a></li>
+                    <li><a href="#breakdowns">Demographic breakdown charts</a></li>
+                    <ul>
+                        {% for b in breakdowns %}
+                        <li><a href="#{{b.title}}">{{ b.title }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </ul>
             </div>
 
         </div>
         <div>
-            <div>
+            <div id="measure-summary">
                 <h2>
                     Measure summary
                 </h2>
@@ -56,7 +71,7 @@
                     </table>
                 </div>
             </div>
-            <div>
+            <div id="practice-level-variation">
                 <h2>
                     Practice level variation
                 </h2>
@@ -68,7 +83,7 @@
                     <img src="{{ decile }}" alt="">
                 </div>
             </div>
-            <div>
+            <div id="most-common-codes">
                 <h2>
                     Most common codes
                 </h2>
@@ -123,7 +138,7 @@
                     </table>
                 </div>
             </div>
-            <div>
+            <div id="population-level">
                 <h2>
                     Population level
                 </h2>
@@ -131,14 +146,14 @@
                     <img src="{{ population_plot }}" alt="">
                 </div>
             </div>
-            <div>
+            <div id="breakdowns">
                 <h2>
                     Breakdowns
                 </h2>
                 <div>
                     Breakdowns content
                     {% for b in breakdowns %}
-                    <div>
+                    <div id="{{ b.title }}">
                         <h3>Breakdown by {{ b.title }}</h3>
                         <img src="{{ b.figure }}" alt="">
                     </div>
