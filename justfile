@@ -7,6 +7,9 @@ export PIP := BIN + if os_family() == "unix" { "/python -m pip" } else { "/pytho
 
 export DEFAULT_PYTHON := if os_family() == "unix" { "python3.8" } else { "python" }
 
+export DOCKER_BUILDKIT := "1"
+export COMPOSE_DOCKER_CLI_BUILD := "1"
+
 export UID := `id -u`
 export GID := `id -g`
 
@@ -106,7 +109,16 @@ docker-build:
 
 # Run analysis unit tests
 test-unit *args: requirements-unit docker-build
-    docker-compose run unit-tests pytest --disable-warnings templates
+    #!/usr/bin/env bash
+    set -eu
+    args="{{ args }}"
+    test -z "$args" && args=$(ls templates/)
+    for analysis in $args
+    do
+        path=templates/$analysis
+        echo "Running unit tests for analysis $analysis in $path..."
+        docker-compose run -e PYTHONPATH=$path unit-tests env -C $path python -m pytest --disable-warnings
+    done
 
 
 test: test-unit test-functional
