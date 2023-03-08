@@ -1,0 +1,16 @@
+services:
+  # used to build the production image
+  unit-tests:
+    image: python-dev
+    build:
+      context: .
+      target: python-dev
+    init: true
+    user: "${UID}:${GID}"
+    environment:
+      HOME: /tmp
+      PYTHONPATH: "/workspace"
+    volumes:
+      - type: bind
+        source: .
+        target: /workspace
