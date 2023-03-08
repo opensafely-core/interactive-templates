@@ -7,6 +7,9 @@ export PIP := BIN + if os_family() == "unix" { "/python -m pip" } else { "/pytho
 
 export DEFAULT_PYTHON := if os_family() == "unix" { "python3.8" } else { "python" }
 
+export UID := `id -u`
+export GID := `id -g`
+
 
 # list available commands
 default:
@@ -47,6 +50,13 @@ requirements-prod *args:
 requirements-dev *args: requirements-prod
     "{{ just_executable() }}" _compile requirements.dev.in requirements.dev.txt {{ args }}
 
+# update requirments for analysis unit tests
+requirements-unit *args:
+    #!/usr/bin/env bash
+    # exit if src file is older than dst file (-nt = 'newer than', but we negate with || to avoid error exit code)
+    test "${FORCE:-}" = "true" -o requirements.unit.in -nt requirements.unit.txt || exit 0
+    docker-compose run unit-tests pip-compile requirements.unit.in {{ args }}
+
 
 # ensure prod requirements installed and up to date
 prodenv: requirements-prod
@@ -56,7 +66,6 @@ prodenv: requirements-prod
 
     $PIP install -r requirements.prod.txt
     touch $VIRTUAL_ENV/.prod
-
 
 # && dependencies are run after the recipe has run. Needs just>=0.9.9. This is
 # a killer feature over Makefiles.
@@ -87,11 +96,20 @@ upgrade env package="": virtualenv
 
 
 # *args is variadic, 0 or more. This allows us to do `just test -k match`, for example.
-# Run the tests
-test *args: devenv
-    $BIN/coverage run --module pytest {{ args }}
+# Run the rendering functional tests
+test-functional *args: devenv
+    $BIN/coverage run --module pytest tests {{ args }}
     $BIN/coverage report || $BIN/coverage html
 
+docker-build:
+    docker-compose build unit-tests
+
+# Run analysis unit tests
+test-unit *args: requirements-unit docker-build
+    docker-compose run unit-tests pytest --disable-warnings templates
+
+
+test: test-unit test-functional
 
 # runs the format (black), sort (isort) and lint (flake8) check but does not change any files
 check: devenv

@@ -13,7 +13,7 @@ class InteractiveReportTemplate:  # pragma: no cover
     directory: Path
     codelist_keys: list
 
-    EXCLUDES = ["__pycache__", "metadata"]
+    EXCLUDES = ["__pycache__", "metadata", "tests"]
 
     @cached_property
     def environment(self):

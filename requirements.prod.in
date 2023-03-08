@@ -2,7 +2,3 @@
 
 # To generate requirements file, run:
 # pip-compile --generate-hashes --output-file=requirements.prod.txt requirements.prod.in
-
-matplotlib==3.1.3
-numpy==1.18.1
-pandas==1.0.1

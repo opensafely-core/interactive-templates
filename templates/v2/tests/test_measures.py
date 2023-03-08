@@ -1,9 +1,3 @@
-import sys
-from pathlib import Path
-
-
-sys.path.append(str(Path(__file__).parents[1] / "templates" / "v2" / "analysis"))
-
 from hypothesis import given
 from hypothesis.extra.pandas import column, data_frames, range_indexes
 from hypothesis.strategies import composite, integers, just, one_of
