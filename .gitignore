@@ -3,3 +3,6 @@ rendered
 .coverage
 .hypothesis
 .venv
+build
+*.egg-info
+interactive_templates/version.py
