@@ -111,7 +111,7 @@ def get_data(
         },
         "imd": {
             "title": "Index of Multiple Deprivation",
-            "description": "Index of Multiple Deprivation breakdown is presented as quintiles, based on English indices of deprivation 2019. These quintile range from 1 (most deprived) to 5 (least deprived See the link below for more details.",
+            "description": "Index of Multiple Deprivation breakdown is presented as quintiles, based on English indices of deprivation 2019. These quintile range from 1 (most deprived) to 5 (least deprived) See the link below for more details.",
             "link": "https://www.gov.uk/government/statistics/english-indices-of-deprivation-2019",
             "link_description": "English Indices of Deprivation 2019",
             "figure": figure_paths["imd"],
