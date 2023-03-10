@@ -43,7 +43,6 @@ def get_data(
     time_event="",
     start_date="",
     end_date="",
-    num_practices=0,
     request_id="",
 ):
     """
@@ -61,7 +60,6 @@ def get_data(
         time_event (str): time event for the report
         start_date (str): start date for the report
         end_date (str): end date for the report
-        num_practices (int): number of practices in the report
         request_id (str): request id - this dictates the path to the data
     Returns:
         dict containing the data
@@ -155,7 +153,6 @@ def get_data(
         "time_value": time_value,
         "time_scale": time_scale,
         "time_event": time_event,
-        "num_practices": num_practices,
     }
     return report_data
 
@@ -198,7 +195,6 @@ def parse_args():
     parser.add_argument("--time-value", type=str, default="")
     parser.add_argument("--time-scale", type=str, default="")
     parser.add_argument("--time-event", type=str, default="")
-    parser.add_argument("--num-practices", type=int, default=0)
     parser.add_argument("--request-id", type=str, default="")
 
     return parser.parse_args()
@@ -222,7 +218,6 @@ if __name__ == "__main__":
         time_event=args.time_event,
         start_date=args.start_date,
         end_date=args.end_date,
-        num_practices=args.num_practices,
         request_id=args.request_id,
     )
 

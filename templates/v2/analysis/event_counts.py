@@ -11,6 +11,10 @@ def round_to_nearest_100(x):
     return int(round(x, -2))
 
 
+def round_to_nearest_10(x):
+    return int(round(x, -1))
+
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--input_dir", type=str, required=True)
@@ -26,7 +30,7 @@ def get_number_of_events(df):
     return df.loc[:, "event_measure"].sum()
 
 
-def get_number_practices(df):
+def get_unique_practices(df):
     return df.loc[:, "practice"].unique()
 
 
@@ -46,12 +50,13 @@ def main():
             events[date] = num_events
             unique_patients = get_unique_patients(df)
             patients.extend(unique_patients)
-            unique_practices = get_number_practices(df)
+            unique_practices = get_unique_practices(df)
+
             practices.extend(unique_practices)
 
     total_events = round_to_nearest_100(sum(events.values()))
     total_patients = round_to_nearest_100(len(np.unique(patients)))
-    total_practices = round_to_nearest_100(len(np.unique(practices)))
+    total_practices = round_to_nearest_10(len(np.unique(practices)))
     events_in_latest_period = round_to_nearest_100(events[max(events.keys())])
 
     save_to_json(
