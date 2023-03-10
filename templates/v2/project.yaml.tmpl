@@ -121,7 +121,6 @@ actions:
       --time-event="{{ time_event }}"
       --start-date="{{ start_date }}"
       --end-date="{{ end_date }}"
-      --num-practices=1000
       --request-id="{{ id }}"
     needs: [event_counts_{{ id }}, deciles_chart_{{ id }}, top_5_table_{{ id }}, plot_measure_{{ id }}]
     outputs:
