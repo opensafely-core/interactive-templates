@@ -86,12 +86,7 @@ def create_top_5_code_table(
     df[code_column] = df[code_column].astype(int).astype(str)
     code_df[code_column] = code_df[code_column].astype(int).astype(str)
 
-    # sum event counts over patients
-    event_counts = df.sort_values(ascending=False, by="num")
-
-    event_counts = group_low_values(
-        event_counts, "num", code_column, low_count_threshold
-    )
+    event_counts = group_low_values(df, "num", code_column, low_count_threshold)
 
     # round
 
@@ -119,6 +114,11 @@ def create_top_5_code_table(
 
     # Rename the code column to something consistent
     event_counts.rename(columns={code_column: "Code"}, inplace=True)
+
+    # sort by proportion of codes
+    event_counts = event_counts.sort_values(
+        ascending=False, by="Proportion of codes (%)"
+    )
 
     event_counts_with_counts = event_counts.copy()
 
