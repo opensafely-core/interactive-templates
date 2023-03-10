@@ -170,14 +170,15 @@ def render_report(report_path, data):
         return template.render(data)
 
 
-def write_html(html, output_dir):
+def write_html(html, output_dir, request_id):
     """
     Write the html to a file in the output directory
     Args:
         html: html to write
         output_dir: directory to write to
+        request_id: the request_id to use as a suffix to the filename
     """
-    with open(output_dir + "/report.html", "w") as f:
+    with open(output_dir + f"/report-{request_id}.html", "w") as f:
         f.write(html)
 
 
@@ -222,4 +223,4 @@ if __name__ == "__main__":
     )
 
     html = render_report("analysis/report_template.html", report_data)
-    write_html(html, output_dir)
+    write_html(html, output_dir, args.request_id)

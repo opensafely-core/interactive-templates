@@ -125,4 +125,4 @@ actions:
     needs: [event_counts_{{ id }}, deciles_chart_{{ id }}, top_5_table_{{ id }}, plot_measure_{{ id }}]
     outputs:
       moderately_sensitive:
-        notebook: output/{{ id }}/report.html
+        notebook: output/{{ id }}/report-{{ id }}.html
