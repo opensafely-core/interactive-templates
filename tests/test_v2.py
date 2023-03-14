@@ -39,3 +39,4 @@ def test_v2_functional(tmp_path):
 
     # failing currently
     assert local_run.main(tmp_path, ["run_all"])
+    assert (tmp_path / "output/foo/report.html").exists()

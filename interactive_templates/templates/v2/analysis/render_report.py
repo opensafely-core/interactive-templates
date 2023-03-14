@@ -178,7 +178,7 @@ def write_html(html, output_dir, request_id):
         output_dir: directory to write to
         request_id: the request_id to use as a suffix to the filename
     """
-    with open(output_dir + f"/report-{request_id}.html", "w") as f:
+    with open(output_dir + "/report.html", "w") as f:
         f.write(html)
 
 
