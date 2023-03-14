@@ -1,0 +1,6 @@
+# Unfortunately, setuptools_scm doesn't work for including package data when
+# installed from a github archive zip, as there's no git metadata to tell it
+# about the extra files.
+#
+# So we add a manual include for template files so that it works in this case
+recursive-include interactive_templates/templates *.tmpl *.j2

@@ -50,7 +50,7 @@ actions:
 
   generate_measures_{{ id }}:
     run: >
-      python:latest python -m analysis.measures
+      python:latest -m analysis.measures
         --breakdowns="{{ demographics|join(',') }}"
         --input_dir="output/{{ id }}/joined"
         --measure="med_review"

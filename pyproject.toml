@@ -1,9 +1,31 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "interactive_templates"
+description = "OpenSAFELY Interactive Templates"
+readme = "README.md"
+authors = [{name = "OpenSAFELY", email = "tech@opensafely.org"}]
+license = {file = "LICENSE"}
+classifiers = [
+  "License :: OSI Approved :: GNU General Public License v3 (GPLv3)"
+]
+requires-python = ">=3.11"
+dynamic = ["version"]
+dependencies = ["jinja2", "attrs", "requests"]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["interactive_templates*"]
+
 [tool.coverage.run]
 branch = true
 dynamic_context = "test_function"
 omit = [
   ".venv/*",
-  "reports/*",
 ]
 
 [tool.coverage.report]

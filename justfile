@@ -5,7 +5,7 @@ export VIRTUAL_ENV  := `echo ${VIRTUAL_ENV:-.venv}`
 export BIN := VIRTUAL_ENV + if os_family() == "unix" { "/bin" } else { "/Scripts" }
 export PIP := BIN + if os_family() == "unix" { "/python -m pip" } else { "/python.exe -m pip" }
 
-export DEFAULT_PYTHON := if os_family() == "unix" { "python3.8" } else { "python" }
+export DEFAULT_PYTHON := if os_family() == "unix" { "python3.11" } else { "python" }
 
 export DOCKER_BUILDKIT := "1"
 export COMPOSE_DOCKER_CLI_BUILD := "1"
@@ -39,6 +39,7 @@ virtualenv:
 
 _compile src dst *args: virtualenv
     #!/usr/bin/env bash
+    set -eux
     # exit if src file is older than dst file (-nt = 'newer than', but we negate with || to avoid error exit code)
     test "${FORCE:-}" = "true" -o {{ src }} -nt {{ dst }} || exit 0
     $BIN/pip-compile --allow-unsafe --generate-hashes --output-file={{ dst }} {{ src }} {{ args }}
@@ -46,7 +47,7 @@ _compile src dst *args: virtualenv
 
 # update requirements.prod.txt if requirements.prod.in has changed
 requirements-prod *args:
-    "{{ just_executable() }}" _compile requirements.prod.in requirements.prod.txt {{ args }}
+    "{{ just_executable() }}" _compile pyproject.toml requirements.prod.txt {{ args }}
 
 
 # update requirements.dev.txt if requirements.dev.in has changed
@@ -107,21 +108,30 @@ test-functional *args: devenv
 docker-build:
     docker-compose build unit-tests
 
-# Run analysis unit tests
+# Run unit tests for templated analysis code in templates/
 test-unit *args: requirements-unit docker-build
     #!/usr/bin/env bash
     set -eu
     args="{{ args }}"
-    test -z "$args" && args=$(ls templates/)
+    test -z "$args" && args=$(ls interactive_templates/templates/)
     for analysis in $args
     do
-        path=templates/$analysis
-        echo "Running unit tests for analysis $analysis in $path..."
-        docker-compose run -e PYTHONPATH=$path unit-tests env -C $path python -m pytest --disable-warnings
+        path=interactive_templates/templates/$analysis
+        echo "Running unit tests for analysis $analysis in $path..." 
+        docker-compose run -e PYTHONPATH=$path unit-tests env -C $path python -m pytest --disable-warnings 
     done
 
+test:
+    #!/usr/bin/env bash
+    set -eu
+    if [[ "{{ invocation_directory() }}" = *interactive_templates/templates/* ]]; then
+        {{ just_executable() }} test-unit $(basename {{ invocation_directory() }})
+    else
+        {{ just_executable() }} test-all
+    fi
 
-test: test-unit test-functional
+#run all tests
+test-all: test-unit test-functional
 
 # runs the format (black), sort (isort) and lint (flake8) check but does not change any files
 check: devenv
