@@ -39,7 +39,7 @@ virtualenv:
 
 _compile src dst *args: virtualenv
     #!/usr/bin/env bash
-    set -eux
+    set -eu
     # exit if src file is older than dst file (-nt = 'newer than', but we negate with || to avoid error exit code)
     test "${FORCE:-}" = "true" -o {{ src }} -nt {{ dst }} || exit 0
     $BIN/pip-compile --allow-unsafe --generate-hashes --output-file={{ dst }} {{ src }} {{ args }}
@@ -146,9 +146,9 @@ fix: devenv
     $BIN/isort .
 
 
-# Run the dev project
-run *args: devenv
-    $BIN/python smush.py {{ args }}
+# Render an analysis with test datat
+render *args="v2": devenv
+    $BIN/python -m interactive_templates.render {{ args }}
 
 
 
