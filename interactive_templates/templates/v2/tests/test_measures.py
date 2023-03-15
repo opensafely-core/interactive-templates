@@ -1,7 +1,8 @@
-from analysis import measures
 from hypothesis import given
 from hypothesis.extra.pandas import column, data_frames, range_indexes
 from hypothesis.strategies import composite, integers, just, one_of
+
+from analysis import measures
 
 
 @composite
