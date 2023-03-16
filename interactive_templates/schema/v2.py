@@ -14,11 +14,11 @@ class Analysis:
     codelist_1: Codelist
     codelist_2: Codelist | None
     created_by: str
-    demographics: str
+    demographics: list
     filter_population: str
     repo: str
     time_scale: str
-    time_value: str
+    time_value: int
     title: str
     id: str | None = None  # noqa: A003
     frequency: str = "monthly"
@@ -39,7 +39,7 @@ TEST_DEFAULTS = dict(
         type="event",
     ),
     created_by="test_user",
-    demographics="age,sex",
+    demographics=["age", "sex"],
     filter_population="adults",
     repo="test_repo",
     time_scale="weeks",
