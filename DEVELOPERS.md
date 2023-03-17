@@ -26,6 +26,23 @@ interactive analysis code in `interactive_templates/templates`, and the
 framework to render these in `interactive_templates/{render.py,schema/} 
 
 
+### Render code
+
+To render the code for an analysis in `./rendered` directory, using test
+template context:
+
+```
+just render v2
+```
+
+You can overide template context with `key=value` cli args:
+
+```
+just render v2 title="foo" codelist_1.slug="org/slug"
+```
+
+
+
 ### Analysis Code
 
 Each directory in `interactive_templates/templates/` contains templated

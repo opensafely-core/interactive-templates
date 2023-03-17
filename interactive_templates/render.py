@@ -1,5 +1,6 @@
 import shutil
 from importlib.resources import files
+from pathlib import Path
 
 import requests
 from attrs import asdict
@@ -78,3 +79,43 @@ def _render_to(output_dir, context, current_dir):
                 dst.write_text(content)
             else:
                 shutil.copyfile(src, dst)
+
+
+if __name__ == "__main__":
+    import argparse
+    import importlib
+
+    parser = argparse.ArgumentParser("render")
+    parser.add_argument(
+        "--output-dir",
+        default="rendered",
+        help="directory to render analysis code",
+        type=Path,
+    )
+    parser.add_argument("name", help="name of analysis to render")
+    parser.add_argument(
+        "context",
+        nargs=argparse.REMAINDER,
+        help="template context args [name=value...]",
+    )
+
+    args = parser.parse_args()
+    module = importlib.import_module(f"interactive_templates.schema.{args.name}")
+
+    def set_value(d, name, value):
+        """Set dotted values in a nested dictlike object."""
+        if "." not in name:
+            d[name] = value
+        else:
+            key, rest = name.split(".", 2)
+            set_value(d[key], rest, value)
+
+    kwargs = module.TEST_DEFAULTS.copy()
+    for c in args.context:
+        name, value = c.split("=", 2)
+        set_value(kwargs, name, value)
+
+    schema = module.Analysis(**kwargs)
+
+    shutil.rmtree(args.output_dir)
+    render_analysis(schema, args.output_dir)

@@ -14,14 +14,38 @@ class Analysis:
     codelist_1: Codelist
     codelist_2: Codelist | None
     created_by: str
-    demographics: str
+    demographics: list
     filter_population: str
     repo: str
     time_scale: str
-    time_value: str
+    time_value: int
     title: str
     id: str | None = None  # noqa: A003
     frequency: str = "monthly"
     time_event: str = "before"
     start_date: str = None
     end_date: str = None
+
+
+TEST_DEFAULTS = dict(
+    codelist_1=Codelist(
+        label="DMARDs",
+        slug="opensafely/dmards/2020-06-23",
+        type="medication",
+    ),
+    codelist_2=Codelist(
+        label="Care planning medication review simple reference set - NHS Digital",
+        slug="opensafely/care-planning-medication-review-simple-reference-set-nhs-digital/61b13c39",
+        type="event",
+    ),
+    created_by="test_user",
+    demographics=["age", "sex"],
+    filter_population="adults",
+    repo="test_repo",
+    time_scale="weeks",
+    time_value="4",
+    title="Test Title",
+    id="test_id",
+    start_date="2019-01-01",
+    end_date="2022-12-31",
+)

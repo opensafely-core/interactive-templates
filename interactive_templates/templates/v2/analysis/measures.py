@@ -2,6 +2,7 @@ import argparse
 from pathlib import Path
 
 import pandas as pd
+
 from analysis.report_utils import get_date_input_file, match_input_files
 
 
