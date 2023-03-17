@@ -2,7 +2,13 @@ import argparse
 import csv
 import json
 
-from jinja2 import Template
+from jinja2 import Environment, FileSystemLoader, StrictUndefined
+
+
+ENVIRONMENT = Environment(
+    loader=FileSystemLoader("."),
+    undefined=StrictUndefined,
+)
 
 
 def data_from_csv(path):
@@ -92,6 +98,7 @@ def get_data(
     breakdowns_options = {
         "age": {
             "title": "Age",
+            "link": None,
             "description": "Age is divided into 10 year age bands.",
             "figure": figure_paths["age"],
         },
@@ -104,6 +111,7 @@ def get_data(
         },
         "sex": {
             "title": "Sex",
+            "link": None,
             "description": "",
             "figure": figure_paths["sex"],
         },
@@ -116,6 +124,7 @@ def get_data(
         },
         "region": {
             "title": "Region",
+            "link": None,
             "description": "Region is categorised into 9 regions in England. A patients' region is determined as the region of the practice they are registered at.",
             "figure": figure_paths["region"],
         },
@@ -165,9 +174,8 @@ def render_report(report_path, data):
         data: data to render
 
     """
-    with open(report_path, "r") as f:
-        template = Template(f.read())
-        return template.render(data)
+    template = ENVIRONMENT.get_template("analysis/report_template.html")
+    return template.render(data)
 
 
 def write_html(html, output_dir, request_id):

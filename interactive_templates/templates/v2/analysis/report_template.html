@@ -214,7 +214,9 @@
                         <div id="{{ b.title }}">
                             <h3>Breakdown by {{ b.title }}</h3>
                             <p>{{ b.description }}</p>
+                            {% if b.link %}
                             <p><a href="{{ b.link }}">{{ b.link_description }}</a></p>
+                            {% endif %}
                             <img src="{{ b.figure }}" alt="">
                             <p><strong>Figure {{ i.value }}</strong>. The rate
                                 per 1000 patients in the selected population for
