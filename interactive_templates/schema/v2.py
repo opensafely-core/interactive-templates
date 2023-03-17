@@ -39,7 +39,7 @@ TEST_DEFAULTS = dict(
         type="event",
     ),
     created_by="test_user",
-    demographics=["age", "sex"],
+    demographics=["age", "ethnicity", "sex", "imd", "region"],
     filter_population="adults",
     repo="test_repo",
     time_scale="weeks",

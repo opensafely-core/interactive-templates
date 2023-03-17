@@ -1,8 +1,31 @@
 import argparse
 import csv
 import json
+import mimetypes
+from base64 import b64encode
+from pathlib import Path
 
-from jinja2 import Template
+from jinja2 import Environment, FileSystemLoader, Markup, StrictUndefined
+
+
+ENVIRONMENT = Environment(
+    loader=FileSystemLoader("."),
+    undefined=StrictUndefined,
+)
+
+
+def display_image(src, data):
+    src = Path(src)
+
+    encoded = b64encode(src.read_bytes()).decode("utf8")
+    mtype, _ = mimetypes.guess_type(str(src))
+
+    return Markup(
+        f'<img src="data:{mtype};base64, {encoded}" title="Image generated from file: {data}"/>'
+    )
+
+
+ENVIRONMENT.globals["display_image"] = display_image
 
 
 def data_from_csv(path):
@@ -31,6 +54,7 @@ def data_from_json(path):
 
 
 def get_data(
+    output_dir,
     report_title="",
     population="all",
     breakdowns="",
@@ -43,11 +67,11 @@ def get_data(
     time_event="",
     start_date="",
     end_date="",
-    request_id="",
 ):
     """
     Get data to render the report
     Args:
+        output_dir (str): the output directory all the files are in
         report_title (str): title of the report
         population (str): population of the report
         breakdowns (str): comma delimited string of demographic breakdowns
@@ -60,7 +84,6 @@ def get_data(
         time_event (str): time event for the report
         start_date (str): start date for the report
         end_date (str): end date for the report
-        request_id (str): request id - this dictates the path to the data
     Returns:
         dict containing the data
     """
@@ -71,53 +94,77 @@ def get_data(
     codelist_1_link = codelist_url_root + codelist_1_link
     codelist_2_link = codelist_url_root + codelist_2_link
 
-    top_5_1_path = f"output/{request_id}/joined/top_5_code_table_1.csv"
-    top_5_2_path = f"output/{request_id}/joined/top_5_code_table_2.csv"
-    summary_table_path = f"output/{request_id}/event_counts.json"
+    top_5_1_path = output_dir / "joined/top_5_code_table_1.csv"
+    top_5_2_path = output_dir / "joined/top_5_code_table_2.csv"
+    summary_table_path = output_dir / "event_counts.json"
 
     top_5_1_data = data_from_csv(top_5_1_path)
     top_5_2_data = data_from_csv(top_5_2_path)
     summary_table_data = data_from_json(summary_table_path)
 
-    figure_paths = {
-        "decile": "joined/deciles_chart_practice_rate_deciles.png",
-        "population": "plot_measures.png",
-        "sex": "plot_measures_sex.png",
-        "age": "plot_measures_age.png",
-        "imd": "plot_measures_imd.png",
-        "region": "plot_measures_region.png",
-        "ethnicity": "plot_measures_ethnicity.png",
+    figures = {
+        "decile": {
+            "path": output_dir / "joined/deciles_chart_practice_rate_deciles.png",
+            "data": output_dir / "joined/measure_practice_rate_deciles.csv",
+        },
+        "population": {
+            "path": output_dir / "plot_measures.png",
+            "data": output_dir / "joined/measure_total_rate.csv",
+        },
+        "sex": {
+            "path": output_dir / "plot_measures_sex.png",
+            "data": output_dir / "joined/measure_sex_rate.csv",
+        },
+        "age": {
+            "path": output_dir / "plot_measures_age.png",
+            "data": output_dir / "joined/measure_age_rate.csv",
+        },
+        "imd": {
+            "path": output_dir / "plot_measures_imd.png",
+            "data": output_dir / "joined/measure_imd_rate.csv",
+        },
+        "region": {
+            "path": output_dir / "plot_measures_region.png",
+            "data": output_dir / "joined/measure_region_rate.csv",
+        },
+        "ethnicity": {
+            "path": output_dir / "plot_measures_ethnicity.png",
+            "data": output_dir / "joined/measure_ethnicity_rate.csv",
+        },
     }
 
     breakdowns_options = {
         "age": {
             "title": "Age",
+            "link": None,
             "description": "Age is divided into 10 year age bands.",
-            "figure": figure_paths["age"],
+            "figure": figures["age"],
         },
         "ethnicity": {
             "title": "Ethnicity",
             "description": "Ethnicity is categorised into 6 high-level groups, as defined by the codelist below.",
             "link": "https://www.opencodelists.org/codelist/opensafely/ethnicity-snomed-0removed/2e641f61/",
             "link_description": "Ethnicity codelist",
-            "figure": figure_paths["ethnicity"],
+            "figure": figures["ethnicity"],
         },
         "sex": {
             "title": "Sex",
+            "link": None,
             "description": "",
-            "figure": figure_paths["sex"],
+            "figure": figures["sex"],
         },
         "imd": {
             "title": "Index of Multiple Deprivation",
             "description": "Index of Multiple Deprivation breakdown is presented as quintiles, based on English indices of deprivation 2019. These quintile range from 1 (most deprived) to 5 (least deprived) See the link below for more details.",
             "link": "https://www.gov.uk/government/statistics/english-indices-of-deprivation-2019",
             "link_description": "English Indices of Deprivation 2019",
-            "figure": figure_paths["imd"],
+            "figure": figures["imd"],
         },
         "region": {
             "title": "Region",
+            "link": None,
             "description": "Region is categorised into 9 regions in England. A patients' region is determined as the region of the practice they are registered at.",
-            "figure": figure_paths["region"],
+            "figure": figures["region"],
         },
     }
     # open file from root directory
@@ -137,13 +184,13 @@ def get_data(
     report_data = {
         "title": report_title,
         "population": population_definition,
-        "decile": figure_paths["decile"],
-        "population_plot": figure_paths["population"],
+        "decile": figures["decile"],
+        "population_plot": figures["population"],
         "breakdowns": breakdowns,
         "top_5_1_data": top_5_1_data,
         "top_5_2_data": top_5_2_data,
         "summary_table_data": summary_table_data,
-        "figures": figure_paths,
+        "figures": figures,
         "codelist_1_link": codelist_1_link,
         "codelist_2_link": codelist_2_link,
         "codelist_1_name": codelist_1_name,
@@ -165,25 +212,31 @@ def render_report(report_path, data):
         data: data to render
 
     """
-    with open(report_path, "r") as f:
-        template = Template(f.read())
-        return template.render(data)
+    template = ENVIRONMENT.get_template("analysis/report_template.html")
+    return template.render(data)
 
 
-def write_html(html, output_dir, request_id):
+def write_html(html, output_dir):
     """
     Write the html to a file in the output directory
     Args:
         html: html to write
         output_dir: directory to write to
-        request_id: the request_id to use as a suffix to the filename
     """
     with open(output_dir + "/report.html", "w") as f:
         f.write(html)
 
 
-def parse_args():
+def render(output_dir, **kwargs):
+    report_data = get_data(output_dir=output_dir, **kwargs)
+    template = ENVIRONMENT.get_template("analysis/report_template.html")
+    report = args.output_dir / "report.html"
+    report.write_text(template.render(report_data))
+
+
+def get_parser():
     parser = argparse.ArgumentParser()
+    parser.add_argument("--output-dir", type=Path)
     parser.add_argument("--report-title", type=str, default="Report Title")
     parser.add_argument("--population", type=str, default="all")
     parser.add_argument("--breakdowns", type=str, default="")
@@ -196,31 +249,10 @@ def parse_args():
     parser.add_argument("--time-value", type=str, default="")
     parser.add_argument("--time-scale", type=str, default="")
     parser.add_argument("--time-event", type=str, default="")
-    parser.add_argument("--request-id", type=str, default="")
-
-    return parser.parse_args()
+    return parser
 
 
 if __name__ == "__main__":
-    args = parse_args()
-
-    output_dir = f"output/{args.request_id}"
-
-    report_data = get_data(
-        report_title=args.report_title,
-        population=args.population,
-        breakdowns=args.breakdowns,
-        codelist_1_name=args.codelist_1_name,
-        codelist_1_link=args.codelist_1_link,
-        codelist_2_name=args.codelist_2_name,
-        codelist_2_link=args.codelist_2_link,
-        time_value=args.time_value,
-        time_scale=args.time_scale,
-        time_event=args.time_event,
-        start_date=args.start_date,
-        end_date=args.end_date,
-        request_id=args.request_id,
-    )
-
-    html = render_report("analysis/report_template.html", report_data)
-    write_html(html, output_dir, args.request_id)
+    parser = get_parser()
+    args = parser.parse_args()
+    render(**vars(args))
