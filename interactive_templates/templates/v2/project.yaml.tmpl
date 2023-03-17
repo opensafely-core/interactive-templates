@@ -109,6 +109,7 @@ actions:
   generate_report_{{ id }}:
     run: >
       python:latest python analysis/render_report.py
+      --output-dir="output/{{ id }}"
       --report-title="{{ title }}"
       --population="{{ filter_population }}"
       --breakdowns="{{ demographics|join(',') }}"
@@ -121,7 +122,6 @@ actions:
       --time-event="{{ time_event }}"
       --start-date="{{ start_date }}"
       --end-date="{{ end_date }}"
-      --request-id="{{ id }}"
     needs: [event_counts_{{ id }}, deciles_chart_{{ id }}, top_5_table_{{ id }}, plot_measure_{{ id }}]
     outputs:
       moderately_sensitive:

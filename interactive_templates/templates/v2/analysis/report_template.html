@@ -103,7 +103,7 @@
                         from which deciles of activity are calculated.</p>
                 <p>The decile chart below is based on data from <strong>{{ summary_table_data.total_practices }}</strong> practices.</p>
                     <div>
-                        <img src="{{ decile }}" alt="">
+                        {{ display_image(decile.path, decile.data) }}
                         <p><strong>Figure 1</strong>. Decile chart showing
                             practice level variation for the measure of
                             interest.</p>
@@ -186,7 +186,7 @@
                         patients for the measure described above.
                     </p>
                     <div>
-                        <img src="{{ population_plot }}" alt="">
+                        {{ display_image(population_plot.path, population_plot.data) }}
                         <p><strong>Figure 2</strong>. The rate per 1000 patients
                             in the selected population for the measure of
                             interest.</p>
@@ -217,7 +217,7 @@
                             {% if b.link %}
                             <p><a href="{{ b.link }}">{{ b.link_description }}</a></p>
                             {% endif %}
-                            <img src="{{ b.figure }}" alt="">
+                            {{ display_image(b.figure.path, b.figure.data) }}
                             <p><strong>Figure {{ i.value }}</strong>. The rate
                                 per 1000 patients in the selected population for
                                 the measure of interest, broken down by
