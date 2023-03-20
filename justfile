@@ -117,8 +117,8 @@ test-unit *args: requirements-unit docker-build
     for analysis in $args
     do
         path=interactive_templates/templates/$analysis
-        echo "Running unit tests for analysis $analysis in $path..." 
-        docker-compose run -e PYTHONPATH=$path unit-tests env -C $path python -m pytest --disable-warnings 
+        echo "Running unit tests for analysis $analysis in $path..."
+        docker-compose run -e PYTHONPATH=$path unit-tests env -C $path python -m pytest --disable-warnings
     done
 
 test:
@@ -138,6 +138,7 @@ check: devenv
     $BIN/black --check .
     $BIN/isort --check-only --diff .
     $BIN/flake8
+    $BIN/check-manifest
 
 
 # fix formatting and import sort ordering

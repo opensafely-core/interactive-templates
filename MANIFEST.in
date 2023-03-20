@@ -3,4 +3,14 @@
 # about the extra files.
 #
 # So we add a manual include for template files so that it works in this case
-recursive-include interactive_templates/templates *.tmpl *.j2
+recursive-include interactive_templates/templates *.tmpl
+recursive-include interactive_templates/templates *.j2
+recursive-include interactive_templates/templates *.csv
+recursive-include interactive_templates/templates *.txt
+recursive-include interactive_templates/templates *.html
+recursive-include interactive_templates/templates *.json
+recursive-exclude tests *.py
+exclude *.md
+exclude requirements.*
+exclude Dockerfile justfile docker-compose.yaml
+exclude .*
