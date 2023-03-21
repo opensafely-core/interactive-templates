@@ -31,6 +31,7 @@ def test_packaging_install_from_archive(tmp_path, git_archive):
     subprocess.run([venv_path / "bin/pip", "install", git_archive], check=True)
 
     expected_data_files = [
+        "templates/README.md.tmpl",
         "templates/v2/project.yaml.tmpl",
         "templates/v2/codelists/codelists.txt",
         "templates/v2/codelists/opensafely-ethnicity-snomed-0removed.csv",

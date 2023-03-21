@@ -33,10 +33,16 @@ def render_analysis(schema, output_dir):
     for key, codelist in codelists:
         codelist.path = write_codelist(key, codelist, output_dir)
 
+    context = asdict(schema)
+
+    readme = output_dir / "README.md"
+    readme_template = ENVIRONMENT.get_template("README.md.tmpl")
+    readme.write_text(readme_template.render(**context))
+
     # recursively render/copy files into output_dir
     _render_to(
         output_dir,
-        context=asdict(schema),
+        context=context,
         current_dir=template_dir,
     )
 
