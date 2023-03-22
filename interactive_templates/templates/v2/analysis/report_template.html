@@ -79,6 +79,7 @@
                                 <tr>
                                     <th>Total events</th>
                                     <th>Total patients</th>
+                                    <th>Total patients with at least one event</th>
                                     <th>Events in latest period</th>
                                 </tr>
                             </thead>
@@ -86,6 +87,7 @@
                                 <tr>
                                     <td>{{ summary_table_data.total_events }}</td>
                                     <td>{{ summary_table_data.total_patients }}</td>
+                                    <td>{{ summary_table_data.unique_patients_with_events }}</td>
                                     <td>{{
                                         summary_table_data.events_in_latest_period
                                         }}</td>
