@@ -117,6 +117,7 @@ test-unit *args: requirements-unit docker-build
     for analysis in $args
     do
         path=interactive_templates/templates/$analysis
+        test -d $path/tests || continue
         echo "Running unit tests for analysis $analysis in $path..."
         docker-compose run -e PYTHONPATH=$path unit-tests env -C $path python -m pytest --disable-warnings
     done
