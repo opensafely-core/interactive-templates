@@ -39,6 +39,7 @@ def main():
             parse_dates=["date"],
         )
         df = df.loc[df["value"] != "[Redacted]", :]
+        df["value"] = df["value"].astype(float)
         df = df.sort_values(by=["date"])
 
         plot_measures(
