@@ -33,6 +33,7 @@ def test_v2_functional(tmp_path):
         demographics=["age", "sex", "ethnicity"],
         start_date="2019-09-01",
         end_date="2023-01-01",
+        purpose="science!",
     )
 
     render_analysis(analysis, tmp_path)
