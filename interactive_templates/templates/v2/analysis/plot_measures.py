@@ -29,7 +29,6 @@ def main():
         filename=f"{ args.output_dir }/plot_measures",
         column_to_plot="value",
         y_label="Rate per 1000",
-        as_bar=False,
         category=None,
     )
 
@@ -47,7 +46,6 @@ def main():
             filename=f"{ args.output_dir }/plot_measures_{breakdown}",
             column_to_plot="value",
             y_label="Rate per 1000",
-            as_bar=False,
             category=breakdown,
         )
 
