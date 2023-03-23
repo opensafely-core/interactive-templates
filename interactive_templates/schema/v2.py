@@ -27,6 +27,7 @@ class Analysis:
     start_date: str = None
     end_date: str = None
     time_ever: bool = field(converter=bool, default=False)
+    week_of_latest_extract: str = None
 
 
 TEST_DEFAULTS = dict(
@@ -45,10 +46,10 @@ TEST_DEFAULTS = dict(
     filter_population="adults",
     repo="https://github.com/test/repo",
     time_scale="weeks",
-    time_event="before",
     time_value="4",
     time_ever=False,
     id="id",
     start_date="2019-01-01",
     end_date="2022-12-31",
+    week_of_latest_extract="2023-01-01",
 )
