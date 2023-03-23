@@ -41,8 +41,8 @@ else:
     raise Exception("Unsupported time scale")
 
 if time_event == "before":
-    codelist_2_period_start = f"- {days} days"
-    codelist_2_period_end = ""
+    codelist_2_period_start = f"- {days}"
+    codelist_2_period_end = "+ 0"
 else:
     raise Exception("Unsupported time event")
 
