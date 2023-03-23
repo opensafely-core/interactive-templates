@@ -8,6 +8,5 @@ from interactive_templates.schema import v2
 def test_v2_functional(tmp_path):
     analysis = v2.Analysis(**v2.TEST_DEFAULTS)
     render_analysis(analysis, tmp_path)
-    # failing currently
     assert local_run.main(tmp_path, ["run_all"])
     assert (tmp_path / "output/id/report.html").exists()

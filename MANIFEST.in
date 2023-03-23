@@ -3,12 +3,13 @@
 # about the extra files.
 #
 # So we add a manual include for template files so that it works in this case
-recursive-include interactive_templates/templates *.tmpl
-recursive-include interactive_templates/templates *.j2
-recursive-include interactive_templates/templates *.csv
-recursive-include interactive_templates/templates *.txt
-recursive-include interactive_templates/templates *.html
-recursive-include interactive_templates/templates *.json
+recursive-include interactive_templates/templates *.tmpl *.j2 *.txt *.html *.json *.csv
+# don't include any files from local development
+recursive-exclude interactive_templates/templates/*/interactive_codelists *.csv
+recursive-exclude interactive_templates/templates/*/output *
+recursive-exclude interactive_templates/templates/*/metadata *
+exclude interactive_templates/templates/*/project.yaml
+# don't ship tests or project dev infra
 recursive-exclude tests *.py
 exclude *.md
 exclude requirements.*

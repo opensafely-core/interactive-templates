@@ -10,9 +10,22 @@ from interactive_templates.schema import Codelist
 
 
 SESSION = requests.Session()
-CODELIST_URL = "https://www.opencodelists.org/codelist/{}/download.csv?fixed-headers=1"
-EXCLUDES = ["__pycache__", "metadata"]
 TEMPLATE_ROOT = files("interactive_templates") / "templates"
+CODELIST_URL = "https://www.opencodelists.org/codelist/{}/download.csv?fixed-headers=1"
+GITIGNORE_PATTERNS = []
+CODELIST_DOWNLOAD_DIR = "interactive_codelists"
+
+# directories or files generated in a template dir during local development
+DEV_FILES = [
+    CODELIST_DOWNLOAD_DIR,
+    "output",
+    "metadata",
+    "project.yaml",
+]
+
+# these fildirectory shouldn't be copied from template dirs, as the are developement only
+IGNORE_DIRS = ["tests"] + DEV_FILES
+
 ENVIRONMENT = Environment(
     loader=FileSystemLoader(str(TEMPLATE_ROOT)),
     undefined=StrictUndefined,
@@ -20,58 +33,87 @@ ENVIRONMENT = Environment(
 
 
 def render_analysis(schema, output_dir):
-    """Render the analysis code for name into output_dir using schema as context."""
+    """Render the analysis code for named templates into output_dir using schema as context."""
     template_dir = TEMPLATE_ROOT / schema.analysis_name
-
     if not template_dir.is_dir():
         raise Exception(
             f"{schema.analysis_name} template dir not found in {TEMPLATE_ROOT}"
         )
 
-    # are there any codelists that need downloading?
-    codelists = [(k, v) for k, v in vars(schema).items() if isinstance(v, Codelist)]
-    for key, codelist in codelists:
-        codelist.path = write_codelist(key, codelist, output_dir)
-
-    context = asdict(schema)
+    print(
+        f"Rendering {schema.analysis_name} templates from {template_dir} into {output_dir}"
+    )
+    context = _render(
+        schema=schema,
+        template_dir=template_dir,
+        output_dir=output_dir,
+    )
 
     readme = output_dir / "README.md"
-    readme_template = ENVIRONMENT.get_template("README.md.tmpl")
-    readme.write_text(readme_template.render(**context))
+    # this allows actions to template their own readme if needed
+    if not readme.exists():
+        readme_template = ENVIRONMENT.get_template("README.md.tmpl")
+        readme.write_text(readme_template.render(**context))
+
+
+def render_analysis_development(schema, directory):
+    """Render the analysis code locally in the same directory."""
+    print(
+        f"DEV: rendering {schema.analysis_name} templates from {directory} into {directory}"
+    )
+    _render(
+        schema=schema,
+        template_dir=directory,
+        output_dir=directory,
+        dev_mode=True,
+    )
+
+
+def _render(schema, template_dir, output_dir, dev_mode=False):
+    # write any codelists
+    write_codelists(schema, output_dir)
+
+    context = asdict(schema)
 
     # recursively render/copy files into output_dir
     _render_to(
         output_dir,
         context=context,
         current_dir=template_dir,
+        dev_mode=dev_mode,
     )
 
-
-def write_codelist(key, codelist, output_dir):
-    """Download the specified codelist to a path within the output_dir."""
-    path = output_dir / "codelists" / f"{key}.csv"
-
-    if not path.parent.exists():
-        path.parent.mkdir(parents=True, exist_ok=True)
-
-    url = CODELIST_URL.format(codelist.slug)
-    resp = SESSION.get(url)
-    resp.raise_for_status()
-
-    path.write_text(resp.text)
-    return path.relative_to(output_dir)
+    return context
 
 
-def _render_to(output_dir, context, current_dir):
+def write_codelists(schema, output_dir):
+    """Download the specified codelists to the correct path within the output_dir."""
+    codelists = [(k, v) for k, v in vars(schema).items() if isinstance(v, Codelist)]
+    for key, codelist in codelists:
+        path = output_dir / CODELIST_DOWNLOAD_DIR / f"{key}.csv"
+
+        if not path.parent.exists():
+            path.parent.mkdir(parents=True, exist_ok=True)
+
+        url = CODELIST_URL.format(codelist.slug)
+        resp = SESSION.get(url)
+        resp.raise_for_status()
+
+        path.write_text(resp.text)
+        codelist.path = path.relative_to(output_dir)
+
+
+def _render_to(output_dir, context, current_dir, dev_mode=False):
     """Recursively walk the src tree, and copy/render files across to the output_dir."""
 
     for src in current_dir.iterdir():
-        if src.name in EXCLUDES or src.name.startswith("."):
+        # skip files we don't want
+        if src.name.startswith(".") or src.name in IGNORE_DIRS:
             continue
 
         if src.is_dir():
             output_subdir = output_dir / src.name
-            _render_to(output_subdir, context, src)
+            _render_to(output_subdir, context, src, dev_mode=dev_mode)
         else:
             dst = output_dir / src.name
             if not dst.parent.exists():
@@ -83,22 +125,24 @@ def _render_to(output_dir, context, current_dir):
                 template = ENVIRONMENT.get_template(str(relative_template_path))
                 content = template.render(**context)
                 dst.write_text(content)
-            else:
+            elif not dev_mode:  # do not copy in dev mode
                 shutil.copyfile(src, dst)
 
 
-if __name__ == "__main__":
+def main():
     import argparse
     import importlib
 
     parser = argparse.ArgumentParser("render")
     parser.add_argument(
         "--output-dir",
-        default="rendered",
         help="directory to render analysis code",
+        default="rendered",
         type=Path,
     )
-    parser.add_argument("name", help="name of analysis to render")
+    parser.add_argument(
+        "analysis", help="name of analysis (or path to directory for local development)"
+    )
     parser.add_argument(
         "context",
         nargs=argparse.REMAINDER,
@@ -106,7 +150,17 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    module = importlib.import_module(f"interactive_templates.schema.{args.name}")
+
+    # have we been give a path or a name?
+    analysis_path = Path(args.analysis)
+    if analysis_path.exists():
+        analysis_name = analysis_path.name
+        dev_mode = True
+    else:
+        analysis_name = args.analysis
+        dev_mode = False
+
+    module = importlib.import_module(f"interactive_templates.schema.{analysis_name}")
 
     def set_value(d, name, value):
         """Set dotted values in a nested dictlike object."""
@@ -121,7 +175,17 @@ if __name__ == "__main__":
         name, value = c.split("=", 2)
         set_value(kwargs, name, value)
 
+    # TODO: smell: this requires the class to be called Analysis
     schema = module.Analysis(**kwargs)
 
-    shutil.rmtree(args.output_dir)
-    render_analysis(schema, args.output_dir)
+    if dev_mode:
+        render_analysis_development(schema, analysis_path)
+    else:
+        if args.output_dir.exists():
+            shutil.rmtree(args.output_dir)
+            args.output_dir.mkdir()
+        render_analysis(schema, args.output_dir)
+
+
+if __name__ == "__main__":
+    main()

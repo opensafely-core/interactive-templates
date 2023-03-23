@@ -18,11 +18,11 @@ export GID := `id -g`
 default:
     @"{{ just_executable() }}" --list
 
-
-# clean up temporary files
+# clean up development files
 clean:
     rm -rf .venv
-
+    # remove any local dev files
+    rm -rf $(grep 'interactive_templates/templates/*' .gitignore)
 
 # ensure valid virtualenv
 virtualenv:
@@ -147,7 +147,15 @@ fix: devenv
     $BIN/black .
     $BIN/isort .
 
-
-# Render an analysis with test datat
-render *args="v2": devenv
-    $BIN/python -m interactive_templates.render {{ args }}
+# This recipe works from either the root project dir or one of the analysis
+# dirs, in which case it will use devmode
+#
+# Render an analysis with test data
+render analysis="v2" *args="": devenv
+    #!/usr/bin/env bash
+    set -eu
+    if [[ "{{ invocation_directory() }}" = *interactive_templates/templates/* ]]; then
+        $BIN/python -m interactive_templates.render {{ invocation_directory() }} {{ args }}
+    else
+        $BIN/python -m interactive_templates.render {{ analysis }} {{ args }}
+    fi
