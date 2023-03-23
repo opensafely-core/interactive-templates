@@ -18,11 +18,11 @@ export GID := `id -g`
 default:
     @"{{ just_executable() }}" --list
 
-
-# clean up temporary files
+# clean up development files
 clean:
     rm -rf .venv
-
+    # remove any local dev files
+    rm -rf $(grep 'interactive_templates/templates/*' .gitignore)
 
 # ensure valid virtualenv
 virtualenv:
@@ -147,51 +147,15 @@ fix: devenv
     $BIN/black .
     $BIN/isort .
 
-
-# Render an analysis with test datat
-render *args="v2": devenv
-    $BIN/python -m interactive_templates.render {{ args }}
-
-
-
-# Remove built assets and collected static files
-assets-clean:
-    rm -rf assets/dist
-    rm -rf staticfiles
-
-
-# Install the Node.js dependencies
-assets-install:
+# This recipe works from either the root project dir or one of the analysis
+# dirs, in which case it will use devmode
+#
+# Render an analysis with test data
+render analysis="v2" *args="": devenv
     #!/usr/bin/env bash
     set -eu
-
-    # exit if lock file has not changed since we installed them. -nt == "newer than",
-    # but we negate with || to avoid error exit code
-    test package-lock.json -nt node_modules/.written || exit 0
-
-    npm ci
-    touch node_modules/.written
-
-
-# Build the Node.js assets
-assets-build:
-    #!/usr/bin/env bash
-    set -eu
-
-    # find files which are newer than dist/.written in the src directory. grep
-    # will exit with 1 if there are no files in the result.  We negate this
-    # with || to avoid error exit code
-    # we wrap the find in an if in case dist/.written is missing so we don't
-    # trigger a failure prematurely
-    if test -f assets/dist/.written; then
-        find assets/src -type f -newer assets/dist/.written | grep -q . || exit 0
+    if [[ "{{ invocation_directory() }}" = *interactive_templates/templates/* ]]; then
+        $BIN/python -m interactive_templates.render {{ invocation_directory() }} {{ args }}
+    else
+        $BIN/python -m interactive_templates.render {{ analysis }} {{ args }}
     fi
-
-    npm run build
-    touch assets/dist/.written
-
-
-assets: assets-install assets-build
-
-
-assets-rebuild: assets-clean assets

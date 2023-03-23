@@ -5,4 +5,7 @@ rendered
 .venv
 build
 *.egg-info
-interactive_templates/version.py
+interactive_templates/templates/*/interactive_codelists/
+interactive_templates/templates/*/metadata/
+interactive_templates/templates/*/output/
+interactive_templates/templates/*/project.yaml
