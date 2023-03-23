@@ -45,6 +45,7 @@ TEST_DEFAULTS = dict(
     filter_population="adults",
     repo="https://github.com/test/repo",
     time_scale="weeks",
+    time_event="before",
     time_value="4",
     time_ever=False,
     id="id",
