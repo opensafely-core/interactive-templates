@@ -165,7 +165,10 @@ def main():
     def set_value(d, name, value):
         """Set dotted values in a nested dictlike object."""
         if "." not in name:
-            d[name] = value
+            if "," in value:
+                d[name] = value.split(",")
+            else:
+                d[name] = value
         else:
             key, rest = name.split(".", 2)
             set_value(d[key], rest, value)

@@ -1,3 +1,5 @@
+from attrs import field, validators
+
 from interactive_templates.schema import Codelist, interactive_schema
 
 
@@ -14,11 +16,11 @@ class Analysis:
     codelist_1: Codelist
     codelist_2: Codelist | None
     created_by: str
-    demographics: list
+    demographics: list = field(validator=validators.instance_of(list))
     filter_population: str
     repo: str
     time_scale: str
-    time_value: int
+    time_value: int = field(converter=int)
     title: str
     purpose: str
     id: str | None = None  # noqa: A003
