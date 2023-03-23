@@ -8,7 +8,10 @@ from cohortextractor import (
 from demographics import demographics
 from event_variables import generate_event_variables
 from populations import population_filters
-from report_utils import calculate_variable_windows
+from report_utils import (
+    calculate_variable_windows_codelist_1,
+    calculate_variable_windows_codelist_2,
+)
 
 
 codelist_1_path = params["codelist_1_path"]
@@ -33,15 +36,14 @@ elif time_scale == "months":
     days = time_value * 28
 elif time_scale == "years":
     days = time_value * 365
+else:
+    raise Exception("Unsupported time scale")
 
 if time_event == "before":
-    codelist_2_period_start = f"- {days}"
-    codelist_2_period_end = "+ 0"
-
-elif time_event == "after":
-    codelist_2_period_start = "- 0"
-    codelist_2_period_end = f"+ {days}"
-
+    codelist_2_period_start = f"- {days} days"
+    codelist_2_period_end = ""
+else:
+    raise Exception("Unsupported time event")
 
 codelist_1 = codelist_from_csv(codelist_1_path, system="snomed", column="code")
 
@@ -51,12 +53,14 @@ codelist_2 = codelist_from_csv(
     column="code",
 )
 
-codelist_1_date_range, codelist_2_date_range = calculate_variable_windows(
-    codelist_1_frequency,
+codelist_1_date_range = calculate_variable_windows_codelist_1(codelist_1_frequency)
+codelist_2_date_range = calculate_variable_windows_codelist_2(
+    codelist_1_date_range,
     codelist_2_comparison_date,
     codelist_2_period_start,
     codelist_2_period_end,
 )
+
 selected_population = population_filters[population_definition]
 selected_demographics = {k: v for k, v in demographics.items() if k in breakdowns}
 
