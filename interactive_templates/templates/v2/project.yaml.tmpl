@@ -59,7 +59,6 @@ actions:
     outputs:
       moderately_sensitive:
         measure: output/{{ id }}/joined/measure*rate.csv
-        decile_measure: output/{{ id }}/joined/measure*rate_deciles.csv
 
   top_5_table_{{ id }}:
     run: >
@@ -72,22 +71,6 @@ actions:
       moderately_sensitive:
         tables: output/{{ id }}/joined/top_5*.csv
 
-  deciles_chart_{{ id }}:
-    run: >
-      deciles-charts:v0.0.33
-        --input-files output/{{ id }}/joined/measure_practice_rate_deciles.csv
-        --output-dir output/{{ id }}/joined
-    config:
-      show_outer_percentiles: true
-      tables:
-        output: true
-      charts:
-        output: true
-    needs: [generate_measures_{{ id }}]
-    outputs:
-      moderately_sensitive:
-        deciles_charts: output/{{ id }}/joined/deciles_*.*
-
   plot_measure_{{ id }}:
     run: >
       python:latest python analysis/plot_measures.py
@@ -97,6 +80,7 @@ actions:
     outputs:
       moderately_sensitive:
         measure: output/{{ id }}/plot_measure*.png
+        deciles: output/{{ id }}/deciles_chart.png
 
   event_counts_{{ id }}:
     run: >
@@ -122,7 +106,7 @@ actions:
       --time-event="{{ time_event }}"
       --start-date="{{ start_date }}"
       --end-date="{{ end_date }}"
-    needs: [event_counts_{{ id }}, deciles_chart_{{ id }}, top_5_table_{{ id }}, plot_measure_{{ id }}]
+    needs: [event_counts_{{ id }}, top_5_table_{{ id }}, plot_measure_{{ id }}]
     outputs:
       moderately_sensitive:
         notebook: output/{{ id }}/report.html
