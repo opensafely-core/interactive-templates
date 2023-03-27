@@ -1,7 +1,11 @@
 import json
 import re
 
+import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
 
 
 def save_to_json(d, filename: str):
@@ -111,3 +115,133 @@ def calculate_variable_windows(
         ]
 
     return codelist_1_date_range, codelist_2_date_range
+
+
+def compute_deciles(measure_table, groupby_col, values_col, has_outer_percentiles=True):
+    """Computes deciles.
+    Args:
+        measure_table: A measure table.
+        groupby_col: The name of the column to group by.
+        values_col: The name of the column for which deciles are computed.
+        has_outer_percentiles: Whether to compute the nine largest and nine smallest
+            percentiles as well as the deciles.
+    Returns:
+        A data frame with `groupby_col`, `values_col`, and `percentile` columns.
+    """
+    quantiles = np.arange(0.1, 1, 0.1)
+    if has_outer_percentiles:
+        quantiles = np.concatenate(
+            [quantiles, np.arange(0.01, 0.1, 0.01), np.arange(0.91, 1, 0.01)]
+        )
+
+    percentiles = (
+        measure_table.groupby(groupby_col)[values_col]
+        .quantile(pd.Series(quantiles))
+        .reset_index()
+    )
+
+    percentiles["percentile"] = percentiles["level_1"].apply(lambda x: int(x * 100))
+
+    return percentiles
+
+
+def deciles_chart(
+    df,
+    filename,
+    period_column=None,
+    column=None,
+    title="",
+    ylabel="",
+):
+    """period_column must be dates / datetimes"""
+
+    CENTER_LEFT = 6
+
+    df = compute_deciles(df, period_column, column, has_outer_percentiles=False)
+
+    """period_column must be dates / datetimes"""
+    sns.set_style("darkgrid")
+
+    fig, ax = plt.subplots(1, 1)
+    fig.set_size_inches(15, 8)
+
+    linestyles = {
+        "decile": {
+            "line": "b--",
+            "linewidth": 1,
+            "label": "Decile",
+        },
+        "median": {
+            "line": "b-",
+            "linewidth": 1.5,
+            "label": "Median",
+        },
+        "percentile": {
+            "line": "b:",
+            "linewidth": 0.8,
+            "label": "1st-9th, 91st-99th percentile",
+        },
+    }
+    label_seen = []
+    for percentile in range(1, 100):  # plot each decile line
+        data = df[df["percentile"] == percentile]
+        add_label = False
+
+        if percentile == 50:
+            style = linestyles["median"]
+            add_label = True
+
+        else:
+            style = linestyles["decile"]
+            if "decile" not in label_seen:
+                label_seen.append("decile")
+                add_label = True
+        if add_label:
+            label = style["label"]
+        else:
+            label = "_nolegend_"
+
+        ax.plot(
+            data[period_column],
+            data[column],
+            style["line"],
+            linewidth=style["linewidth"],
+            label=label,
+        )
+    ax.set_ylabel(ylabel, size=20, alpha=1)
+    if title:
+        ax.set_title(title, size=14, wrap=True)
+    # set ymax across all subplots as largest value across dataset
+
+    ax.set_ylim(
+        [0, 100 if df[column].isnull().values.all() else df[column].max() * 1.05]
+    )
+    ax.tick_params(labelsize=20)
+    ax.set_xlim(
+        [df[period_column].min(), df[period_column].max()]
+    )  # set x axis range as full date range
+
+    plt.setp(ax.xaxis.get_majorticklabels(), rotation=90)
+    # plot every 2nd x axis label
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%B %Y"))
+
+    plt.xticks(sorted(df[period_column].unique()), rotation=90)
+    ax.xaxis.set_major_locator(mdates.MonthLocator(interval=2))
+
+    ax.legend(
+        bbox_to_anchor=(1.1, 0.8),  # arbitrary location in axes
+        #  specified as (x0, y0, w, h)
+        loc=CENTER_LEFT,  # which part of the bounding box should
+        #  be placed at bbox_to_anchor
+        ncol=1,  # number of columns in the legend
+        fontsize=20,
+        borderaxespad=0.0,
+    )  # padding between the axes and legend
+    #  specified in font-size units
+
+    plt.tight_layout()
+
+    # seaborn style
+    plt.style.use("seaborn")
+    plt.savefig(filename)
+    plt.clf()
