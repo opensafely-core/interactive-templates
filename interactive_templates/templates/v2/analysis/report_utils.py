@@ -117,16 +117,18 @@ def calculate_variable_windows(
     return codelist_1_date_range, codelist_2_date_range
 
 
-def compute_deciles(measure_table, groupby_col, values_col, has_outer_percentiles=True):
-    """Computes deciles.
+def compute_deciles(measure_table, groupby_col, value_col, has_outer_percentiles=True):
+    """
+    Computes deciles and other percentiles from a measure table.
+
     Args:
-        measure_table: A measure table.
-        groupby_col: The name of the column to group by.
-        values_col: The name of the column for which deciles are computed.
-        has_outer_percentiles: Whether to compute the nine largest and nine smallest
-            percentiles as well as the deciles.
+        measure_table: the measure table to compute the percentiles from
+        groupby_col: the name of the column to group by
+        value_col: the name of the column to compute the percentiles for
+        has_outer_percentiles: whether to compute the nine largest and nine smallest percentiles
+
     Returns:
-        A data frame with `groupby_col`, `values_col`, and `percentile` columns.
+    A dataframe with columns for the grouping column, the value column, and the percentile.
     """
     quantiles = np.arange(0.1, 1, 0.1)
     if has_outer_percentiles:
@@ -135,71 +137,64 @@ def compute_deciles(measure_table, groupby_col, values_col, has_outer_percentile
         )
 
     percentiles = (
-        measure_table.groupby(groupby_col)[values_col]
+        measure_table.groupby(groupby_col)[value_col]
         .quantile(pd.Series(quantiles))
         .reset_index()
     )
+    percentiles["percentile"] = (percentiles["level_1"] * 100).astype(int)
+    percentiles = percentiles.rename(columns={value_col: "value"})
 
-    percentiles["percentile"] = percentiles["level_1"].apply(lambda x: int(x * 100))
-
-    return percentiles
+    return percentiles[[groupby_col, "value", "percentile"]]
 
 
-def deciles_chart(
-    df,
-    filename,
-    period_column=None,
-    column=None,
-    title="",
-    ylabel="",
-):
-    """period_column must be dates / datetimes"""
+def deciles_chart(df, filename, period_column=None, column=None, title="", ylabel=""):
+    """
+    Create a deciles chart from a dataframe and save it to a file.
 
-    CENTER_LEFT = 6
+    Args:
+        df: the dataframe to plot
+        filename: the name of the file to save the chart to
+        period_column: the name of the column containing the date or datetime values
+        column: the name of the column to plot the deciles of
+        title: the title of the chart
+        ylabel: the label of the y-axis of the chart
+    """
 
-    df = compute_deciles(df, period_column, column, has_outer_percentiles=False)
-
-    """period_column must be dates / datetimes"""
     sns.set_style("darkgrid")
 
-    fig, ax = plt.subplots(1, 1)
-    fig.set_size_inches(15, 8)
+    fig, ax = plt.subplots(figsize=(15, 8))
 
     linestyles = {
-        "decile": {
-            "line": "b--",
-            "linewidth": 1,
-            "label": "Decile",
-        },
-        "median": {
-            "line": "b-",
-            "linewidth": 1.5,
-            "label": "Median",
-        },
+        "decile": {"line": "b--", "linewidth": 1, "label": "Decile"},
+        "median": {"line": "b-", "linewidth": 1.5, "label": "Median"},
         "percentile": {
             "line": "b:",
             "linewidth": 0.8,
             "label": "1st-9th, 91st-99th percentile",
         },
     }
+
+    df = compute_deciles(
+        measure_table=df,
+        groupby_col=period_column,
+        value_col=column,
+        has_outer_percentiles=True,
+    )
+
     label_seen = []
-    for percentile in range(1, 100):  # plot each decile line
+    for percentile in range(1, 100):
         data = df[df["percentile"] == percentile]
-        add_label = False
 
         if percentile == 50:
             style = linestyles["median"]
-            add_label = True
-
+            label = style["label"]
         else:
             style = linestyles["decile"]
             if "decile" not in label_seen:
                 label_seen.append("decile")
-                add_label = True
-        if add_label:
-            label = style["label"]
-        else:
-            label = "_nolegend_"
+                label = style["label"]
+            else:
+                label = "_nolegend_"
 
         ax.plot(
             data[period_column],
@@ -208,40 +203,25 @@ def deciles_chart(
             linewidth=style["linewidth"],
             label=label,
         )
-    ax.set_ylabel(ylabel, size=20, alpha=1)
-    if title:
-        ax.set_title(title, size=14, wrap=True)
-    # set ymax across all subplots as largest value across dataset
 
+    ax.set_ylabel(ylabel, size=20, alpha=1)
+    ax.set_title(title, size=14, wrap=True)
     ax.set_ylim(
         [0, 100 if df[column].isnull().values.all() else df[column].max() * 1.05]
     )
     ax.tick_params(labelsize=20)
-    ax.set_xlim(
-        [df[period_column].min(), df[period_column].max()]
-    )  # set x axis range as full date range
-
+    ax.set_xlim([df[period_column].min(), df[period_column].max()])
     plt.setp(ax.xaxis.get_majorticklabels(), rotation=90)
-    # plot every 2nd x axis label
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%B %Y"))
-
     plt.xticks(sorted(df[period_column].unique()), rotation=90)
     ax.xaxis.set_major_locator(mdates.MonthLocator(interval=2))
-
     ax.legend(
-        bbox_to_anchor=(1.1, 0.8),  # arbitrary location in axes
-        #  specified as (x0, y0, w, h)
-        loc=CENTER_LEFT,  # which part of the bounding box should
-        #  be placed at bbox_to_anchor
-        ncol=1,  # number of columns in the legend
+        bbox_to_anchor=(1.1, 0.8),
+        loc="center left",
+        ncol=1,
         fontsize=20,
         borderaxespad=0.0,
-    )  # padding between the axes and legend
-    #  specified in font-size units
-
+    )
     plt.tight_layout()
-
-    # seaborn style
-    plt.style.use("seaborn")
     plt.savefig(filename)
     plt.clf()
