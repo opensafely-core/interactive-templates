@@ -5,6 +5,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from report_utils import get_date_input_file, match_input_files, save_to_json
+from utilities import drop_zero_practices
 
 
 def round_to_nearest_100(x):
@@ -45,6 +46,7 @@ def main():
     patients = []
     patients_with_events = []
     practices = []
+    practice_with_events = []
     events = {}
 
     for file in Path(args.input_dir).iterdir():
@@ -60,7 +62,11 @@ def main():
             patients_with_events.extend(unique_patients_with_events)
             unique_practices = get_unique_practices(df)
 
+            df_practices_dropped = drop_zero_practices(df, "event_measure")
+            unique_practices_with_events = get_unique_practices(df_practices_dropped)
+
             practices.extend(unique_practices)
+            practice_with_events.extend(unique_practices_with_events)
 
     total_events = round_to_nearest_100(sum(events.values()))
     total_patients = round_to_nearest_100(len(np.unique(patients)))
@@ -68,6 +74,9 @@ def main():
         len(np.unique(patients_with_events))
     )
     total_practices = round_to_nearest_10(len(np.unique(practices)))
+    total_practices_with_events = round_to_nearest_10(
+        len(np.unique(practice_with_events))
+    )
     events_in_latest_period = round_to_nearest_100(events[max(events.keys())])
 
     save_to_json(
@@ -77,6 +86,7 @@ def main():
             "unique_patients_with_events": unique_patients_with_events,
             "events_in_latest_period": events_in_latest_period,
             "total_practices": total_practices,
+            "total_practices_with_events": total_practices_with_events,
         },
         f"{args.output_dir}/event_counts.json",
     )
