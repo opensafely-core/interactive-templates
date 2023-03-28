@@ -191,6 +191,7 @@
                     <h2>
                         Practice level variation
                     </h2>
+
                     <p>Practice level variation in this measure is shown below as a decile chart.
                         Deciles charts provide a way of understanding the variability in a chosen
                         measure at the level of individual practices. To calculate deciles charts, the
@@ -205,8 +206,10 @@
                 <p>
                     Practices that do not have any registered patients with the measure of interest recorded
                     throughout the entire study period are not included. The decile chart below is based on data
-                    from <strong>{{ summary_table_data.total_practices }}</strong> practices.
+                    from <strong>{{ summary_table_data.total_practices_with_events }}/{{ summary_table_data.total_practices }}</strong>
+                    practices.
                 </p>
+
 
                     <div>
                         {{ display_image(decile.path, decile.data) }}
