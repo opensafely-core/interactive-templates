@@ -150,7 +150,7 @@ def get_data(
         "sex": {
             "title": "Sex",
             "link": None,
-            "description": "",
+            "description": "Sex is grouped by 'M' and 'F'. Patients who's sex is not recorded as 'M' or 'F' are not included in this analysis to prevent disclosure concerns resulting from low event counts.",
             "figure": figures["sex"],
         },
         "imd": {
@@ -173,13 +173,15 @@ def get_data(
     # population logic
 
     if population == "adults":
-        population_definition = "all registered patients aged 18 and over"
+        population_definition = "all patients aged 18 and over registered with a general practice at the start of each month"
 
     elif population == "children":
-        population_definition = "all registered patients aged under 18"
+        population_definition = "all patients aged under 18 registered with a general practice at the start of each month"
 
     else:
-        population_definition = "all registered patients"
+        population_definition = (
+            "all patients registered with a general practice at the start of each month"
+        )
 
     report_data = {
         "title": report_title,
