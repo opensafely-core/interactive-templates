@@ -85,11 +85,8 @@ def plot_measures(
     plt.close()
 
 
-def calculate_variable_windows(
+def calculate_variable_windows_codelist_1(
     codelist_1_frequency,
-    codelist_2_comparison_date,
-    codelist_2_period_start,
-    codelist_2_period_end,
 ):
     """
     Calculates the date range to use for the variables based on codelist 1 and 2.
@@ -99,20 +96,38 @@ def calculate_variable_windows(
     else:
         codelist_1_date_range = ["index_date", "last_day_of_month(index_date)"]
 
+    return codelist_1_date_range
+
+
+def calculate_variable_windows_codelist_2(
+    codelist_1_date_range,
+    codelist_2_comparison_date,
+    codelist_2_period_start,
+    codelist_2_period_end,
+):
+    """
+    Calculates the date range to use for the variables based on codelist 2.
+    """
     if codelist_2_comparison_date == "start_date":
         codelist_2_date_range = [
             f"index_date {codelist_2_period_start} days",
             f"index_date {codelist_2_period_end} days",
         ]
     elif codelist_2_comparison_date == "end_date":
-        codelist_2_date_range = [
-            f"{codelist_1_date_range[1]} {codelist_2_period_start} days",
-            f"{codelist_1_date_range[1]} {codelist_2_period_end} days",
-        ]
+        if codelist_1_date_range[1] == "index_date + 7 days":
+            codelist_2_date_range = [
+                f"{codelist_1_date_range[0]} {codelist_2_period_start}",
+                f"{codelist_1_date_range[1]}",
+            ]
+        else:
+            codelist_2_date_range = [
+                f"{codelist_1_date_range[0]} {codelist_2_period_start}",
+                f"{codelist_1_date_range[1]}",
+            ]
     else:
         codelist_2_date_range = [
-            f"event_1_date {codelist_2_period_start} days",
-            f"event_1_date {codelist_2_period_end} days",
+            f"event_1_date {codelist_2_period_start}",
+            f"event_1_date {codelist_2_period_end}",
         ]
 
-    return codelist_1_date_range, codelist_2_date_range
+    return codelist_2_date_range
