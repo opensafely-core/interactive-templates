@@ -29,7 +29,6 @@ def main():
         filename=f"{ args.output_dir }/plot_measures",
         column_to_plot="value",
         y_label="Rate per 1000",
-        as_bar=False,
         category=None,
     )
 
@@ -39,6 +38,7 @@ def main():
             parse_dates=["date"],
         )
         df = df.loc[df["value"] != "[Redacted]", :]
+        df["value"] = df["value"].astype(float)
         df = df.sort_values(by=["date"])
 
         plot_measures(
@@ -46,7 +46,6 @@ def main():
             filename=f"{ args.output_dir }/plot_measures_{breakdown}",
             column_to_plot="value",
             y_label="Rate per 1000",
-            as_bar=False,
             category=breakdown,
         )
 

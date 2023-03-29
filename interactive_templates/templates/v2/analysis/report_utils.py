@@ -32,63 +32,64 @@ def get_date_input_file(file: str) -> str:
 
 
 def plot_measures(
-    df,
-    filename: str,
-    column_to_plot: str,
-    y_label: str,
-    as_bar: bool = False,
-    category: str = None,
+    df, filename: str, column_to_plot: str, y_label: str, category: str = None
 ):
-    """Produce time series plot from measures table.  One line is plotted for each sub
-    category within the category column. Saves output in 'output' dir as jpeg file.
+    """Produce time series plot from measures table. If category is provided, one line is plotted for each sub
+    category within the category column. Saves output in 'output' dir as png file.
     Args:
         df: A measure table
         column_to_plot: Column name for y-axis values
         y_label: Label to use for y-axis
-        as_bar: Boolean indicating if bar chart should be plotted instead of line chart. Only valid if no categories.
-        category: Name of column indicating different categories
+        category: Name of column indicating different categories, optional
     """
-    plt.figure(figsize=(15, 8))
     if category:
         df[category] = df[category].fillna("Missing")
-        for unique_category in sorted(df[category].unique()):
-            # subset on category column and sort by date
-            df_subset = df[df[category] == unique_category].sort_values("date")
 
-            plt.plot(df_subset["date"], df_subset[column_to_plot])
-    else:
-        if as_bar:
-            df.plot.bar("date", column_to_plot, legend=False)
-        else:
-            plt.plot(df["date"], df[column_to_plot])
-
-    x_labels = sorted(df["date"].unique())
-    plt.ylabel(y_label)
-    plt.xlabel("Date")
-    plt.xticks(x_labels, rotation="vertical")
-    plt.ylim(
-        bottom=0,
-        top=1000
-        if df[column_to_plot].isnull().values.all()
-        else df[column_to_plot].max(),
-    )
+    _, ax = plt.subplots(figsize=(15, 8))
 
     if category:
-        plt.legend(
-            sorted(df[category].unique()), bbox_to_anchor=(1.04, 1), loc="upper left"
+        for unique_category in sorted(df[category].unique()):
+            df_subset = df[df[category] == unique_category].sort_values("date")
+            ax.plot(df_subset["date"], df_subset[column_to_plot])
+    else:
+        ax.plot(df["date"], df[column_to_plot])
+
+    ax.set(
+        ylabel=y_label,
+        xlabel="Date",
+        ylim=(
+            0,
+            1000
+            if df[column_to_plot].isnull().values.all()
+            else df[column_to_plot].max(),
+        ),
+    )
+
+    month_locator = mdates.MonthLocator()
+    ax.xaxis.set_major_locator(month_locator)
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
+    plt.xticks(rotation="vertical")
+
+    if category:
+        ax.legend(
+            sorted(df[category].unique()),
+            bbox_to_anchor=(1.04, 1),
+            loc="upper left",
+            fontsize=20,
         )
 
+    ax.margins(x=0)
+    ax.yaxis.label.set_size(25)
+    ax.xaxis.label.set_size(25)
+    ax.tick_params(axis="both", which="major", labelsize=20)
     plt.tight_layout()
-
+    plt.style.use("seaborn")
     plt.savefig(f"{filename}.png")
     plt.close()
 
 
-def calculate_variable_windows(
+def calculate_variable_windows_codelist_1(
     codelist_1_frequency,
-    codelist_2_comparison_date,
-    codelist_2_period_start,
-    codelist_2_period_end,
 ):
     """
     Calculates the date range to use for the variables based on codelist 1 and 2.
@@ -98,24 +99,39 @@ def calculate_variable_windows(
     else:
         codelist_1_date_range = ["index_date", "last_day_of_month(index_date)"]
 
+    return codelist_1_date_range
+
+
+def calculate_variable_windows_codelist_2(
+    codelist_1_date_range,
+    codelist_2_comparison_date,
+    codelist_2_period_start,
+    codelist_2_period_end,
+):
+    """
+    Calculates the date range to use for the variables based on codelist 2.
+    """
     if codelist_2_comparison_date == "start_date":
         codelist_2_date_range = [
             f"index_date {codelist_2_period_start} days",
             f"index_date {codelist_2_period_end} days",
         ]
     elif codelist_2_comparison_date == "end_date":
-        codelist_2_date_range = [
-            f"{codelist_1_date_range[1]} {codelist_2_period_start} days",
-            f"{codelist_1_date_range[1]} {codelist_2_period_end} days",
-        ]
+        if codelist_1_date_range[1] == "index_date + 7 days":
+            codelist_2_date_range = [
+                f"{codelist_1_date_range[0]} {codelist_2_period_start}",
+                f"{codelist_1_date_range[1]}",
+            ]
+        else:
+            codelist_2_date_range = [
+                f"{codelist_1_date_range[0]} {codelist_2_period_start}",
+                f"{codelist_1_date_range[1]}",
+            ]
     else:
         codelist_2_date_range = [
-            f"event_1_date {codelist_2_period_start} days",
-            f"event_1_date {codelist_2_period_end} days",
+            f"event_1_date {codelist_2_period_start}",
+            f"event_1_date {codelist_2_period_end}",
         ]
-
-    return codelist_1_date_range, codelist_2_date_range
-
 
 def compute_deciles(measure_table, groupby_col, value_col, has_outer_percentiles=True):
     """
@@ -225,3 +241,4 @@ def deciles_chart(df, filename, period_column=None, column=None, title="", ylabe
     plt.tight_layout()
     plt.savefig(filename)
     plt.clf()
+
