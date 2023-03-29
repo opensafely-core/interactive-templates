@@ -133,6 +133,9 @@ def calculate_variable_windows_codelist_2(
             f"event_1_date {codelist_2_period_end}",
         ]
 
+    return codelist_2_date_range
+
+
 def compute_deciles(measure_table, groupby_col, value_col, has_outer_percentiles=True):
     """
     Computes deciles and other percentiles from a measure table.
@@ -241,4 +244,3 @@ def deciles_chart(df, filename, period_column=None, column=None, title="", ylabe
     plt.tight_layout()
     plt.savefig(filename)
     plt.clf()
-
