@@ -43,7 +43,7 @@ def render_analysis(schema, output_dir):
     print(
         f"Rendering {schema.analysis_name} templates from {template_dir} into {output_dir}"
     )
-    context = _render(
+    _render(
         schema=schema,
         template_dir=template_dir,
         output_dir=output_dir,
@@ -52,8 +52,9 @@ def render_analysis(schema, output_dir):
     readme = output_dir / "README.md"
     # this allows actions to template their own readme if needed
     if not readme.exists():
+        _, _, repo_name = schema.repo.rpartition("/")
         readme_template = ENVIRONMENT.get_template("README.md.tmpl")
-        readme.write_text(readme_template.render(**context))
+        readme.write_text(readme_template.render(repo=repo_name))
 
 
 def render_analysis_development(schema, directory):
