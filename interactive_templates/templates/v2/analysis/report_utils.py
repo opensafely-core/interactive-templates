@@ -37,7 +37,9 @@ def calculate_rate(df, value_col, population_col, rate_per=1000, round_rate=Fals
 
     else:
         rate = df[value_col] / (df[population_col] / rate_per)
-    df["rate"] = rate
+
+    rate = rate.apply(round, ndigits=4)
+    return rate
 
 
 def relabel_sex(df):

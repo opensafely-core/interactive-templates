@@ -2,7 +2,7 @@ import argparse
 from pathlib import Path
 
 import pandas as pd
-from analysis.report_utils import get_date_input_file, match_input_files
+from analysis.report_utils import calculate_rate, get_date_input_file, match_input_files
 
 
 def round_column(df, col, decimals=-1):
@@ -94,9 +94,7 @@ def main():
                 counts["population"] = df.groupby(by=[breakdown])[
                     ["event_measure"]
                 ].count()
-                counts["value"] = (
-                    counts["event_measure"] / counts["population"]
-                ) * 1000
+                counts["value"] = calculate_rate(counts, "event_measure", "population")
                 counts = counts.reset_index()
                 counts["date"] = date
                 data[breakdown].append(counts)
@@ -106,7 +104,7 @@ def main():
     df = df.sort_values(by=["date"])
     df = round_column(df, "event_measure", decimals=-1)
     df = round_column(df, "population", decimals=-1)
-    df["value"] = df["event_measure"] / df["population"] * 1000
+    df["value"] = calculate_rate(df, "event_measure", "population")
     df.loc[(df["event_measure"] == 0) | (df["population"] == 0), "value"] = "[Redacted]"
 
     df.to_csv(f"{args.input_dir}/measure_total_rate.csv", index=False)
@@ -115,6 +113,13 @@ def main():
 
         # sort by date
         df = df.sort_values(by=["date"])
+        df = round_column(df, "event_measure", decimals=-1)
+        df = round_column(df, "population", decimals=-1)
+        df["value"] = calculate_rate(df, "event_measure", "population")
+        df.loc[
+            (df["event_measure"] == 0) | (df["population"] == 0), "value"
+        ] = "[Redacted]"
+        df.to_csv(f"{args.input_dir}/measure_{breakdown}_rate.csv", index=False)
 
         # if practice breakdown, we dont want to redact as we'll be aggregating to deciles
         if breakdown != "practice":
