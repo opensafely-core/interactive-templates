@@ -14,6 +14,24 @@ def round_column(df, col, decimals=-1):
     return df
 
 
+def filter_data(df, filters):
+    """
+    Filter a DataFrame based on specified columns and their corresponding filter values.
+
+    Args:
+        df (pd.DataFrame): The input DataFrame to be filtered.
+        filters (dict): A dictionary where keys are column names and values are lists of
+                        the desired values for that column.
+
+    Returns:
+        pd.DataFrame: The filtered DataFrame.
+    """
+    for column, filter_values in filters.items():
+        if column in df.columns:
+            df = df.loc[df[column].isin(filter_values), :]
+    return df
+
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--breakdowns", type=str, required=True)
@@ -39,14 +57,22 @@ def main():
         if match_input_files(file.name):
             date = get_date_input_file(file.name)
 
-            df = pd.read_csv(file)
+            filters = {
+                "sex": ["M", "F"],
+                "age_band": [
+                    "18-19",
+                    "20-29",
+                    "30-39",
+                    "40-49",
+                    "50-59",
+                    "60-69",
+                    "70-79",
+                    "80+",
+                ],
+            }
 
-            if "sex" in breakdowns:
-                df = df.loc[df["sex"].isin(["M", "F"]), :]
-            if "age_band" in breakdowns:
-                df.loc[df["age_band"] != "missing", :]
+            df = pd.read_csv(file).pipe(filter_data, filters).assign(date=date)
 
-            df["date"] = date
             count = df.loc[:, "event_measure"].sum()
             population = df.loc[:, "event_measure"].count()
             value = (count / population) * 1000
