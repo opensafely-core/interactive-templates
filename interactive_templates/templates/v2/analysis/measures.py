@@ -49,9 +49,10 @@ def main():
         breakdowns = []
 
     breakdowns.extend(["practice", "event_1_code", "event_2_code"])
-    data = {"total": []}
-    for b in breakdowns:
-        data[b] = []
+
+    measure_df = pd.DataFrame(
+        columns=["date", "event_measure", "population", "group", "group_value"]
+    )
 
     for file in Path(args.input_dir).iterdir():
         if match_input_files(file.name):
@@ -84,56 +85,50 @@ def main():
             }
 
             # make df from row_dict
-
             df_row = pd.DataFrame(row_dict)
 
-            data["total"].append(df_row)
+            measure_df = pd.concat([measure_df, df_row], ignore_index=True)
 
             for breakdown in breakdowns:
                 counts = df.groupby(by=[breakdown])[["event_measure"]].sum()
                 counts["population"] = df.groupby(by=[breakdown])[
                     ["event_measure"]
                 ].count()
-                counts["value"] = calculate_rate(counts, "event_measure", "population")
                 counts = counts.reset_index()
                 counts["date"] = date
-                data[breakdown].append(counts)
+                counts["group"] = breakdown
+                counts["group_value"] = counts[breakdown]
+                counts = counts.drop(columns=[breakdown])
+                measure_df = pd.concat([measure_df, counts], ignore_index=True)
 
-    df = pd.concat(data["total"])
     # sort by date
-    df = df.sort_values(by=["date"])
-    df = round_column(df, "event_measure", decimals=-1)
-    df = round_column(df, "population", decimals=-1)
-    df["value"] = calculate_rate(df, "event_measure", "population")
-    df.loc[(df["event_measure"] == 0) | (df["population"] == 0), "value"] = "[Redacted]"
+    measure_df = measure_df.sort_values(by=["group", "group_value", "date"])
+    for group in measure_df["group"].unique():
+        group_df = measure_df.loc[measure_df["group"] == group, :]
 
-    df.to_csv(f"{args.input_dir}/measure_total_rate.csv", index=False)
-    for breakdown in breakdowns:
-        df = pd.concat(data[breakdown])
-
-        # sort by date
-        df = df.sort_values(by=["date"])
-        df = round_column(df, "event_measure", decimals=-1)
-        df = round_column(df, "population", decimals=-1)
-        df["value"] = calculate_rate(df, "event_measure", "population")
-        df.loc[
-            (df["event_measure"] == 0) | (df["population"] == 0), "value"
-        ] = "[Redacted]"
-        df.to_csv(f"{args.input_dir}/measure_{breakdown}_rate.csv", index=False)
-
-        # if practice breakdown, we dont want to redact as we'll be aggregating to deciles
-        if breakdown != "practice":
-            df = round_column(df, "event_measure", decimals=-1)
-            df = round_column(df, "population", decimals=-1)
-            df["value"] = df["event_measure"] / df["population"] * 1000
-            df.loc[
-                (df["event_measure"] == 0) | (df["population"] == 0), "value"
+        if group == "practice":
+            # we don't want to redact as we aggregate into deciles
+            group_df.loc[:, "value"] = calculate_rate(
+                group_df, "event_measure", "population"
+            )
+        else:
+            group_df = round_column(group_df, "event_measure", decimals=-1)
+            group_df = round_column(group_df, "population", decimals=-1)
+            group_df.loc[:, "value"] = calculate_rate(
+                group_df, "event_measure", "population"
+            )
+            group_df.loc[
+                (group_df["event_measure"] == 0) | (group_df["population"] == 0),
+                "value",
             ] = "[Redacted]"
 
-        else:
-            df["value"] = df["event_measure"] / df["population"] * 1000
+        measure_df.loc[measure_df["group"] == group, "value"] = group_df["value"]
 
-        df.to_csv(f"{args.input_dir}/measure_{breakdown}_rate.csv", index=False)
+    measure_df.to_csv(f"{args.input_dir}/measure_all.csv", index=False)
+    measure_for_deciles = measure_df.loc[measure_df["group"] == "practice", :]
+    measure_for_deciles.to_csv(
+        f"{args.input_dir}/measure_practice_rate_deciles.csv", index=False
+    )
 
 
 if __name__ == "__main__":
