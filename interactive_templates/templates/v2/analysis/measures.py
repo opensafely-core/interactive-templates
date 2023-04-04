@@ -32,6 +32,101 @@ def filter_data(df, filters):
     return df
 
 
+def calculate_total_counts(df, date, group=None, group_value=None):
+    """
+    Calculate the total counts for a DataFrame.
+
+    Args:
+        df (pd.DataFrame): The input DataFrame. Should contain columns "event_measure" and "date".
+        date (str): The date of the input file.
+        group (str, optional): The group category. Defaults to None.
+        group_value (str, optional): The group value. Defaults to None.
+    Returns:
+        pd.DataFrame: A DataFrame (shape: (1, 5)) containing the total counts.
+    """
+    if not {"event_measure", "date"}.issubset(df.columns):
+        raise ValueError(
+            "The input DataFrame must contain 'event measure' and 'date' columns."
+        )
+
+    count = df["event_measure"].sum()
+    population = df["event_measure"].count()
+
+    row_dict = {
+        "date": date,
+        "event_measure": count,
+        "population": population,
+        "group": group,
+        "group_value": group_value,
+    }
+    return pd.DataFrame.from_records([row_dict])
+
+
+def calculate_group_counts(df, breakdown, date):
+    """
+    Calculate the counts for a specified group.
+
+    Args:
+        df (pd.DataFrame): The input DataFrame. Should contain a column named "breakdown".
+        breakdown (str): The name of the column to group by.
+        date (str): The date of the input file.
+
+    Returns:
+        pd.DataFrame: A DataFrame containing the counts for the specified group.
+    """
+    counts = (
+        df.groupby(by=[breakdown])["event_measure"]
+        .agg(["sum", "count"])
+        .reset_index()
+        .rename(
+            columns={
+                breakdown: "group_value",
+                "sum": "event_measure",
+                "count": "population",
+            }
+        )
+    )
+    counts["date"] = date
+    counts["group"] = breakdown
+
+    return counts
+
+
+def calculate_and_redact_values(df):
+    """
+    Calculate the values for each group and redact where necessary.
+
+    Args:
+        df (pd.DataFrame): The input DataFrame. Should contain columns "event_measure", "population" and "group".
+
+    Returns:
+        pd.DataFrame: A DataFrame containing the calculated values.
+    """
+    groups = df["group"].unique()
+    result = pd.DataFrame(columns=["group", "group_value", "value"])
+    for group in groups:
+        group_df = df.loc[df["group"] == group, :]
+
+        if group == "practice":
+            group_df.loc[:, "value"] = calculate_rate(
+                group_df, "event_measure", "population"
+            )
+        else:
+            group_df = round_column(group_df, "event_measure", decimals=-1)
+            group_df = round_column(group_df, "population", decimals=-1)
+            group_df.loc[:, "value"] = calculate_rate(
+                group_df, "event_measure", "population"
+            )
+            group_df.loc[
+                (group_df["event_measure"] == 0) | (group_df["population"] == 0),
+                "value",
+            ] = "[Redacted]"
+
+        result = pd.concat([result, group_df], ignore_index=True)
+
+    return result
+
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--breakdowns", type=str, required=True)
@@ -56,8 +151,6 @@ def main():
 
     for file in Path(args.input_dir).iterdir():
         if match_input_files(file.name):
-            date = get_date_input_file(file.name)
-
             filters = {
                 "sex": ["M", "F"],
                 "age_band": [
@@ -71,59 +164,24 @@ def main():
                     "80+",
                 ],
             }
+            date = get_date_input_file(file.name)
+            file_path = str(file.absolute())
+            df = pd.read_csv(file_path).pipe(filter_data, filters).assign(date=date)
 
-            df = pd.read_csv(file).pipe(filter_data, filters).assign(date=date)
+            total_count = calculate_total_counts(df, date, group="total", group_value="total")
 
-            count = df.loc[:, "event_measure"].sum()
-            population = df.loc[:, "event_measure"].count()
-            value = (count / population) * 1000
-            row_dict = {
-                "date": pd.Series([date]),
-                "event_measure": pd.Series([count]),
-                "population": pd.Series([population]),
-                "value": pd.Series([value]),
-            }
-
-            # make df from row_dict
-            df_row = pd.DataFrame(row_dict)
-
-            measure_df = pd.concat([measure_df, df_row], ignore_index=True)
+            measure_df = pd.concat([measure_df, total_count], ignore_index=True)
 
             for breakdown in breakdowns:
-                counts = df.groupby(by=[breakdown])[["event_measure"]].sum()
-                counts["population"] = df.groupby(by=[breakdown])[
-                    ["event_measure"]
-                ].count()
-                counts = counts.reset_index()
-                counts["date"] = date
-                counts["group"] = breakdown
-                counts["group_value"] = counts[breakdown]
-                counts = counts.drop(columns=[breakdown])
+                counts = calculate_group_counts(df, breakdown, date)
+
                 measure_df = pd.concat([measure_df, counts], ignore_index=True)
 
     # sort by date
+
     measure_df = measure_df.sort_values(by=["group", "group_value", "date"])
-    for group in measure_df["group"].unique():
-        group_df = measure_df.loc[measure_df["group"] == group, :]
 
-        if group == "practice":
-            # we don't want to redact as we aggregate into deciles
-            group_df.loc[:, "value"] = calculate_rate(
-                group_df, "event_measure", "population"
-            )
-        else:
-            group_df = round_column(group_df, "event_measure", decimals=-1)
-            group_df = round_column(group_df, "population", decimals=-1)
-            group_df.loc[:, "value"] = calculate_rate(
-                group_df, "event_measure", "population"
-            )
-            group_df.loc[
-                (group_df["event_measure"] == 0) | (group_df["population"] == 0),
-                "value",
-            ] = "[Redacted]"
-
-        measure_df.loc[measure_df["group"] == group, "value"] = group_df["value"]
-
+    measure_df = calculate_and_redact_values(measure_df)
     measure_df.to_csv(f"{args.input_dir}/measure_all.csv", index=False)
     measure_for_deciles = measure_df.loc[measure_df["group"] == "practice", :]
     measure_for_deciles.to_csv(
