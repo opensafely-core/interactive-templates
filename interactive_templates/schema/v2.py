@@ -21,6 +21,7 @@ class Analysis:
     repo: str
     time_scale: str
     time_value: int = field(converter=int)
+    time_value_ever: bool = field(converter=bool)
     title: str
     purpose: str
     id: str | None = None  # noqa: A003
@@ -47,6 +48,7 @@ TEST_DEFAULTS = dict(
     repo="https://github.com/test/repo",
     time_scale="weeks",
     time_value="4",
+    time_value_ever=False,
     title="Test Title",
     id="id",
     start_date="2019-01-01",
