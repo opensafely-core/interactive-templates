@@ -19,7 +19,7 @@ codelist_1_type = params["codelist_1_type"]
 codelist_2_path = params["codelist_2_path"]
 codelist_2_type = params["codelist_2_type"]
 time_value = int(params["time_value"])
-time_value_ever = params["time_value_ever"]
+time_ever = params["time_ever"]
 time_scale = params["time_scale"]
 time_event = params["time_event"]
 codelist_2_comparison_date = params["codelist_2_comparison_date"]
@@ -96,7 +96,7 @@ study = StudyDefinition(
         codelist_2_type,
         codelist_2,
         codelist_2_date_range,
-        ever=time_value_ever,
+        ever=time_ever,
     ),
 )
 
