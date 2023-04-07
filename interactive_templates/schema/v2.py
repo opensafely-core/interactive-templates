@@ -21,7 +21,6 @@ class Analysis:
     repo: str
     time_scale: str
     time_value: int = field(converter=int)
-    time_ever: bool = field(converter=bool)
     title: str
     purpose: str
     id: str | None = None  # noqa: A003
@@ -29,6 +28,7 @@ class Analysis:
     time_event: str = "before"
     start_date: str = None
     end_date: str = None
+    time_ever: bool = field(converter=bool, default=False)
 
 
 TEST_DEFAULTS = dict(
