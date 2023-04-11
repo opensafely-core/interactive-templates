@@ -28,6 +28,7 @@ class Analysis:
     time_event: str = "before"
     start_date: str = None
     end_date: str = None
+    time_ever: bool = field(converter=bool, default=False)
 
 
 TEST_DEFAULTS = dict(
@@ -47,6 +48,7 @@ TEST_DEFAULTS = dict(
     repo="https://github.com/test/repo",
     time_scale="weeks",
     time_value="4",
+    time_ever=False,
     title="Test Title",
     id="id",
     start_date="2019-01-01",
