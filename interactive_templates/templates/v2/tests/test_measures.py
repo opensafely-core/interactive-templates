@@ -1,3 +1,5 @@
+import pandas as pd
+import pytest
 from analysis import measures
 from hypothesis import given
 from hypothesis.extra.pandas import column, data_frames, range_indexes
@@ -24,3 +26,33 @@ def test_redact_and_round_column(data_frame):
     # Rather than reimplement the rounding function, we test that values are multiples
     # of 10.
     assert rounded_data_frame.loc[:, "A"].mod(10).sum() == 0
+
+
+@pytest.fixture
+def filter_data_df():
+    return pd.DataFrame(
+        {
+            "A": [1, 2, 3, 4, 5],
+            "B": ["a", "b", "c", "d", "e"],
+            "C": [10, 20, 30, 40, 50],
+        }
+    )
+
+
+def test_filter_data(filter_data_df):
+    filters = {
+        "A": [1, 3, 5, 6],
+        "B": ["a", "d", "a"],
+        "C": [10, 20, 50, 10],
+    }
+
+    exp = pd.DataFrame(
+        {
+            "A": [1],
+            "B": ["a"],
+            "C": [10],
+        }
+    )
+
+    obs = measures.filter_data(filter_data_df, filters)
+    assert exp.equals(obs)
