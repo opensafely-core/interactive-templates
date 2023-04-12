@@ -91,3 +91,30 @@ def input_df(draw):
             index=range_indexes(min_size=nrows, max_size=nrows),
         )
     )
+
+
+@given(df=input_df())
+def test_calculate_total_counts(df):
+    date = "2022-01-01"
+    df["date"] = date
+
+    obs = measures.calculate_total_counts(df, date, group="total", group_value="total")
+
+    assert obs["group"].all() == "total"
+    assert obs["group_value"].all() == "total"
+
+    assert len(obs) == 1
+    assert obs.columns.tolist() == [
+        "date",
+        "event_measure",
+        "population",
+        "group",
+        "group_value",
+    ]
+
+    # assert date is correct
+    assert obs["date"].all() == date
+
+    # assert that the sum of the event_measure and population columns is correct
+    assert obs["event_measure"].iloc[0] == df["event_measure"].sum()
+    assert obs["population"].iloc[0] == df["population"].sum()
