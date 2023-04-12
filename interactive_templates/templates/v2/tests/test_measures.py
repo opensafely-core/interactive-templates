@@ -2,6 +2,7 @@ import pandas as pd
 import pytest
 from analysis import measures
 from hypothesis import given
+from hypothesis import strategies as st
 from hypothesis.extra.pandas import column, data_frames, range_indexes
 from hypothesis.strategies import composite, integers, just, one_of
 
@@ -56,3 +57,37 @@ def test_filter_data(filter_data_df):
 
     obs = measures.filter_data(filter_data_df, filters)
     assert exp.equals(obs)
+
+
+@st.composite
+def input_df(draw):
+    nrows = 20
+
+    patient_id = column(
+        name="patient_id",
+        elements=st.integers(min_value=1, max_value=1000),
+        unique=True,
+    )
+
+    sex = column(name="sex", elements=st.sampled_from(["M", "F"]), unique=False)
+
+    event_measure = column(
+        name="event_measure",
+        elements=st.integers(min_value=0, max_value=1),
+        unique=False,
+    )
+
+    population = column(
+        name="population", elements=st.integers(min_value=1, max_value=1), unique=False
+    )
+
+    imd = column(
+        name="imd", elements=st.integers(min_value=1, max_value=5), unique=False
+    )
+
+    return draw(
+        data_frames(
+            [patient_id, event_measure, population, sex, imd],
+            index=range_indexes(min_size=nrows, max_size=nrows),
+        )
+    )
