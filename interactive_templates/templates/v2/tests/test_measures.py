@@ -118,3 +118,36 @@ def test_calculate_total_counts(df):
     # assert that the sum of the event_measure and population columns is correct
     assert obs["event_measure"].iloc[0] == df["event_measure"].sum()
     assert obs["population"].iloc[0] == df["population"].sum()
+
+
+@given(df=input_df())
+def test_calculate_group_counts(df):
+    date = "2022-01-01"
+    df["date"] = date
+
+    obs = measures.calculate_group_counts(df, "sex", date)
+
+    # there can be samples where there is only 1 unique sex value, so we cant simply assert that the shape is (2,5)
+    assert len(obs) == obs["group_value"].nunique()
+
+    assert obs.columns.tolist() == [
+        "date",
+        "event_measure",
+        "population",
+        "group",
+        "group_value",
+    ]
+
+    # assert date is correct
+    assert obs["date"].all() == date
+
+    # assert that the sum of the event_measure and population columns is correct
+    assert (
+        obs.loc[obs["group_value"] == "M", "event_measure"].sum()
+        == df.loc[df["sex"] == "M", "event_measure"].sum()
+    )
+    assert (
+        obs.loc[obs["group_value"] == "F", "population"].sum()
+        == df.loc[df["sex"] == "F", "population"].sum()
+    )
+    assert obs["population"].sum() == df["population"].sum()

@@ -89,6 +89,8 @@ def calculate_group_counts(df, breakdown, date):
     counts["date"] = date
     counts["group"] = breakdown
 
+    # reorder the columns
+    counts = counts[["date", "event_measure", "population", "group", "group_value"]]
     return counts
 
 
