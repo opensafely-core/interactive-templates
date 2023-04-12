@@ -4,7 +4,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from report_utils import (
+from analysis.report_utils import (
     drop_zero_practices,
     get_date_input_file,
     match_input_files,
@@ -22,9 +22,7 @@ round_to_nearest_10 = functools.partial(round_to_nearest, base=10)
 
 def get_summary_stats(df):
     required_columns = {"patient_id", "event_measure", "practice"}
-    assert required_columns.issubset(
-        df.columns
-    ), f"DataFrame must have all of the following columns: {', '.join(required_columns)}"
+    assert required_columns.issubset(set(df.columns))
 
     unique_patients = df["patient_id"].unique()
     num_events = df["event_measure"].sum()
