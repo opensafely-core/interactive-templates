@@ -25,7 +25,7 @@ time_event = params["time_event"]
 codelist_2_comparison_date = params["codelist_2_comparison_date"]
 codelist_1_frequency = params["codelist_1_frequency"]
 population_definition = params["population"]
-breakdowns = [x for x in params["breakdowns"].split(",")]
+breakdowns = params["breakdowns"]
 
 # handle dates
 # TODO: handle events in the same period (week, day, month). Requires form changes
