@@ -88,7 +88,10 @@ def get_data(
         dict containing the data
     """
 
-    breakdowns = breakdowns.split(",")
+    if breakdowns != "":
+        breakdowns = breakdowns.split(",")
+    else:
+        breakdowns = []
 
     codelist_url_root = "https://opencodelists.org/codelist/"
     codelist_1_link = codelist_url_root + codelist_1_link
