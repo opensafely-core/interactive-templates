@@ -20,12 +20,14 @@
                     <li><a href="#population-level">Population level chart</a></li>
                     <li><a href="#practice-level-variation">Practice level variation</a></li>
                     <li><a href="#most-common-codes">Most common codes</a></li>
+                    {% if breakdowns|length >0 %}
                     <li><a href="#breakdowns">Demographic breakdown charts</a></li>
                     <ul>
                         {% for b in breakdowns %}
                         <li><a href="#{{b.title}}">{{ b.title }}</a></li>
                         {% endfor %}
                     </ul>
+                    {% endif %}
                 </div>
 
                 <div id="intro">
@@ -282,6 +284,7 @@
                         </table>
                     </div>
                 </div>
+                {% if breakdowns|length >0 %}
                 <div id="breakdowns">
                     <h2>
                         Demographic breakdowns
@@ -297,6 +300,7 @@
                         </span>
                         {% endfor %}.
                     </p>
+
                     <div>
 
                         {% set i=namespace(value=3) %}
@@ -317,7 +321,9 @@
 
                         {% endfor %}
                     </div>
+
                 </div>
+                {% endif %}
             </div>
         </div>
     </body>
