@@ -21,7 +21,6 @@ class Analysis:
     repo: str
     time_scale: str
     time_value: int = field(converter=int)
-    purpose: str
     id: str | None = None  # noqa: A003
     frequency: str = "monthly"
     time_event: str = "before"
@@ -51,5 +50,4 @@ TEST_DEFAULTS = dict(
     id="id",
     start_date="2019-01-01",
     end_date="2022-12-31",
-    purpose="science!",
 )
