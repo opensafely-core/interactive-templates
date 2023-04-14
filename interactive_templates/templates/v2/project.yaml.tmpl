@@ -111,7 +111,6 @@ actions:
     run: >
       python:latest python analysis/render_report.py
       --output-dir="output/{{ id }}"
-      --report-title="{{ title }}"
       --population="{{ filter_population }}"
       --breakdowns="{{ demographics|join(',') }}"
       --codelist-1-name="{{ codelist_1.label }}"

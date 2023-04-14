@@ -55,7 +55,6 @@ def data_from_json(path):
 
 def get_data(
     output_dir,
-    report_title="",
     population="all",
     breakdowns="",
     codelist_1_name="",
@@ -72,7 +71,6 @@ def get_data(
     Get data to render the report
     Args:
         output_dir (str): the output directory all the files are in
-        report_title (str): title of the report
         population (str): population of the report
         breakdowns (str): comma delimited string of demographic breakdowns
         codelist_1_name (str): name of the first codelist
@@ -184,7 +182,6 @@ def get_data(
         )
 
     report_data = {
-        "title": report_title,
         "population": population_definition,
         "decile": figures["decile"],
         "population_plot": figures["population"],
@@ -239,7 +236,6 @@ def render(output_dir, **kwargs):
 def get_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument("--output-dir", type=Path)
-    parser.add_argument("--report-title", type=str, default="Report Title")
     parser.add_argument("--population", type=str, default="all")
     parser.add_argument("--breakdowns", type=str, default="")
     parser.add_argument("--start-date", type=str, default="")

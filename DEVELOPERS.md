@@ -23,7 +23,7 @@ just #  shortcut for just --list
 
 There are multiple independendant codebases in this repo - multiple templated
 interactive analysis code in `interactive_templates/templates`, and the
-framework to render these in `interactive_templates/{render.py,schema/} 
+framework to render these in `interactive_templates/{render.py,schema/}
 
 
 ### Render code
@@ -38,7 +38,7 @@ just render v2
 You can overide template context with `key=value` cli args:
 
 ```
-just render v2 title="foo" codelist_1.slug="org/slug"
+just render v2 codelist_1.slug="org/slug"
 ```
 
 
@@ -53,7 +53,7 @@ To work on one of these intractive analyses, `cd` into that directory,
 work on the code like it was a normal study, and run `just test` to run tests.
 This will run any *unit* tests in this template dir.
 
-e.g. 
+e.g.
 
 ```
 cd interactive_templates/templates/v2
@@ -87,4 +87,3 @@ To run these tests:
 ```
 just test-functional
 ```
-
