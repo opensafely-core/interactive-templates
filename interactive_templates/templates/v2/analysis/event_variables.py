@@ -1,5 +1,5 @@
 from cohortextractor import patients
-from utilities import generate_expectations_codes
+from report_utils import generate_expectations_codes
 
 
 def clinical_event(codelist, date_range, event_name, ever=False):

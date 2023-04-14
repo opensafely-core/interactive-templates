@@ -1,11 +1,58 @@
 import json
 import re
+from pathlib import Path
 
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+
+
+BASE_DIR = Path(__file__).parents[1]
+OUTPUT_DIR = BASE_DIR / "output"
+ANALYSIS_DIR = BASE_DIR / "analysis"
+CODELIST_DIR = BASE_DIR / "codelists"
+
+
+def calculate_rate(df, value_col, population_col, rate_per=1000, round_rate=False):
+    """Calculates the number of events per 1,000 or passed rate_per variable of the population.
+    This function operates on the given measure table in-place, adding
+    a `rate` column.
+    Args:
+        df: A measure table.
+        value_col: The name of the numerator column in the measure table.
+        population_col: The name of the denominator column in the measure table.
+        rate_per: Value to calculate rate per
+        round: Bool indicating whether to round rate to 2dp.
+    """
+    if round_rate:
+        rate = round(df[value_col] / (df[population_col] / rate_per), 4)
+
+    else:
+        rate = df[value_col] / (df[population_col] / rate_per)
+
+    return rate
+
+
+def relabel_sex(df):
+    sex_codes = {
+        "F": "Female",
+        "M": "Male",
+    }
+
+    df = df.replace({"sex": sex_codes})
+    return df
+
+
+def generate_expectations_codes(codelist, incidence=0.5):
+    if len(codelist) >= 10:
+        expectations = {str(x): (1 - incidence) / 10 for x in codelist[0:10]}
+    else:
+        expectations = {str(x): (1 - incidence) / len(codelist) for x in codelist}
+
+    expectations[None] = incidence
+    return expectations
 
 
 def save_to_json(d, filename: str):
@@ -244,3 +291,20 @@ def deciles_chart(df, filename, period_column=None, column=None, title="", ylabe
     plt.tight_layout()
     plt.savefig(filename)
     plt.clf()
+
+
+def drop_zero_practices(df, measure_count_column):
+    """
+    Drops practices which have had zero events for a measure
+    of interest for the whole period of interest.
+
+    Args:
+        df: A measure table.
+        measure_count_column: The name of the column in the measure table
+
+    Returns:
+        A measure table with practices with zero events removed.
+    """
+
+    non_zero = df.groupby("practice")[measure_count_column].any()
+    return df[df["practice"].isin(non_zero[non_zero].index)]

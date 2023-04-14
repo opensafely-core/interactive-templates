@@ -54,12 +54,12 @@ actions:
       python:latest -m analysis.measures
         --breakdowns="{{ demographics|join(',') }}"
         --input_dir="output/{{ id }}/joined"
-        --measure="med_review"
 
     needs: [join_cohorts_{{ id }}]
     outputs:
       moderately_sensitive:
-        measure: output/{{ id }}/joined/measure*rate.csv
+        measure: output/{{ id }}/joined/measure_all.csv
+        decile_measure: output/{{ id }}/joined/measure_practice_rate_deciles.csv
 
   top_5_table_{{ id }}:
     run: >
