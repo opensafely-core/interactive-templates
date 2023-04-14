@@ -102,7 +102,7 @@ def get_data(
 
     figures = {
         "decile": {
-            "path": output_dir / "joined/deciles_chart_practice_rate_deciles.png",
+            "path": output_dir / "deciles_chart.png",
             "data": output_dir / "joined/measure_practice_rate_deciles.csv",
         },
         "population": {

@@ -1,7 +1,7 @@
 import argparse
 
 import pandas as pd
-from report_utils import plot_measures
+from report_utils import deciles_chart, plot_measures
 
 
 def parse_args():
@@ -48,6 +48,17 @@ def main():
             y_label="Rate per 1000",
             category=breakdown,
         )
+
+    practice_df = pd.read_csv(
+        f"{ args.output_dir }/joined/measure_practice_rate.csv", parse_dates=["date"]
+    )
+    deciles_chart(
+        practice_df,
+        f"{ args.output_dir }/deciles_chart.png",
+        period_column="date",
+        column="value",
+        ylabel="rate per 1000",
+    )
 
 
 if __name__ == "__main__":

@@ -89,19 +89,20 @@ def main():
 
         # sort by date
         df = df.sort_values(by=["date"])
-        df = round_column(df, "event_measure", decimals=-1)
-        df = round_column(df, "population", decimals=-1)
-        df["value"] = df["event_measure"] / df["population"] * 1000
-        df.loc[
-            (df["event_measure"] == 0) | (df["population"] == 0), "value"
-        ] = "[Redacted]"
-        df.to_csv(f"{args.input_dir}/measure_{breakdown}_rate.csv", index=False)
 
-        if breakdown == "practice":
-            df_for_deciles = df.loc[df["value"] != "[Redacted]", :]
-            df_for_deciles.to_csv(
-                f"{args.input_dir}/measure_practice_rate_deciles.csv", index=False
-            )
+        # if practice breakdown, we dont want to redact as we'll be aggregating to deciles
+        if breakdown != "practice":
+            df = round_column(df, "event_measure", decimals=-1)
+            df = round_column(df, "population", decimals=-1)
+            df["value"] = df["event_measure"] / df["population"] * 1000
+            df.loc[
+                (df["event_measure"] == 0) | (df["population"] == 0), "value"
+            ] = "[Redacted]"
+
+        else:
+            df["value"] = df["event_measure"] / df["population"] * 1000
+
+        df.to_csv(f"{args.input_dir}/measure_{breakdown}_rate.csv", index=False)
 
 
 if __name__ == "__main__":
