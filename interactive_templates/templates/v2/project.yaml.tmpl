@@ -54,7 +54,6 @@ actions:
       python:latest -m analysis.measures
         --breakdowns="{{ demographics|join(',') }}"
         --input_dir="output/{{ id }}/joined"
-        --measure="med_review"
 
     needs: [join_cohorts_{{ id }}]
     outputs:
