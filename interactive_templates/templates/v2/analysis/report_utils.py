@@ -15,12 +15,6 @@ ANALYSIS_DIR = BASE_DIR / "analysis"
 CODELIST_DIR = BASE_DIR / "codelists"
 
 
-BASE_DIR = Path(__file__).parents[1]
-OUTPUT_DIR = BASE_DIR / "output"
-ANALYSIS_DIR = BASE_DIR / "analysis"
-CODELIST_DIR = BASE_DIR / "codelists"
-
-
 def calculate_rate(df, value_col, population_col, rate_per=1000, round_rate=False):
     """Calculates the number of events per 1,000 or passed rate_per variable of the population.
     This function operates on the given measure table in-place, adding
