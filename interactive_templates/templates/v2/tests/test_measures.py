@@ -11,12 +11,12 @@ def data_frames_st(draw):
 
 
 @given(data_frames_st())
-def test_round_column(data_frame):
+def test_redact_and_round_column(data_frame):
     # The function modifies the data frame in place, so we create a boolean mask before
     # we pass the data frame to the function.
     redact = data_frame["A"] <= 10
 
-    rounded_data_frame = measures.round_column(data_frame, "A")
+    rounded_data_frame = measures.redact_and_round_column(data_frame, "A")
     redacted = rounded_data_frame["A"] == 0
 
     assert data_frame is rounded_data_frame  # data frame modified in place

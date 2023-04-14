@@ -5,7 +5,7 @@ import pandas as pd
 from analysis.report_utils import calculate_rate, get_date_input_file, match_input_files
 
 
-def round_column(df, col, decimals=-1):
+def redact_and_round_column(df, col, decimals=-1):
     """Redact values less-than or equal-to 10 and then round values to nearest 10."""
     df[col] = df[col].apply(lambda x: x if x > 10 else 0)
     # `Series.round` introduces scaling and precision errors, meaning some numbers
@@ -112,8 +112,8 @@ def calculate_and_redact_values(df):
                 group_df, "event_measure", "population"
             )
         else:
-            group_df = round_column(group_df, "event_measure", decimals=-1)
-            group_df = round_column(group_df, "population", decimals=-1)
+            group_df = redact_and_round_column(group_df, "event_measure", decimals=-1)
+            group_df = redact_and_round_column(group_df, "population", decimals=-1)
             group_df.loc[:, "value"] = calculate_rate(
                 group_df, "event_measure", "population"
             )
@@ -168,7 +168,9 @@ def main():
             file_path = str(file.absolute())
             df = pd.read_csv(file_path).pipe(filter_data, filters).assign(date=date)
 
-            total_count = calculate_total_counts(df, date, group="total", group_value="total")
+            total_count = calculate_total_counts(
+                df, date, group="total", group_value="total"
+            )
 
             measure_df = pd.concat([measure_df, total_count], ignore_index=True)
 
