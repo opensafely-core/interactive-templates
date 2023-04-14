@@ -10,10 +10,10 @@ def test_render_cli(tmp_path):
             "interactive_templates.render",
             f"--output-dir={tmp_path}",
             "v2",
-            "title=TESTTITLE",
+            "id=1234",
         ],
         check=True,
     )
 
     project = tmp_path / "project.yaml"
-    assert "TESTTITLE" in project.read_text()
+    assert "output/1234" in project.read_text()
