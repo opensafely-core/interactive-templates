@@ -209,3 +209,20 @@ def generate_expectations_codes(codelist, incidence=0.5):
     # expectations = {str(x): (1-incidence) / len(codelist) for x in codelist}
     expectations[None] = incidence
     return expectations
+
+
+def drop_zero_practices(df, measure_count_column):
+    """
+    Drops practices which have had zero events for a measure
+    of interest for the whole period of interest.
+
+    Args:
+        df: A measure table.
+        measure_count_column: The name of the column in the measure table
+
+    Returns:
+        A measure table with practices with zero events removed.
+    """
+
+    non_zero = df.groupby("practice")[measure_count_column].any()
+    return df[df["practice"].isin(non_zero[non_zero].index)]
