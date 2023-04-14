@@ -160,7 +160,7 @@ def compute_deciles(measure_table, groupby_col, value_col, has_outer_percentiles
         .quantile(pd.Series(quantiles))
         .reset_index()
     )
-    percentiles["percentile"] = (percentiles["level_1"] * 100).astype(int)
+    percentiles["percentile"] = round(percentiles["level_1"] * 100)
     percentiles = percentiles.rename(columns={value_col: "value"})
 
     return percentiles[[groupby_col, "value", "percentile"]]
