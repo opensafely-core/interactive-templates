@@ -52,7 +52,9 @@ actions:
   generate_measures_{{ id }}:
     run: >
       python:latest -m analysis.measures
-        --breakdowns="{{ demographics|join(',') }}"
+      {%- for demo in demographics %}
+        --breakdowns={{demo}}
+      {%- endfor %}
         --input-dir="output/{{ id }}/joined"
 
     needs: [join_cohorts_{{ id }}]
@@ -75,7 +77,9 @@ actions:
   plot_measure_{{ id }}:
     run: >
       python:latest python analysis/plot_measures.py
-        --breakdowns="{{ demographics|join(',') }}"
+      {%- for demo in demographics %}
+        --breakdowns={{demo}}
+      {%- endfor %}
         --output-dir output/{{ id }}
     needs: [generate_measures_{{ id }}]
     outputs:
@@ -96,7 +100,9 @@ actions:
       python:latest python analysis/render_report.py
       --output-dir="output/{{ id }}"
       --population="{{ filter_population }}"
-      --breakdowns="{{ demographics|join(',') }}"
+      {%- for demo in demographics %}
+      --breakdowns={{demo}}
+      {%- endfor %}
       --codelist-1-name="{{ codelist_1.label }}"
       --codelist-2-name="{{ codelist_2.label }}"
       --codelist-1-link="{{ codelist_1.slug }}"
