@@ -53,7 +53,7 @@ actions:
     run: >
       python:latest -m analysis.measures
         --breakdowns="{{ demographics|join(',') }}"
-        --input_dir="output/{{ id }}/joined"
+        --input-dir="output/{{ id }}/joined"
 
     needs: [join_cohorts_{{ id }}]
     outputs:
@@ -85,7 +85,7 @@ actions:
 
   event_counts_{{ id }}:
     run: >
-      python:latest python analysis/event_counts.py --input_dir="output/{{ id }}/joined" --output_dir="output/{{ id }}"
+      python:latest python analysis/event_counts.py --input-dir="output/{{ id }}/joined" --output-dir="output/{{ id }}"
     needs: [join_cohorts_{{ id }}]
     outputs:
       moderately_sensitive:

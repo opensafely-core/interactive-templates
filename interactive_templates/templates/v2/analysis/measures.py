@@ -130,7 +130,7 @@ def calculate_and_redact_values(df):
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--breakdowns", type=str, required=True)
-    parser.add_argument("--input_dir", type=str, required=True)
+    parser.add_argument("--input-dir", type=str, required=True)
     return parser.parse_args()
 
 
