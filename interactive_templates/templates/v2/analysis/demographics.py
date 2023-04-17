@@ -6,8 +6,8 @@ demographics = {
         patients.categorised_as(
             {
                 "missing": "DEFAULT",
-                "18-19": """ age_years >= 0 AND age_years < 20""",
-                "20-29": """ age_years >=  20 AND age_years < 30""",
+                "1-17": """ age_years >= 0 AND age_years < 18""",
+                "18-29": """ age_years >=  18 AND age_years < 30""",
                 "30-39": """ age_years >=  30 AND age_years < 40""",
                 "40-49": """ age_years >=  40 AND age_years < 50""",
                 "50-59": """ age_years >=  50 AND age_years < 60""",
@@ -20,8 +20,8 @@ demographics = {
                 "category": {
                     "ratios": {
                         "missing": 0.005,
-                        "18-19": 0.125,
-                        "20-29": 0.125,
+                        "1-17": 0.125,
+                        "18-29": 0.125,
                         "30-39": 0.125,
                         "40-49": 0.125,
                         "50-59": 0.125,
