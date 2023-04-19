@@ -22,8 +22,8 @@ def round_to_nearest_10(x):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input_dir", type=str, required=True)
-    parser.add_argument("--output_dir", type=str, required=True)
+    parser.add_argument("--input-dir", type=str, required=True)
+    parser.add_argument("--output-dir", type=str, required=True)
     return parser.parse_args()
 
 
