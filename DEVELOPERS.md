@@ -87,3 +87,24 @@ To run these tests:
 ```
 just test-functional
 ```
+
+
+### Github auto PR Token
+
+The workflow in `.github/workflows/create-job-server-pr.yml` needs a fine
+grained PAT as a repository secret in order to work.
+
+Any tech team member can generate a PAT using their account, as the
+fine-grained nature means we can restrict it appropriately.
+
+1. Go to https://github.com/settings/tokens?type=beta
+1. Generate New Token:
+    1. Name: `JOB_SERVER_PR_TOKEN`
+    1. Expiry: 90 days
+    1. Description: "Token to allow interactive-templates to create job-server PRs"
+    1. Resource Owner: opensafely-core
+    1. Repository Access: Only Select Respositories, select `job-server`.
+    1. Account Permissions:
+        1. Contents - Read and Write
+        1. Pull Requests - Read and Write
+1. Add token value as repository secret `JOB_SERVER_PR_TOKEN`
