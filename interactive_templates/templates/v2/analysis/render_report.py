@@ -21,7 +21,7 @@ def display_image(src, data):
     mtype, _ = mimetypes.guess_type(str(src))
 
     return Markup(
-        f'<img src="data:{mtype};base64, {encoded}" title="Image generated from file: {data}"/>'
+        f'<img src="data:{mtype};base64,{encoded}" title="Image generated from file: {data}">'
     )
 
 
