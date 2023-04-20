@@ -161,9 +161,11 @@
                 </p>
                 <figure>
                     {{ display_image(population_plot.path, population_plot.data) }}
-                    <figcaption><strong>Figure 1</strong>. The monthly rate per 1000 patients
+                    <figcaption>
+                        <strong>Figure 1</strong>. The monthly rate per 1000 patients
                         in the selected population for the specified measure between
-                        {{ start_date }} and {{ end_date }}.</figcaption>
+                        {{ start_date }} and {{ end_date }}.
+                    </figcaption>
                 </figure>
             </section>
 
@@ -191,10 +193,12 @@
 
                 <figure>
                     {{ display_image(decile.path, decile.data) }}
-                    <figcaption><strong>Figure 2</strong>. Practice level decile chart showing
+                    <figcaption>
+                        <strong>Figure 2</strong>. Practice level decile chart showing
                         practice level variation in the rate per 1000 patients who satisfy the
-                        specified measure between {{start_date}} and {{ end_date }}.</figcaption>
-                    </figure>
+                        specified measure between {{ start_date}} and {{ end_date }}.
+                    </figcaption>
+                </figure>
             </section>
 
             <section id="most-common-codes">
