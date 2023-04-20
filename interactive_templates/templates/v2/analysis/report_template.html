@@ -22,7 +22,7 @@
                     <li>
                         <ol>
                             {% for b in breakdowns %}
-                            <li><a href="#{{b.title}}">{{ b.title }}</a></li>
+                            <li><a href="#{{ b.title|lower|urlize }}">{{ b.title }}</a></li>
                             {% endfor %}
                         </ol>
                     </li>
@@ -278,7 +278,7 @@
 
                 {% set i=namespace(value=3) %}
                 {% for b in breakdowns %}
-                <section id="{{ b.title }}">
+                <section id="{{ b.title|lower|urlize }}">
                     <h3>Breakdown by {{ b.title }}</h3>
                     <p>{{ b.description }}</p>
 
