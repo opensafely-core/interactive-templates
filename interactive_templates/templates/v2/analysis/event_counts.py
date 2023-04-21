@@ -12,7 +12,7 @@ from analysis.report_utils import (
 )
 
 
-def round_to_nearest(x, base=10):
+def round_to_nearest(x, *, base):
     return base * round(x / base)
 
 
