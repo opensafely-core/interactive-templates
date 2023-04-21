@@ -44,6 +44,17 @@ def get_patients_with_events(df):
     return df_subset.loc[:, "patient_id"].unique()
 
 
+def generate_latest_week_range(latest_week_start):
+    latest_week_start = pd.to_datetime(latest_week_start)
+    latest_week_end = latest_week_start + pd.DateOffset(6)
+
+    latest_week_range = (
+        f"{latest_week_start:%Y-%m-%d} - {latest_week_end:%Y-%m-%d} inclusive"
+    )
+
+    return latest_week_range
+
+
 def main():
     args = parse_args()
 
@@ -82,6 +93,7 @@ def main():
 
     # there should only be one key in events_weekly, but we take the max anyway
     latest_week = max(events_weekly.keys())
+    latest_month = max(events.keys())
     events_in_latest_week = round_to_nearest_100(events_weekly[latest_week])
     total_events = round_to_nearest_100(sum(events.values()))
     total_patients = round_to_nearest_100(len(np.unique(patients)))
@@ -103,7 +115,8 @@ def main():
             "total_practices": total_practices,
             "total_practices_with_events": total_practices_with_events,
             "events_in_latest_week": events_in_latest_week,
-            "latest_week": latest_week,
+            "latest_week": generate_latest_week_range(latest_week),
+            "latest_month": pd.to_datetime(latest_month).strftime("%Y-%m"),
         },
         f"{args.output_dir}/event_counts.json",
     )
