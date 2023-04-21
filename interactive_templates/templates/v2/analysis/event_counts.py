@@ -68,7 +68,7 @@ def main():
     for file in Path(args.input_dir).rglob("*"):
         if match_input_files(file.name):
             date = get_date_input_file(file.name)
-            df = pd.read_csv(file)
+            df = pd.read_feather(file)
             df["date"] = date
             num_events = get_number_of_events(df)
             events[date] = num_events
@@ -86,7 +86,7 @@ def main():
 
         if match_input_files(file.name, weekly=True):
             date = get_date_input_file(file.name, weekly=True)
-            df = pd.read_csv(file)
+            df = pd.read_feather(file)
             df["date"] = date
             num_events = get_number_of_events(df)
             events_weekly[date] = num_events

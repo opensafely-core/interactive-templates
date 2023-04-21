@@ -9,10 +9,10 @@ actions:
     run: cohortextractor:latest generate_cohort
       --study-definition study_definition_ethnicity
       --param end_date="{{ end_date }}"
-      --output-dir output/{{ id }} --output-format=csv.gz
+      --output-dir output/{{ id }} --output-format=feather
     outputs:
       highly_sensitive:
-        cohort: output/{{ id }}/input_ethnicity.csv.gz
+        cohort: output/{{ id }}/input_ethnicity.feather
 
   generate_study_population_weekly_{{ id }}:
     run: cohortextractor:latest generate_cohort
@@ -32,11 +32,11 @@ actions:
       --param breakdowns=""
       --index-date_range="{{ week_of_latest_extract }} to {{ week_of_latest_extract }} by week"
       --output-dir=output/{{ id }}
-      --output-format=csv.gz
-      --output-file=output/{{ id }}/input_weekly_{{week_of_latest_extract}}.csv.gz
+      --output-format=feather
+      --output-file=output/{{ id }}/input_weekly_{{week_of_latest_extract}}.feather
     outputs:
       highly_sensitive:
-        cohort: output/{{ id }}/input_weekly_{{ week_of_latest_extract }}.csv.gz
+        cohort: output/{{ id }}/input_weekly_{{ week_of_latest_extract }}.feather
 
   generate_study_population_{{ id }}:
     run: cohortextractor:latest generate_cohort
@@ -56,21 +56,21 @@ actions:
       --param breakdowns="{{ demographics|join(',') }}"
       --index-date-range="{{ start_date }} to {{ end_date }} by month"
       --output-dir=output/{{ id }}
-      --output-format=csv.gz
+      --output-format=feather
     outputs:
       highly_sensitive:
-        cohort: output/{{ id }}/input_*.csv.gz
+        cohort: output/{{ id }}/input_*.feather
 
   join_cohorts_{{ id }}:
     run: >
       cohort-joiner:v0.0.38
-        --lhs output/{{ id }}/input_20*.csv.gz
-        --rhs output/{{ id }}/input_ethnicity.csv.gz
+        --lhs output/{{ id }}/input_20*.feather
+        --rhs output/{{ id }}/input_ethnicity.feather
         --output-dir output/{{ id }}/joined
     needs: [generate_study_population_{{ id }}, generate_study_population_ethnicity_{{ id }}]
     outputs:
       highly_sensitive:
-        cohort: output/{{ id }}/joined/input_20*.csv.gz
+        cohort: output/{{ id }}/joined/input_20*.feather
 
   generate_measures_{{ id }}:
     run: >
