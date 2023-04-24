@@ -3,6 +3,13 @@ from attrs import field, validators
 from interactive_templates.schema import Codelist, interactive_schema
 
 
+def int_or_none(v):
+    if v is None:
+        return None
+    else:
+        return int(v)
+
+
 # the name should match the name of the directory where the templates are stored
 @interactive_schema(name="v2")
 class Analysis:
@@ -19,14 +26,14 @@ class Analysis:
     demographics: list = field(validator=validators.instance_of(list))
     filter_population: str
     repo: str
-    time_scale: str
-    time_value: int = field(converter=int)
+    time_value: int | None = field(converter=int_or_none)
+    time_scale: str | None = None
+    time_ever: bool | None = field(converter=bool, default=None)
     id: str | None = None  # noqa: A003
     frequency: str = "monthly"
     time_event: str = "before"
     start_date: str = None
     end_date: str = None
-    time_ever: bool = field(converter=bool, default=False)
     week_of_latest_extract: str = "2023-04-03"
 
 
@@ -47,7 +54,7 @@ TEST_DEFAULTS = dict(
     repo="https://github.com/test/repo",
     time_scale="weeks",
     time_value="4",
-    time_ever=False,
+    time_ever=None,
     id="id",
     start_date="2019-01-01",
     end_date="2022-12-31",
