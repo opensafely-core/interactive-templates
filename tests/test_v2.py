@@ -22,3 +22,15 @@ def test_v2_functional_time_value_zero(tmp_path):
 
     assert local_run.main(tmp_path, ["run_all"])
     assert (tmp_path / "output/id/report.html").exists()
+
+
+def test_v2_functional_time_ever_true(tmp_path):
+    analysis = v2.Analysis(**v2.TEST_DEFAULTS)
+    analysis.time_value = None
+    analysis.time_scale = None
+    analysis.time_ever = True
+
+    render_analysis(analysis, tmp_path)
+
+    assert local_run.main(tmp_path, ["run_all"])
+    assert (tmp_path / "output/id/report.html").exists()
