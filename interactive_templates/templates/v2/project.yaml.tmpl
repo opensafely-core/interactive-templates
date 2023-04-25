@@ -112,7 +112,7 @@ actions:
 
   event_counts_{{ id }}:
     run: >
-      python:latest python analysis/event_counts.py --input-dir="output/{{ id }}" --output-dir="output/{{ id }}"
+      python:latest -m analysis.event_counts --input-dir="output/{{ id }}" --output-dir="output/{{ id }}"
     needs: [join_cohorts_{{ id }}, generate_study_population_weekly_{{ id }}]
     outputs:
       moderately_sensitive:
