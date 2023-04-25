@@ -6,6 +6,7 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn as sns
 
 
 BASE_DIR = Path(__file__).parents[1]
@@ -106,16 +107,35 @@ def plot_measures(
         df[category] = df[category].fillna("Missing")
 
     _, ax = plt.subplots(figsize=(15, 8))
+    palette = sns.color_palette("tab10")
 
     if category:
         if category_order:
             for unique_category in category_order:
                 df_subset = df[df[category] == unique_category].sort_values("date")
-                ax.plot(df_subset["date"], df_subset[column_to_plot])
+
+                sns.lineplot(
+                    x="date",
+                    y=column_to_plot,
+                    data=df_subset,
+                    palette=palette,
+                    ax=ax,
+                    label=unique_category,
+                )
+
         else:
             for unique_category in df[category].unique():
                 df_subset = df[df[category] == unique_category].sort_values("date")
-                ax.plot(df_subset["date"], df_subset[column_to_plot])
+
+                sns.lineplot(
+                    x="date",
+                    y=column_to_plot,
+                    data=df_subset,
+                    palette=palette,
+                    ax=ax,
+                    label=unique_category,
+                )
+
     else:
         ax.plot(df["date"], df[column_to_plot])
 
