@@ -1,6 +1,7 @@
 import argparse
 
 import pandas as pd
+import seaborn as sns
 from report_utils import deciles_chart, plot_measures
 
 
@@ -17,6 +18,8 @@ def parse_args():
 def main():
     args = parse_args()
     breakdowns = args.breakdowns
+
+    sns.set_style("darkgrid")
 
     df = pd.read_csv(
         f"{ args.output_dir }/joined/measure_all.csv", parse_dates=["date"]

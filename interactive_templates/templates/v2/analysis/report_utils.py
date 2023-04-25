@@ -6,7 +6,6 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
 
 
 BASE_DIR = Path(__file__).parents[1]
@@ -157,7 +156,6 @@ def plot_measures(
     ax.xaxis.label.set_size(25)
     ax.tick_params(axis="both", which="major", labelsize=20)
     plt.tight_layout()
-    plt.style.use("seaborn")
     plt.savefig(f"{filename}.png")
     plt.close()
 
@@ -252,8 +250,6 @@ def deciles_chart(df, filename, period_column=None, column=None, title="", ylabe
         title: the title of the chart
         ylabel: the label of the y-axis of the chart
     """
-
-    sns.set_style("darkgrid")
 
     fig, ax = plt.subplots(figsize=(15, 8))
 
