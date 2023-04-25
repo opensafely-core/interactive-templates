@@ -168,6 +168,8 @@ def main():
         if "." not in name:
             if "," in value:
                 d[name] = value.split(",")
+            elif value.lower() == "none":
+                d[name] = None
             else:
                 d[name] = value
         else:
