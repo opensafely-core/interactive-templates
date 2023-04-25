@@ -294,17 +294,25 @@ def deciles_chart(df, filename, period_column=None, column=None, title="", ylabe
     label_seen = []
     for percentile in range(1, 100):
         data = df[df["percentile"] == percentile]
+        add_label = False
 
         if percentile == 50:
             style = linestyles["median"]
-            label = style["label"]
+            add_label = True
+        elif percentile < 10 or percentile > 90:
+            style = linestyles["percentile"]
+            if "percentile" not in label_seen:
+                label_seen.append("percentile")
+                add_label = True
         else:
             style = linestyles["decile"]
             if "decile" not in label_seen:
                 label_seen.append("decile")
-                label = style["label"]
-            else:
-                label = "_nolegend_"
+                add_label = True
+        if add_label:
+            label = style["label"]
+        else:
+            label = "_nolegend_"
 
         ax.plot(
             data[period_column],
