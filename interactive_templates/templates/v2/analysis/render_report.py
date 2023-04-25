@@ -66,6 +66,7 @@ def get_data(
     time_event="",
     start_date="",
     end_date="",
+    time_ever=False,
 ):
     """
     Get data to render the report
@@ -82,6 +83,7 @@ def get_data(
         time_event (str): time event for the report
         start_date (str): start date for the report
         end_date (str): end date for the report
+        time_ever (bool): whether codelist 2 uses time ever
     Returns:
         dict containing the data
     """
@@ -197,6 +199,7 @@ def get_data(
         "time_value": time_value,
         "time_scale": time_scale,
         "time_event": time_event,
+        "time_ever": time_ever,
     }
     return report_data
 
@@ -245,6 +248,7 @@ def get_parser():
     parser.add_argument("--time-value", type=str, default="")
     parser.add_argument("--time-scale", type=str, default="")
     parser.add_argument("--time-event", type=str, default="")
+    parser.add_argument("--time-ever", type=bool, default=False)
     return parser
 
 

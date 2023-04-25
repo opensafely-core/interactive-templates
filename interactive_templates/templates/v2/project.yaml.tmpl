@@ -135,6 +135,9 @@ actions:
       --time-event="{{ time_event }}"
       --start-date="{{ start_date }}"
       --end-date="{{ end_date }}"
+      {% if time_ever %}
+      --time-ever
+      {% endif %}
     needs: [event_counts_{{ id }}, top_5_table_{{ id }}, plot_measure_{{ id }}]
     outputs:
       moderately_sensitive:
