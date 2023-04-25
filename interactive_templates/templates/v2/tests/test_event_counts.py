@@ -1,5 +1,5 @@
 import pandas as pd
-from analysis.event_counts import get_summary_stats, round_to_nearest
+from analysis import event_counts
 from hypothesis import given
 from hypothesis import strategies as st
 
@@ -11,7 +11,7 @@ from hypothesis import strategies as st
 # fail due to the limited precision of floating-point arithmetic. The max value here is a reasonable upper bound for
 # the values of x we expect to see in practice.
 def test_round_to_nearest(x, base):
-    result = round_to_nearest(x, base=base)
+    result = event_counts.round_to_nearest(x, base=base)
 
     # Check if the result is a multiple of base
     assert result % base == 0
@@ -28,7 +28,7 @@ def test_get_summary_stats():
         "practice": ["A", "A", "B", "C", "C"],
     }
     df = pd.DataFrame(data)
-    summary_stats = get_summary_stats(df)
+    summary_stats = event_counts.get_summary_stats(df)
 
     assert (summary_stats["unique_patients"] == [1, 2, 3, 4]).all()
     assert summary_stats["num_events"] == 3
