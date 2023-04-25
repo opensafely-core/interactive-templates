@@ -87,7 +87,12 @@ def get_date_input_file(file: str, weekly=False) -> str:
 
 
 def plot_measures(
-    df, filename: str, column_to_plot: str, y_label: str, category: str = None
+    df,
+    filename: str,
+    column_to_plot: str,
+    y_label: str,
+    category: str = None,
+    category_order: list = None,
 ):
     """Produce time series plot from measures table. If category is provided, one line is plotted for each sub
     category within the category column. Saves output in 'output' dir as png file.
@@ -96,6 +101,7 @@ def plot_measures(
         column_to_plot: Column name for y-axis values
         y_label: Label to use for y-axis
         category: Name of column indicating different categories, optional
+        category_order: List of categories in order to plot, optional
     """
     if category:
         df[category] = df[category].fillna("Missing")
@@ -103,9 +109,14 @@ def plot_measures(
     _, ax = plt.subplots(figsize=(15, 8))
 
     if category:
-        for unique_category in sorted(df[category].unique()):
-            df_subset = df[df[category] == unique_category].sort_values("date")
-            ax.plot(df_subset["date"], df_subset[column_to_plot])
+        if category_order:
+            for unique_category in category_order:
+                df_subset = df[df[category] == unique_category].sort_values("date")
+                ax.plot(df_subset["date"], df_subset[column_to_plot])
+        else:
+            for unique_category in df[category].unique():
+                df_subset = df[df[category] == unique_category].sort_values("date")
+                ax.plot(df_subset["date"], df_subset[column_to_plot])
     else:
         ax.plot(df["date"], df[column_to_plot])
 
@@ -126,12 +137,20 @@ def plot_measures(
     plt.xticks(rotation="vertical")
 
     if category:
-        ax.legend(
-            sorted(df[category].unique()),
-            bbox_to_anchor=(1.04, 1),
-            loc="upper left",
-            fontsize=20,
-        )
+        if category_order:
+            ax.legend(
+                category_order,
+                bbox_to_anchor=(1.04, 1),
+                loc="upper left",
+                fontsize=20,
+            )
+        else:
+            ax.legend(
+                sorted(df[category].unique()),
+                bbox_to_anchor=(1.04, 1),
+                loc="upper left",
+                fontsize=20,
+            )
 
     ax.margins(x=0)
     ax.yaxis.label.set_size(25)
