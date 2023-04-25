@@ -132,7 +132,8 @@ def plot_measures(
 
     month_locator = mdates.MonthLocator()
     ax.xaxis.set_major_locator(month_locator)
-    ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%B %Y"))
+    ax.xaxis.set_major_locator(mdates.MonthLocator(interval=2))
     plt.xticks(rotation="vertical")
 
     if category:
