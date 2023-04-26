@@ -5,7 +5,7 @@ from cohortextractor import (
     params,
     patients,
 )
-from demographics import demographics
+from demographics import get_demographics
 from event_variables import generate_event_variables
 from populations import population_filters
 from report_utils import (
@@ -66,6 +66,12 @@ codelist_2_date_range = calculate_variable_windows_codelist_2(
 )
 
 selected_population = population_filters[population_definition]
+
+if population_definition == "children":
+    demographics = get_demographics(children=True)
+else:
+    demographics = get_demographics()
+
 selected_demographics = {k: v for k, v in demographics.items() if k in breakdowns}
 
 study = StudyDefinition(
