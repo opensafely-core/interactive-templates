@@ -138,7 +138,7 @@ def get_data(
         "age": {
             "title": "Age",
             "link": None,
-            "description": "Age is divided into 10 year age bands."
+            "description": "Age is divided into those aged between 18-29 and then consecutive 10 year age bands."
             if population != "children"
             else "Age is divided into 3 groups: 0-5 years, 6-10 years and 11-17 years.",
             "figure": figures["age"],
