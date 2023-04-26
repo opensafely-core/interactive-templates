@@ -162,13 +162,6 @@ def main():
                     "70-79",
                     "80+",
                 ],
-                "imd": [
-                    "Most deprived",
-                    "2",
-                    "3",
-                    "4",
-                    "Least deprived",
-                ],
             }
             date = get_date_input_file(file.name)
             file_path = str(file.absolute())
