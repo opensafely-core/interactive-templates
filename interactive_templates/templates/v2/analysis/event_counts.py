@@ -68,7 +68,7 @@ def main():
     for file in Path(args.input_dir).rglob("*"):
         if match_input_files(file.name):
             date = get_date_input_file(file.name)
-            df = pd.read_csv(file)
+            df = pd.read_feather(file)
             df["date"] = date
 
             df_practices_dropped = drop_zero_practices(df, "event_measure")
@@ -81,7 +81,7 @@ def main():
 
         if match_input_files(file.name, weekly=True):
             date = get_date_input_file(file.name, weekly=True)
-            df = pd.read_csv(file)
+            df = pd.read_feather(file)
             df["date"] = date
             num_events = df.loc[:, "event_measure"].sum()
             events_weekly[date] = num_events

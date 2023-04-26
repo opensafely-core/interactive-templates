@@ -65,10 +65,10 @@ def match_input_files(file: str, weekly=False) -> bool:
     """Checks if file name has format outputted by cohort extractor"""
     if weekly:
         pattern = (
-            r"^input_weekly_20\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])\.csv.gz"
+            r"^input_weekly_20\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])\.feather"
         )
     else:
-        pattern = r"^input_20\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])\.csv.gz"
+        pattern = r"^input_20\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])\.feather"
     return True if re.match(pattern, file) else False
 
 
@@ -80,9 +80,9 @@ def get_date_input_file(file: str, weekly=False) -> str:
 
     else:
         if weekly:
-            date = re.search(r"input_weekly_(.*).csv.gz", file)
+            date = re.search(r"input_weekly_(.*).feather", file)
         else:
-            date = re.search(r"input_(.*).csv.gz", file)
+            date = re.search(r"input_(.*).feather", file)
         return date.group(1)
 
 

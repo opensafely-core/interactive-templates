@@ -165,7 +165,7 @@ def main():
             }
             date = get_date_input_file(file.name)
             file_path = str(file.absolute())
-            df = pd.read_csv(file_path).pipe(filter_data, filters).assign(date=date)
+            df = pd.read_feather(file_path).pipe(filter_data, filters).assign(date=date)
 
             total_count = calculate_total_counts(
                 df, date, group="total", group_value="total"
