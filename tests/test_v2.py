@@ -35,5 +35,5 @@ def test_v2_functional_time_ever(tmp_path):
     # speed things up by only testing the base study definition
     assert local_run.main(tmp_path, ["generate_study_population_weekly_id"])
     assert (
-        tmp_path / f"output/id/input_weekly_{ analysis.week_of_latest_extract }.csv.gz"
+        tmp_path / f"output/id/input_weekly_{ analysis.week_of_latest_extract }.feather"
     ).exists()
