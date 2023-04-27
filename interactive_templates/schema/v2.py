@@ -1,13 +1,24 @@
+import datetime
+
 from attrs import field, validators
 
 from interactive_templates.schema import Codelist, interactive_schema
 
 
 def int_or_none(v):
+    "int converter that allows None"
     if v is None:
         return None
     else:
         return int(v)
+
+
+def date_string(instance, attr, value):
+    "validator for YYYY-MM-DD strings"
+    try:
+        datetime.date.fromisoformat(value)
+    except ValueError as exc:
+        raise ValueError(f"{attr} is invalid: {exc}")
 
 
 # the name should match the name of the directory where the templates are stored
@@ -20,21 +31,50 @@ class Analysis:
     to capture all the details for a given analysis.
     """
 
-    codelist_1: Codelist
-    codelist_2: Codelist | None
+    # request data
     created_by: str
-    demographics: list = field(validator=validators.instance_of(list))
-    filter_population: str
+    id: str  # noqa: A003
     repo: str
-    time_value: int | None = field(converter=int_or_none)
-    time_scale: str | None = None
+
+    # analsysis data
+    #
+    # mandatory attributres have to come first in the class list
+    demographics: list = field(
+        validator=validators.deep_iterable(
+            member_validator=validators.in_(
+                ["age", "sex", "region", "imd", "ethnicity"]
+            ),
+            iterable_validator=validators.instance_of(list),
+        ),
+    )
+    start_date: str = field(validator=date_string)
+    end_date: str = field(validator=date_string)
+
+    codelist_1: Codelist = field(validator=validators.instance_of(Codelist))
+    codelist_2: Codelist | None = field(
+        validator=validators.optional(validators.instance_of(Codelist)),
+        default=None,
+    )
+
+    filter_population: str = field(
+        validator=validators.in_(["all", "children", "adults"]),
+        default="all",
+    )
+    time_value: int | None = field(converter=int_or_none, default=None)
+    time_scale: str | None = field(
+        validator=validators.in_([None, "weeks", "months", "years", ""]),
+        default="months",
+    )
     time_ever: bool | None = field(converter=bool, default=None)
-    id: str | None = None  # noqa: A003
-    frequency: str = "monthly"
-    time_event: str = "before"
-    start_date: str = None
-    end_date: str = None
-    week_of_latest_extract: str = "2023-04-03"
+    time_event: str = field(
+        validator=validators.in_(["before"]),
+        default="before",
+    )
+    frequency: str = field(
+        validator=validators.in_(["weekly", "monthly"]),
+        default="monthly",
+    )
+    week_of_latest_extract: str = field(validator=date_string, default="2023-04-03")
 
 
 TEST_DEFAULTS = dict(
