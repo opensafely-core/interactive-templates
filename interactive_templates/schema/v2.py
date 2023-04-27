@@ -31,11 +31,6 @@ class Analysis:
     to capture all the details for a given analysis.
     """
 
-    # request data
-    created_by: str
-    id: str  # noqa: A003
-    repo: str
-
     # analsysis data
     #
     # mandatory attributres have to come first in the class list
@@ -75,6 +70,11 @@ class Analysis:
         default="monthly",
     )
     week_of_latest_extract: str = field(validator=date_string, default="2023-04-03")
+
+    # request data filled in later
+    created_by: str | None = None
+    repo: str | None = None
+    id: str | None = None  # noqa: A003
 
 
 TEST_DEFAULTS = dict(
