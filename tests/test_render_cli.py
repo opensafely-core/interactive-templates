@@ -17,3 +17,5 @@ def test_render_cli(tmp_path):
 
     project = tmp_path / "project.yaml"
     assert "output/1234" in project.read_text()
+    assert (tmp_path / "config.json").exists()
+    assert (tmp_path / "README.md").exists()

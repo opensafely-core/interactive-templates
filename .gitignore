@@ -9,3 +9,4 @@ interactive_templates/templates/*/interactive_codelists/
 interactive_templates/templates/*/metadata/
 interactive_templates/templates/*/output/
 interactive_templates/templates/*/project.yaml
+interactive_templates/templates/*/config.json

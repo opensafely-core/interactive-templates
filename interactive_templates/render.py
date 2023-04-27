@@ -1,3 +1,4 @@
+import json
 import shutil
 from importlib.resources import files
 from pathlib import Path
@@ -74,6 +75,9 @@ def _render(schema, template_dir, output_dir, dev_mode=False):
     # write any codelists
     write_codelists(schema, output_dir)
 
+    config = output_dir / "config.json"
+    config.write_text(json.dumps(asdict(schema), indent=2))
+
     context = asdict(schema)
 
     # recursively render/copy files into output_dir
@@ -101,7 +105,7 @@ def write_codelists(schema, output_dir):
         resp.raise_for_status()
 
         path.write_text(resp.text)
-        codelist.path = path.relative_to(output_dir)
+        codelist.path = str(path.relative_to(output_dir))
 
 
 def _render_to(output_dir, context, current_dir, dev_mode=False):
