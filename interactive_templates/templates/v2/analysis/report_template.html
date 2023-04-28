@@ -22,8 +22,7 @@
                     <li><a href="#practice-level-variation">Practice level variation</a></li>
                     <li><a href="#most-common-codes">Most common codes</a></li>
                     {% if breakdowns|length >0 %}
-                    <li><a href="#breakdowns">Demographic breakdown charts</a></li>
-                    <li>
+                    <li><a href="#breakdowns">Demographic breakdown charts</a>
                         <ol>
                             {% for b in breakdowns %}
                             <li><a href="#{{ b.title|lower|replace(" ", "-") }}">{{ b.title }}</a></li>
