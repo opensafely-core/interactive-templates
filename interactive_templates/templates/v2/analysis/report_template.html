@@ -223,15 +223,15 @@
                             </thead>
                         {% endif %}
                     {% endfor %}
-                    {% for row in top_5_1_data %}
-                        <tbody>
+                    <tbody>
+                        {% for row in top_5_1_data %}
                             {% if not loop.first %}
                                 <tr>
                                     {% for col in row %}<td>{{ col }}</td>{% endfor %}
                                 </tr>
                             {% endif %}
-                            </tbody>
-                    {% endfor %}
+                        {% endfor %}
+                    </tbody>
                 </table>
 
                 <table>
@@ -247,15 +247,15 @@
                             </thead>
                         {% endif %}
                     {% endfor %}
-                    {% for row in top_5_2_data %}
-                        <tbody>
+                    <tbody>
+                        {% for row in top_5_2_data %}
                             {% if not loop.first %}
                                 <tr>
                                     {% for col in row %}<td>{{ col }}</td>{% endfor %}
                                 </tr>
                             {% endif %}
-                            </tbody>
-                    {% endfor %}
+                        {% endfor %}
+                    </tbody>
                 </table>
             </section>
 
