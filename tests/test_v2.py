@@ -34,4 +34,4 @@ def test_v2_functional_time_ever(tmp_path):
 
     # speed things up by only testing the base study definition
     assert local_run.main(tmp_path, ["generate_study_population_id"])
-    assert (tmp_path / "output/id/input_2019-01-01.feather").exists()
+    assert (tmp_path / "output/id/input_2019-09-01.feather").exists()
