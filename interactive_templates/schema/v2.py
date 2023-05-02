@@ -44,6 +44,7 @@ class Analysis:
     )
     start_date: str = field(validator=date_string)
     end_date: str = field(validator=date_string)
+    week_of_latest_extract: str = field(validator=date_string)
 
     codelist_1: Codelist = field(validator=validators.instance_of(Codelist))
     codelist_2: Codelist | None = field(
@@ -69,7 +70,6 @@ class Analysis:
         validator=validators.in_(["weekly", "monthly"]),
         default="monthly",
     )
-    week_of_latest_extract: str = field(validator=date_string, default="2023-04-03")
 
     # request data filled in later
     created_by: str | None = None
@@ -98,4 +98,5 @@ TEST_DEFAULTS = dict(
     id="id",
     start_date="2019-01-01",
     end_date="2022-12-31",
+    week_of_latest_extract="2022-12-19",
 )
