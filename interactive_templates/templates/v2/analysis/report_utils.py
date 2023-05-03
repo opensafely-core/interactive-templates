@@ -157,20 +157,11 @@ def plot_measures(
     plt.xticks(rotation="vertical")
 
     if category:
-        if category_order:
-            ax.legend(
-                category_order,
-                bbox_to_anchor=(1.04, 1),
-                loc="upper left",
-                fontsize=20,
-            )
-        else:
-            ax.legend(
-                sorted(df[category].unique()),
-                bbox_to_anchor=(1.04, 1),
-                loc="upper left",
-                fontsize=20,
-            )
+        ax.legend(
+            bbox_to_anchor=(1.04, 1),
+            loc="upper left",
+            fontsize=20,
+        )
 
     ax.margins(x=0)
     ax.yaxis.label.set_size(25)

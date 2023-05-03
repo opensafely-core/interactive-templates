@@ -54,6 +54,29 @@ def main():
                     "Least deprived",
                 ],
             )
+
+        elif breakdown == "age":
+            plot_measures(
+                df_subset,
+                filename=f"{ args.output_dir }/plot_measures_{breakdown}",
+                column_to_plot="value",
+                y_label="Rate per 1000",
+                category="group_value",
+                category_order=[
+                    "0-5",
+                    "6-10",
+                    "11-17",
+                    "0-17",
+                    "18-29",
+                    "30-39",
+                    "40-49",
+                    "50-59",
+                    "60-69",
+                    "70-79",
+                    "80+",
+                ],
+            )
+
         else:
             plot_measures(
                 df_subset,
