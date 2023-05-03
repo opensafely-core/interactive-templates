@@ -168,7 +168,8 @@ def main():
         f"{args.output_dir}/joined/top_5_code_table_1.csv", index=False
     )
     top_5_code_table_with_counts.to_csv(
-        f"{args.output_dir}/joined/top_5_code_table_with_counts_1.csv", index=False
+        f"{args.output_dir}/for_checking/top_5_code_table_with_counts_1.csv",
+        index=False,
     )
 
     code_df_2 = measure_df.loc[measure_df["group"] == "event_2_code", :]
@@ -193,7 +194,8 @@ def main():
         f"{args.output_dir}/joined/top_5_code_table_2.csv", index=False
     )
     top_5_code_table_with_counts.to_csv(
-        f"{args.output_dir}/joined/top_5_code_table_with_counts_2.csv", index=False
+        f"{args.output_dir}/for_checking/top_5_code_table_with_counts_2.csv",
+        index=False,
     )
 
 

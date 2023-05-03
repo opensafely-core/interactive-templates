@@ -156,6 +156,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--breakdowns", action="append", default=[], required=False)
     parser.add_argument("--input-dir", type=str, required=True)
+    parser.add_argument("--output-dir", type=str, required=True)
     return parser.parse_args()
 
 
@@ -214,8 +215,11 @@ def main():
     measure_df_for_checking = measure_df.loc[
         ~(measure_df["group"].isin(["event_1_code", "event_2_code", "practice"])), :
     ]
+
+    Path(f"{args.output_dir}/for_checking").mkdir(parents=True, exist_ok=True)
+
     measure_df_for_checking.to_csv(
-        f"{args.input_dir}/measure_all_for_checking.csv", index=False
+        f"{args.output_dir}/for_checking/measure_all_for_checking.csv", index=False
     )
 
     measure_for_deciles = measure_df.loc[measure_df["group"] == "practice", :]
