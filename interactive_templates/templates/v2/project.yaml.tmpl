@@ -75,9 +75,6 @@ actions:
   plot_measure_{{ id }}:
     run: >
       python:latest python analysis/plot_measures.py
-      {%- for demo in demographics %}
-        --breakdowns={{demo}}
-      {%- endfor %}
         --output-dir output/{{ id }}
     needs: [generate_measures_{{ id }}]
     outputs:
