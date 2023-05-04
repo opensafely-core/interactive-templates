@@ -284,6 +284,7 @@
                     </p>
                     {% endif %}
 
+                    {% if b.figure.exists %}
                     <figure>
                         {{ display_image(b.figure.path, b.figure.data) }}
                         <figcaption>
@@ -294,6 +295,9 @@
                         </figcaption>
                         {% set i.value = i.value +1 %}
                     </figure>
+                    {% else %}
+                    <p>This chart has been redacted to prevent potential disclosure of patient information.</p>
+                    {% endif %}
                 </section>
                 {% endfor %}
 

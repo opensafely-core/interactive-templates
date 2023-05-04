@@ -131,6 +131,12 @@ def get_data(
         },
     }
 
+    for figure in figures:
+        if not figures[figure]["path"].exists():
+            figures[figure]["exists"] = False
+        else:
+            figures[figure]["exists"] = True
+
     breakdowns_options = {
         "age": {
             "title": "Age",
