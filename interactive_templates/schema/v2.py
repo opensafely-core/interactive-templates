@@ -2,7 +2,7 @@ import datetime
 
 from attrs import field, validators
 
-from interactive_templates.schema import Codelist, interactive_schema
+from interactive_templates import dates, schema
 
 
 def int_or_none(v):
@@ -22,7 +22,7 @@ def date_string(instance, attr, value):
 
 
 # the name should match the name of the directory where the templates are stored
-@interactive_schema(name="v2")
+@schema.interactive_schema(name="v2")
 class Analysis:
     """
     Encapsulate all the data for an analysis to pass between layers
@@ -42,12 +42,12 @@ class Analysis:
             iterable_validator=validators.instance_of(list),
         ),
     )
-    start_date: str = field(validator=date_string)
-    end_date: str = field(validator=date_string)
 
-    codelist_1: Codelist = field(validator=validators.instance_of(Codelist))
-    codelist_2: Codelist | None = field(
-        validator=validators.optional(validators.instance_of(Codelist)),
+    codelist_1: schema.Codelist = field(
+        validator=validators.instance_of(schema.Codelist)
+    )
+    codelist_2: schema.Codelist | None = field(
+        validator=validators.optional(validators.instance_of(schema.Codelist)),
         default=None,
     )
 
@@ -69,7 +69,11 @@ class Analysis:
         validator=validators.in_(["weekly", "monthly"]),
         default="monthly",
     )
-    week_of_latest_extract: str = field(validator=date_string, default="2023-04-03")
+    start_date: str = field(validator=date_string, default=dates.START_DATE)
+    end_date: str = field(validator=date_string, default=dates.END_DATE)
+    week_of_latest_extract: str = field(
+        validator=date_string, default=dates.WEEK_OF_LATEST_EXTRACT
+    )
 
     # request data filled in later
     created_by: str | None = None
@@ -78,12 +82,12 @@ class Analysis:
 
 
 TEST_DEFAULTS = dict(
-    codelist_1=Codelist(
+    codelist_1=schema.Codelist(
         label="DMARDs",
         slug="opensafely/dmards/2020-06-23",
         type="medication",
     ),
-    codelist_2=Codelist(
+    codelist_2=schema.Codelist(
         label="Care planning medication review simple reference set - NHS Digital",
         slug="opensafely/care-planning-medication-review-simple-reference-set-nhs-digital/61b13c39",
         type="event",
@@ -96,6 +100,6 @@ TEST_DEFAULTS = dict(
     time_value="4",
     time_ever=None,
     id="id",
-    start_date="2019-01-01",
-    end_date="2022-12-31",
+    start_date=dates.START_DATE,
+    end_date=dates.END_DATE,
 )
