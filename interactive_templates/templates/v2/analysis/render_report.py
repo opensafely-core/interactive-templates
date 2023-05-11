@@ -5,6 +5,7 @@ import mimetypes
 from base64 import b64encode
 from pathlib import Path
 
+from config import CONFIG
 from jinja2 import Environment, FileSystemLoader, Markup, StrictUndefined
 
 
@@ -239,22 +240,24 @@ def render(output_dir, **kwargs):
 def get_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument("--output-dir", type=Path)
-    parser.add_argument("--population", type=str, default="all")
-    parser.add_argument("--breakdowns", action="append", default=[])
-    parser.add_argument("--start-date", type=str, default="")
-    parser.add_argument("--end-date", type=str, default="")
-    parser.add_argument("--codelist-1-name", type=str, default="")
-    parser.add_argument("--codelist-2-name", type=str, default="")
-    parser.add_argument("--codelist-1-link", type=str, default="")
-    parser.add_argument("--codelist-2-link", type=str, default="")
-    parser.add_argument("--time-value", type=str, default="")
-    parser.add_argument("--time-scale", type=str, default="")
-    parser.add_argument("--time-event", type=str, default="")
-    parser.add_argument("--time-ever", type=bool, default=False)
     return parser
 
 
 if __name__ == "__main__":
     parser = get_parser()
     args = parser.parse_args()
+
+    args.population = CONFIG["filter_population"]
+    args.breakdowns = CONFIG["demographics"]
+    args.start_date = CONFIG["start_date"]
+    args.end_date = CONFIG["end_date"]
+    args.codelist_1_name = CONFIG["codelist_1"]["label"]
+    args.codelist_2_name = CONFIG["codelist_2"]["label"]
+    args.codelist_1_link = CONFIG["codelist_1"]["slug"]
+    args.codelist_2_link = CONFIG["codelist_2"]["slug"]
+    args.time_value = CONFIG["time_value"]
+    args.time_scale = CONFIG["time_scale"]
+    args.time_event = CONFIG["time_event"]
+    args.time_ever = CONFIG["time_ever"]
+
     render(**vars(args))
