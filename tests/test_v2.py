@@ -32,6 +32,5 @@ def test_v2_functional_time_ever(tmp_path):
     analysis = v2.Analysis(**kwargs)
     render_analysis(analysis, tmp_path)
 
-    # speed things up by only testing the base study definition
-    assert local_run.main(tmp_path, ["generate_study_population_id"])
-    assert (tmp_path / "output/id/input_2019-09-01.feather").exists()
+    assert local_run.main(tmp_path, ["run_all"])
+    assert (tmp_path / "output/id/report.html").exists()
