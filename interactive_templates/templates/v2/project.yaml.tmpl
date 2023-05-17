@@ -60,7 +60,6 @@ actions:
     outputs:
       moderately_sensitive:
         measure: output/{{ id }}/joined/measure_all.csv
-        measure_for_checking: output/{{ id }}/for_checking/measure_all_for_checking.csv
         decile_measure: output/{{ id }}/joined/measure_practice_rate_deciles.csv
 
   top_5_table_{{ id }}:
@@ -84,6 +83,7 @@ actions:
     outputs:
       moderately_sensitive:
         measure: output/{{ id }}/plot_measure*.png
+        data: output/{{ id }}/for_checking/plot_measure_for_checking.csv
         deciles: output/{{ id }}/deciles_chart.png
 
   event_counts_{{ id }}:

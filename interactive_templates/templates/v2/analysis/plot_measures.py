@@ -1,4 +1,5 @@
 import argparse
+from pathlib import Path
 
 import pandas as pd
 import seaborn as sns
@@ -20,12 +21,14 @@ def main():
     df = pd.read_csv(
         f"{ args.output_dir }/joined/measure_all.csv", parse_dates=["date"]
     )
-    breakdowns = df["group"].unique().tolist()
-    breakdowns = [
-        b
-        for b in breakdowns
-        if b not in ("total", "practice", "event_1_code", "event_2_code")
-    ]
+
+    # subset of the measures file that is used for plotting in this script
+    df = df.loc[~(df["group"].isin(["event_1_code", "event_2_code", "practice"])), :]
+
+    Path(f"{args.output_dir}/for_checking").mkdir(parents=True, exist_ok=True)
+    df.to_csv(
+        f"{ args.output_dir }/for_checking/plot_measure_for_checking.csv", index=False
+    )
 
     df = df.loc[df["value"] != "[Redacted]", :]
     df["value"] = df["value"].astype(float)

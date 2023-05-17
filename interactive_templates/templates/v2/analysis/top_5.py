@@ -1,4 +1,5 @@
 import argparse
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -167,6 +168,9 @@ def main():
     top_5_code_table.to_csv(
         f"{args.output_dir}/joined/top_5_code_table_1.csv", index=False
     )
+
+    Path(f"{args.output_dir}/for_checking").mkdir(parents=True, exist_ok=True)
+
     top_5_code_table_with_counts.to_csv(
         f"{args.output_dir}/for_checking/top_5_code_table_with_counts_1.csv",
         index=False,

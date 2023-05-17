@@ -209,19 +209,6 @@ def main():
     measure_df = calculate_and_redact_values(measure_df)
     measure_df = drop_redacted_rows(measure_df)
     measure_df.to_csv(f"{args.input_dir}/measure_all.csv", index=False)
-
-    # the individual code counts and practice counts aggregated later so don't need to be output
-    # checked in the meaure file
-    measure_df_for_checking = measure_df.loc[
-        ~(measure_df["group"].isin(["event_1_code", "event_2_code", "practice"])), :
-    ]
-
-    Path(f"{args.output_dir}/for_checking").mkdir(parents=True, exist_ok=True)
-
-    measure_df_for_checking.to_csv(
-        f"{args.output_dir}/for_checking/measure_all_for_checking.csv", index=False
-    )
-
     measure_for_deciles = measure_df.loc[measure_df["group"] == "practice", :]
     measure_for_deciles.to_csv(
         f"{args.input_dir}/measure_practice_rate_deciles.csv", index=False
