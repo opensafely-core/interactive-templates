@@ -44,7 +44,7 @@
                     The measure shows the number of people each month who had both a code from
                     codelist 1 added to their health record and a code from codelist 2 added to
                     their health record in the same month{% if time_ever %} or anytime prior{% else%}
-                    {% if time_value == "0" %}.{% else %} or up to
+                    {% if time_value == 0 %}.{% else %} or up to
                     <strong>{{ time_value }} {{ time_scale }} {{ time_event }}</strong> the start of
                     that month.{% endif %}{% endif %} This monthly measure is calculated for the period between
                     <strong>{{ start_date }}</strong> and <strong>{{ end_date }}</strong>.

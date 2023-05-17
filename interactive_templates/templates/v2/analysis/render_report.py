@@ -62,7 +62,7 @@ def get_data(
     codelist_1_link="",
     codelist_2_name="",
     codelist_2_link="",
-    time_value="",
+    time_value=0,
     time_scale="",
     time_event="",
     start_date="",
@@ -79,7 +79,7 @@ def get_data(
         codelist_1_link (str): link to the first codelist (OpenCodelists)
         codelist_2_name (str): name of the second codelist
         codelist_2_link (str): link to the second codelist (OpenCodelists)
-        time_value (str): time value for the report
+        time_value (int): time value for the report
         time_scale (str): time scale for the report
         time_event (str): time event for the report
         start_date (str): start date for the report
