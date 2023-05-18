@@ -129,6 +129,29 @@ def calculate_and_redact_values(df):
     return result
 
 
+def drop_redacted_rows(measure_df):
+    """
+    Drop rows where the value is redacted.
+
+    Args:
+        measure_df (pd.DataFrame): Measure DataFrame. Should contain a "group_value" and "value" column.
+
+    Returns:
+        pd.DataFrame: A measure DataFrame where subgroups with >50% redacted values have been removed.
+    """
+
+    for group_value in measure_df["group_value"].unique():
+        group_value_df = measure_df.loc[measure_df["group_value"] == group_value, :]
+        redacted_count = group_value_df.loc[group_value_df["value"] == "[Redacted]", :][
+            "value"
+        ].count()
+        total_count = group_value_df["value"].count()
+        if redacted_count / total_count > 0.5:
+            measure_df = measure_df.loc[measure_df["group_value"] != group_value, :]
+
+    return measure_df
+
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--breakdowns", action="append", default=[], required=False)
@@ -183,6 +206,7 @@ def main():
     measure_df = measure_df.sort_values(by=["group", "group_value", "date"])
 
     measure_df = calculate_and_redact_values(measure_df)
+    measure_df = drop_redacted_rows(measure_df)
     measure_df.to_csv(f"{args.input_dir}/measure_all.csv", index=False)
     measure_for_deciles = measure_df.loc[measure_df["group"] == "practice", :]
     measure_for_deciles.to_csv(

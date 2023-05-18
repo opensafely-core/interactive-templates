@@ -151,3 +151,45 @@ def test_calculate_group_counts(df):
         == df.loc[df["sex"] == "F", "population"].sum()
     )
     assert obs["population"].sum() == df["population"].sum()
+
+
+@st.composite
+def measure_df_strategy(draw):
+    nrows = 20
+
+    group_value = column(
+        name="group_value",
+        elements=st.integers(min_value=1, max_value=1000),
+        unique=True,
+    )
+
+    value = column(
+        name="value",
+        elements=st.one_of(st.floats(min_value=0, max_value=1), st.just("[Redacted]")),
+        unique=False,
+    )
+
+    return draw(
+        data_frames(
+            [group_value, value],
+            index=range_indexes(min_size=nrows, max_size=nrows),
+        )
+    )
+
+
+@given(input_measure_df=measure_df_strategy())
+def test_drop_redacted_rows(input_measure_df: pd.DataFrame):
+    result_df = measures.drop_redacted_rows(input_measure_df)
+
+    for group_value in result_df["group_value"].unique():
+        group_value_df = input_measure_df.loc[
+            input_measure_df["group_value"] == group_value, :
+        ]
+        redacted_count = group_value_df.loc[group_value_df["value"] == "[Redacted]", :][
+            "value"
+        ].count()
+        total_count = group_value_df["value"].count()
+
+        assert (
+            redacted_count / total_count <= 0.5
+        ), f"Subgroup {group_value} has more than 50% redacted values"
