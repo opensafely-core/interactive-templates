@@ -138,7 +138,7 @@ def parse_args():
         type=str,
         help="Path to codelist for event 2",
     )
-    parser.add_argument("--output-dir", type=str, required=True)
+    parser.add_argument("--output-dir", type=Path, required=True)
     args = parser.parse_args()
     return args
 
@@ -147,10 +147,10 @@ def main():
     args = parse_args()
     codelist_1_path = args.codelist_1_path
     codelist_2_path = args.codelist_2_path
-    measure_df = pd.read_csv(f"{args.output_dir}/measure_all.csv")
+    measure_df = pd.read_csv(args.output_dir / "measure_all.csv")
 
     code_df = measure_df.loc[measure_df["group"] == "event_1_code", :]
-    codelist = pd.read_csv(f"{codelist_1_path}", dtype={"code": str})
+    codelist = pd.read_csv(codelist_1_path, dtype={"code": str})
 
     events_per_code = (
         code_df.groupby("group_value")[["event_measure"]].sum().reset_index()
@@ -165,19 +165,19 @@ def main():
         low_count_threshold=7,
         rounding_base=7,
     )
-    top_5_code_table.to_csv(f"{args.output_dir}/top_5_code_table_1.csv", index=False)
+    top_5_code_table.to_csv(args.output_dir / "top_5_code_table_1.csv", index=False)
 
-    Path(f"{args.output_dir}/for_checking").mkdir(parents=True, exist_ok=True)
+    Path(args.output_dir / "for_checking").mkdir(parents=True, exist_ok=True)
 
     top_5_code_table_with_counts.to_csv(
-        f"{args.output_dir}/for_checking/top_5_code_table_with_counts_1.csv",
+        args.output_dir / "for_checking/top_5_code_table_with_counts_1.csv",
         index=False,
     )
 
     code_df_2 = measure_df.loc[measure_df["group"] == "event_2_code", :]
 
     # TODO: support vpids?
-    codelist_2 = pd.read_csv(f"{codelist_2_path}", dtype={"code": str})
+    codelist_2 = pd.read_csv(codelist_2_path, dtype={"code": str})
     events_per_code = (
         code_df_2.groupby("group_value")[["event_measure"]].sum().reset_index()
     )
@@ -192,9 +192,9 @@ def main():
         rounding_base=7,
     )
 
-    top_5_code_table.to_csv(f"{args.output_dir}/top_5_code_table_2.csv", index=False)
+    top_5_code_table.to_csv(args.output_dir / "top_5_code_table_2.csv", index=False)
     top_5_code_table_with_counts.to_csv(
-        f"{args.output_dir}/for_checking/top_5_code_table_with_counts_2.csv",
+        args.output_dir / "for_checking" / "top_5_code_table_with_counts_2.csv",
         index=False,
     )
 
