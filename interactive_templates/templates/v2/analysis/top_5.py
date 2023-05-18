@@ -147,7 +147,7 @@ def main():
     args = parse_args()
     codelist_1_path = args.codelist_1_path
     codelist_2_path = args.codelist_2_path
-    measure_df = pd.read_csv(f"{args.output_dir}/joined/measure_all.csv")
+    measure_df = pd.read_csv(f"{args.output_dir}/measure_all.csv")
 
     code_df = measure_df.loc[measure_df["group"] == "event_1_code", :]
     codelist = pd.read_csv(f"{codelist_1_path}", dtype={"code": str})
@@ -165,9 +165,7 @@ def main():
         low_count_threshold=7,
         rounding_base=7,
     )
-    top_5_code_table.to_csv(
-        f"{args.output_dir}/joined/top_5_code_table_1.csv", index=False
-    )
+    top_5_code_table.to_csv(f"{args.output_dir}/top_5_code_table_1.csv", index=False)
 
     Path(f"{args.output_dir}/for_checking").mkdir(parents=True, exist_ok=True)
 
@@ -194,9 +192,7 @@ def main():
         rounding_base=7,
     )
 
-    top_5_code_table.to_csv(
-        f"{args.output_dir}/joined/top_5_code_table_2.csv", index=False
-    )
+    top_5_code_table.to_csv(f"{args.output_dir}/top_5_code_table_2.csv", index=False)
     top_5_code_table_with_counts.to_csv(
         f"{args.output_dir}/for_checking/top_5_code_table_with_counts_2.csv",
         index=False,

@@ -8,6 +8,10 @@ from report_utils import deciles_chart, plot_measures
 
 def parse_args():
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--breakdowns", action="append", default=[], help="breakdowns to use"
+    )
+    parser.add_argument("--input-dir", help="input directory", required=True)
     parser.add_argument("--output-dir", help="output directory", required=True)
     args = parser.parse_args()
     return args
@@ -18,9 +22,7 @@ def main():
 
     sns.set_style("darkgrid")
 
-    df = pd.read_csv(
-        f"{ args.output_dir }/joined/measure_all.csv", parse_dates=["date"]
-    )
+    df = pd.read_csv(f"{ args.input_dir }/measure_all.csv", parse_dates=["date"])
 
     # subset of the measures file that is used for plotting in this script
     df = df.loc[~(df["group"].isin(["event_1_code", "event_2_code", "practice"])), :]
@@ -95,7 +97,7 @@ def main():
             )
 
     practice_df = pd.read_csv(
-        f"{ args.output_dir }/joined/measure_practice_rate_deciles.csv",
+        f"{ args.output_dir }/measure_practice_rate_deciles.csv",
         parse_dates=["date"],
     )
     deciles_chart(
