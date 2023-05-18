@@ -20,6 +20,10 @@ round_to_nearest_100 = functools.partial(round_to_nearest, base=100)
 round_to_nearest_10 = functools.partial(round_to_nearest, base=10)
 
 
+def replace_zero_with_redacted(x):
+    return x if x > 0 else "[REDACTED]"
+
+
 def get_summary_stats(df):
     required_columns = {"patient_id", "event_measure", "practice"}
     assert required_columns.issubset(set(df.columns))
@@ -89,17 +93,27 @@ def main():
     # there should only be one key in events_weekly, but we take the max anyway
     latest_week = max(events_weekly.keys())
     latest_month = max(events.keys())
-    events_in_latest_week = round_to_nearest_100(events_weekly[latest_week])
-    total_events = round_to_nearest_100(sum(events.values()))
-    total_patients = round_to_nearest_100(len(np.unique(patients)))
-    unique_patients_with_events = round_to_nearest_100(
-        len(np.unique(patients_with_events))
+    events_in_latest_week = replace_zero_with_redacted(
+        round_to_nearest_100(events_weekly[latest_week])
     )
+
+    total_events = replace_zero_with_redacted(
+        round_to_nearest_100(sum(events.values()))
+    )
+    total_patients = replace_zero_with_redacted(
+        round_to_nearest_100(len(np.unique(patients)))
+    )
+    unique_patients_with_events = replace_zero_with_redacted(
+        round_to_nearest_100(len(np.unique(patients_with_events)))
+    )
+
     total_practices = round_to_nearest_10(len(np.unique(practices)))
     total_practices_with_events = round_to_nearest_10(
         len(np.unique(practice_with_events))
     )
-    events_in_latest_period = round_to_nearest_100(events[max(events.keys())])
+    events_in_latest_period = replace_zero_with_redacted(
+        round_to_nearest_100(events[max(events.keys())])
+    )
 
     save_to_json(
         {

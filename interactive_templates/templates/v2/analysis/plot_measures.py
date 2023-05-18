@@ -1,6 +1,7 @@
 import argparse
 
 import pandas as pd
+import seaborn as sns
 from report_utils import deciles_chart, plot_measures
 
 
@@ -17,6 +18,8 @@ def parse_args():
 def main():
     args = parse_args()
     breakdowns = args.breakdowns
+
+    sns.set_style("darkgrid")
 
     df = pd.read_csv(
         f"{ args.output_dir }/joined/measure_all.csv", parse_dates=["date"]
@@ -51,6 +54,29 @@ def main():
                     "Least deprived",
                 ],
             )
+
+        elif breakdown == "age":
+            plot_measures(
+                df_subset,
+                filename=f"{ args.output_dir }/plot_measures_{breakdown}",
+                column_to_plot="value",
+                y_label="Rate per 1000",
+                category="group_value",
+                category_order=[
+                    "0-5",
+                    "6-10",
+                    "11-17",
+                    "0-17",
+                    "18-29",
+                    "30-39",
+                    "40-49",
+                    "50-59",
+                    "60-69",
+                    "70-79",
+                    "80+",
+                ],
+            )
+
         else:
             plot_measures(
                 df_subset,
