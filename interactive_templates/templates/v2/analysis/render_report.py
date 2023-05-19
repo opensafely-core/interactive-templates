@@ -93,8 +93,8 @@ def get_data(
     codelist_1_link = codelist_url_root + codelist_1_link
     codelist_2_link = codelist_url_root + codelist_2_link
 
-    top_5_1_path = output_dir / "joined/top_5_code_table_1.csv"
-    top_5_2_path = output_dir / "joined/top_5_code_table_2.csv"
+    top_5_1_path = output_dir / "top_5_code_table_1.csv"
+    top_5_2_path = output_dir / "top_5_code_table_2.csv"
     summary_table_path = output_dir / "event_counts.json"
 
     top_5_1_data = data_from_csv(top_5_1_path)
@@ -104,31 +104,31 @@ def get_data(
     figures = {
         "decile": {
             "path": output_dir / "deciles_chart.png",
-            "data": output_dir / "joined/measure_practice_rate_deciles.csv",
+            "data": output_dir / "measure_practice_rate_deciles.csv",
         },
         "population": {
             "path": output_dir / "plot_measures.png",
-            "data": output_dir / "joined/measure_total_rate.csv",
+            "data": output_dir / "measure_total_rate.csv",
         },
         "sex": {
             "path": output_dir / "plot_measures_sex.png",
-            "data": output_dir / "joined/measure_sex_rate.csv",
+            "data": output_dir / "measure_sex_rate.csv",
         },
         "age": {
             "path": output_dir / "plot_measures_age.png",
-            "data": output_dir / "joined/measure_age_rate.csv",
+            "data": output_dir / "measure_age_rate.csv",
         },
         "imd": {
             "path": output_dir / "plot_measures_imd.png",
-            "data": output_dir / "joined/measure_imd_rate.csv",
+            "data": output_dir / "measure_imd_rate.csv",
         },
         "region": {
             "path": output_dir / "plot_measures_region.png",
-            "data": output_dir / "joined/measure_region_rate.csv",
+            "data": output_dir / "measure_region_rate.csv",
         },
         "ethnicity": {
             "path": output_dir / "plot_measures_ethnicity.png",
-            "data": output_dir / "joined/measure_ethnicity_rate.csv",
+            "data": output_dir / "measure_ethnicity_rate.csv",
         },
     }
 

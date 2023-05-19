@@ -155,7 +155,8 @@ def drop_redacted_rows(measure_df):
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--breakdowns", action="append", default=[], required=False)
-    parser.add_argument("--input-dir", type=str, required=True)
+    parser.add_argument("--input-dir", type=Path, required=True)
+    parser.add_argument("--output-dir", type=Path, required=True)
     return parser.parse_args()
 
 
@@ -206,11 +207,10 @@ def main():
     measure_df = measure_df.sort_values(by=["group", "group_value", "date"])
 
     measure_df = calculate_and_redact_values(measure_df)
-    measure_df = drop_redacted_rows(measure_df)
-    measure_df.to_csv(f"{args.input_dir}/measure_all.csv", index=False)
+    measure_df.to_csv(args.output_dir / "measure_all.csv", index=False)
     measure_for_deciles = measure_df.loc[measure_df["group"] == "practice", :]
     measure_for_deciles.to_csv(
-        f"{args.input_dir}/measure_practice_rate_deciles.csv", index=False
+        args.output_dir / "measure_practice_rate_deciles.csv", index=False
     )
 
 

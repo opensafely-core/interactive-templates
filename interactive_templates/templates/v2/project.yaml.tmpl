@@ -54,12 +54,13 @@ actions:
         --breakdowns={{demo}}
       {%- endfor %}
         --input-dir="output/{{ id }}/joined"
+        --output-dir="output/{{ id }}"
 
     needs: [join_cohorts_{{ id }}]
     outputs:
       moderately_sensitive:
-        measure: output/{{ id }}/joined/measure_all.csv
-        decile_measure: output/{{ id }}/joined/measure_practice_rate_deciles.csv
+        measure: output/{{ id }}/measure_all.csv
+        decile_measure: output/{{ id }}/measure_practice_rate_deciles.csv
 
   top_5_table_{{ id }}:
     run: >
@@ -70,16 +71,23 @@ actions:
     needs: [generate_measures_{{ id }}]
     outputs:
       moderately_sensitive:
-        tables: output/{{ id }}/joined/top_5*.csv
+        table_1: output/{{ id }}/top_5_code_table_1.csv
+        table_2: output/{{ id }}/top_5_code_table_2.csv
+        tables_for_checking: output/{{ id }}/for_checking/top_5*.csv
 
   plot_measure_{{ id }}:
     run: >
       python:latest python analysis/plot_measures.py
+      {%- for demo in demographics %}
+        --breakdowns={{demo}}
+      {%- endfor %}
+        --input-dir output/{{ id }}
         --output-dir output/{{ id }}
     needs: [generate_measures_{{ id }}]
     outputs:
       moderately_sensitive:
         measure: output/{{ id }}/plot_measure*.png
+        data: output/{{ id }}/for_checking/plot_measure_for_checking.csv
         deciles: output/{{ id }}/deciles_chart.png
 
   event_counts_{{ id }}:
