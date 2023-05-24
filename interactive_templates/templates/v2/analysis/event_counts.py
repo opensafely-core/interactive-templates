@@ -24,19 +24,23 @@ def replace_zero_with_redacted(x):
     return x if x > 0 else "[REDACTED]"
 
 
-def get_summary_stats(df):
+def get_summary_stats(df, df_practices_dropped):
     required_columns = {"patient_id", "event_measure", "practice"}
     assert required_columns.issubset(set(df.columns))
+    assert required_columns.issubset(set(df_practices_dropped.columns))
 
     unique_patients = df["patient_id"].unique()
     num_events = df["event_measure"].sum()
-    unique_practices = df["practice"].unique()
     patients_with_events = df.loc[df["event_measure"] == 1, "patient_id"].unique()
+
+    unique_practices = df["practice"].unique()
+    unique_practices_with_events = df_practices_dropped["practice"].unique()
 
     return {
         "unique_patients": unique_patients,
         "num_events": num_events,
         "unique_practices": unique_practices,
+        "unique_practices_with_events": unique_practices_with_events,
         "patients_with_events": patients_with_events,
     }
 
@@ -76,12 +80,13 @@ def main():
             df["date"] = date
 
             df_practices_dropped = drop_zero_practices(df, "event_measure")
-            # TODO: think about whether we should calculate all of the stats on the dropped data or not
-            summary_stats = get_summary_stats(df_practices_dropped)
+
+            summary_stats = get_summary_stats(df, df_practices_dropped)
             events[date] = summary_stats["num_events"]
             patients.extend(summary_stats["unique_patients"])
             patients_with_events.extend(summary_stats["patients_with_events"])
             practices.extend(summary_stats["unique_practices"])
+            practice_with_events.extend(summary_stats["unique_practices_with_events"])
 
         if match_input_files(file.name, weekly=True):
             date = get_date_input_file(file.name, weekly=True)
