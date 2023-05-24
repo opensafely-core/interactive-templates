@@ -31,12 +31,14 @@ def get_summary_stats(df):
     unique_patients = df["patient_id"].unique()
     num_events = df["event_measure"].sum()
     unique_practices = df["practice"].unique()
+    unique_practices_with_events = df.loc[df["event_measure"] == 1, "practice"].unique()
     patients_with_events = df.loc[df["event_measure"] == 1, "patient_id"].unique()
 
     return {
         "unique_patients": unique_patients,
         "num_events": num_events,
         "unique_practices": unique_practices,
+        "unique_practices_with_events": unique_practices_with_events,
         "patients_with_events": patients_with_events,
     }
 
@@ -82,6 +84,7 @@ def main():
             patients.extend(summary_stats["unique_patients"])
             patients_with_events.extend(summary_stats["patients_with_events"])
             practices.extend(summary_stats["unique_practices"])
+            practice_with_events.extend(summary_stats["unique_practices_with_events"])
 
         if match_input_files(file.name, weekly=True):
             date = get_date_input_file(file.name, weekly=True)
