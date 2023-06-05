@@ -222,9 +222,9 @@ flake8-no-pep420==2.4.0 \
     --hash=sha256:69a1a3d5765b588c35be3d53778b2de1e67332ad12f32aa9083eba4cf4d3b5e7 \
     --hash=sha256:6f504c95109bce34b6f7020b531cf2a819efa5be3aa53f822e90f6244a83f051
     # via -r requirements.dev.in
-hypothesis==6.75.6 \
-    --hash=sha256:18627dc834111b06b1b18fb676b7446bfb36adc54ba117e270da5dca46c7a217 \
-    --hash=sha256:cd85acc2c6dd5fff1a118b3a4dc400434485f6afda4d4a8d7c2b5d0bffc1acff
+hypothesis==6.76.0 \
+    --hash=sha256:034f73dd485933b0f4c319d7c3c58230492fdd7b16e821d67d150a78138adb93 \
+    --hash=sha256:526657eb3e4f2076b0383f722b2e6a92fd15d1d42db532decae8c41b14cab801
     # via -r requirements.dev.in
 identify==2.5.17 \
     --hash=sha256:7d526dd1283555aafcc91539acc061d8f6f59adb0a7bba462735b0a318bff7ed \
