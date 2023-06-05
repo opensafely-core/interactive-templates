@@ -18,6 +18,7 @@ CODELIST_DOWNLOAD_DIR = "interactive_codelists"
 
 # directories or files generated in a template dir during local development
 DEV_FILES = [
+    "__pycache__",
     CODELIST_DOWNLOAD_DIR,
     "output",
     "metadata",
