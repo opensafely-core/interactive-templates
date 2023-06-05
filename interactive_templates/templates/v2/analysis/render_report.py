@@ -37,7 +37,7 @@ def data_from_csv(path):
     Reuturns:
         list of lists (rows) containing the data
     """
-    with open(path, "r") as f:
+    with open(path) as f:
         reader = csv.reader(f)
         return [row for row in reader]
 
@@ -50,7 +50,7 @@ def data_from_json(path):
     Reuturns:
         dict containing the data
     """
-    with open(path, "r") as f:
+    with open(path) as f:
         return json.load(f)
 
 
