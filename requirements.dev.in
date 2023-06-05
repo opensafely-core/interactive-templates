@@ -16,6 +16,7 @@ isort
 pip-tools
 pre-commit
 pytest
+pytest-freezegun
 responses
 
 # analysis code tests
