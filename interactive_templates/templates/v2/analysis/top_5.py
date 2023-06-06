@@ -58,7 +58,7 @@ def group_low_values(df, count_column, code_column, threshold):
 
 def round_values(x, base=5):
     rounded = x
-    if isinstance(x, (int, float)):
+    if isinstance(x, (int, float)):  # noqa: UP038
         if np.isnan(x):
             rounded = np.nan
         else:

@@ -134,12 +134,18 @@ test:
 #run all tests
 test-all: test-unit test-functional
 
-# runs the format (black), sort (isort) and lint (flake8) check but does not change any files
-check: devenv
-    $BIN/black --check .
-    $BIN/isort --check-only --diff .
-    $BIN/flake8
-    $BIN/check-manifest
+black *args=".": devenv
+    $BIN/black --check {{ args }}
+
+check-manifest *args="": devenv
+    $BIN/check-manifest {{ args }}
+
+ruff *args=".": devenv
+    $BIN/ruff check {{ args }}
+
+
+# run the various dev checks but does not change any files
+check: black check-manifest ruff
 
 
 # fix formatting and import sort ordering
