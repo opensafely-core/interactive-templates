@@ -131,7 +131,10 @@
                         <strong>Table 1</strong>. Summary table showing the total number of patients
                         who meet the measure criteria at some point during the study period, the total
                         number of event throughout the study period (up to one event, per patient, per month),
-                        and the number of events in the latest complete month and complete week.
+                        and the number of events in the latest complete month and complete week. <strong>Note:</strong>
+                        Counts less than 50 are suppressed to reduce the risk of disclosure of patient identifiable information.
+                        All other counts are rounded to the nearest 100 (except for counts of practices, which are rounded to
+                        the nearest 10).
                     </caption>
                     <thead>
                         <tr>
@@ -163,7 +166,9 @@
                     <figcaption>
                         <strong>Figure 1</strong>. The monthly rate per 1000 registered patients
                         in the selected population for the specified measure between
-                        {{ start_date }} and {{ end_date }}.
+                        {{ start_date }} and {{ end_date }}. <strong>Note:</strong> Monthly counts
+                        less than or equal to 10 are suppressed to reduce the risk of disclosure of
+                        patient identifiable information. The figure above may therefore be incomplete.
                     </figcaption>
                 </figure>
             </section>
@@ -211,7 +216,12 @@
                     the specified codelists, only the latest code will contribute to the counts in this table.
                 </p>
                 <table>
-                    <caption><strong>Table 2</strong>. The top 5 most common codes recorded for codelist 1 ({{ codelist_1_name }}).</caption>
+                    <caption><strong>Table 2</strong>. The top 5 most common codes recorded for codelist 1 ({{ codelist_1_name }}).
+                    <strong>Note:</strong>
+                        Codes with a count less than are suppressed to reduce the risk of disclosure of patient identifiable information.
+                        They are then rounded to the nearest 7, before being used to calculate the percetage make-up.
+                    </caption>
+                    </caption>
                     {% for row in top_5_1_data %}
                         {% if loop.first %}
                             <thead>
@@ -235,7 +245,11 @@
                 </table>
 
                 <table>
-                    <caption><strong>Table 3</strong>. The top 5 most common codes recorded for codelist 2 ({{ codelist_2_name }}).</caption>
+                    <caption><strong>Table 3</strong>. The top 5 most common codes recorded for codelist 2 ({{ codelist_2_name }}).
+                    <strong>Note:</strong>
+                        Codes with a count less than are suppressed to reduce the risk of disclosure of patient identifiable information.
+                        They are then rounded to the nearest 7, before being used to calculate the percetage make-up.
+                    </caption>
                     {% for row in top_5_2_data %}
                         {% if loop.first %}
                             <thead>
@@ -269,6 +283,8 @@
                     {% for b in breakdowns %}
                     <span><strong>{{ b.title|lower }}</strong>{% if not loop.last %}, {% else %}.{% endif %}</span>
                     {% endfor %}
+                    <strong>Note:</strong> Monthly counts less than or equal to 10 are suppressed to reduce the risk of disclosure of patient identifiable information.
+                    Some groups may therefore be missing from the figures below.
                 </p>
 
                 {% set i=namespace(value=3) %}
