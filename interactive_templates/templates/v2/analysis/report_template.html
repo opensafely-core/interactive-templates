@@ -137,6 +137,7 @@
                         <tr>
                             <th>Total events</th>
                             <th>Total patients</th>
+                            <th>Total patients with events</th>
                             <th>Events in latest month ({{ summary_table_data.latest_month }})</th>
                             <th>Events in latest week ({{ summary_table_data.latest_week }})</th>
                         </tr>
@@ -145,6 +146,7 @@
                         <tr>
                             <td data-format-number="true">{{ summary_table_data.total_events }}</td>
                             <td data-format-number="true">{{ summary_table_data.total_patients }}</td>
+                            <td data-format-number="true">{{ summary_table_data.unique_patients_with_events }}</td>
                             <td data-format-number="true">{{ summary_table_data.events_in_latest_period }}</td>
                             <td data-format-number="true">{{ summary_table_data.events_in_latest_week }}</td>
                         </tr>
