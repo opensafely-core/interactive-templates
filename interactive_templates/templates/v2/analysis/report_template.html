@@ -279,7 +279,11 @@
 
                     {% if b.link %}
                     <p>
-                        <strong>Codelist link: </strong>
+                        {% if b.title == "Index of Multiple Deprivation"%}
+                            <strong>Definition: </strong>
+                        {% else %}
+                            <strong>Codelist link: </strong>
+                        {% endif %}
                         <a href="{{ b.link }}" target="_blank" rel="noopener noreferrer">{{ b.link_description }}</a>
                     </p>
                     {% endif %}
