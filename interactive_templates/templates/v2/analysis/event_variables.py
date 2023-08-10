@@ -1,5 +1,4 @@
 from cohortextractor import patients
-from report_utils import generate_expectations_codes
 
 
 def clinical_event(codelist, date_range, event_name, ever=False):
@@ -25,17 +24,6 @@ def clinical_event(codelist, date_range, event_name, ever=False):
                 **date_kwargs,
                 returning="binary_flag",
                 return_expectations={"incidence": 0.5},
-            )
-        ),
-        f"{event_name}_code": (
-            patients.with_these_clinical_events(
-                codelist=codelist,
-                **date_kwargs,
-                returning="code",
-                return_expectations={
-                    "rate": "universal",
-                    "category": {"ratios": generate_expectations_codes(codelist)},
-                },
             )
         ),
         f"{event_name}_date": (
@@ -80,17 +68,6 @@ def medication_event(codelist, date_range, event_name, ever=False):
                 **date_kwargs,
                 returning="binary_flag",
                 return_expectations={"incidence": 0.5},
-            )
-        ),
-        f"{event_name}_code": (
-            patients.with_these_medications(
-                codelist=codelist,
-                **date_kwargs,
-                returning="code",
-                return_expectations={
-                    "rate": "universal",
-                    "category": {"ratios": generate_expectations_codes(codelist)},
-                },
             )
         ),
         f"{event_name}_date": (
