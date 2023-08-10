@@ -66,73 +66,69 @@ def round_values(x, base=5):
     return rounded
 
 
+def apply_rounding(event_counts, rounding_base):
+    event_counts["num"] = event_counts["num"].apply(
+        lambda x: round_values(x, rounding_base)
+    )
+    return event_counts
+
+
+def calculate_proportion(event_counts):
+    total_events = event_counts["num"].sum()
+    event_counts["Proportion of codes (%)"] = round(
+        (event_counts["num"] / total_events) * 100, 2
+    )
+    return event_counts
+
+
+def add_description(event_counts, code_df, code_column, term_column):
+    code_df = code_df.set_index(code_column).rename(
+        columns={term_column: "Description"}
+    )
+    event_counts = event_counts.set_index(code_column).join(code_df).reset_index()
+    event_counts.loc[event_counts[code_column] == "Other", "Description"] = "-"
+    return event_counts
+
+
+def handle_edge_case_percentages(event_counts):
+    total_events = event_counts["num"].sum()
+
+    zero_condition = (event_counts["Proportion of codes (%)"] == 0) & (
+        event_counts["num"] > 0
+    )
+    hundred_condition = (event_counts["Proportion of codes (%)"] == 100) & (
+        event_counts["num"] < total_events
+    )
+
+    event_counts.loc[zero_condition, "Proportion of codes (%)"] = "<0.001"
+    event_counts.loc[hundred_condition, "Proportion of codes (%)"] = ">99.99"
+
+    return event_counts
+
+
 def create_top_5_code_table(
     df, code_df, code_column, term_column, low_count_threshold, rounding_base, nrows=5
 ):
-    """Creates a table of the top 5 codes recorded with the number of events and % makeup of each code.
-    Args:
-        df: A measure table.
-        code_df: A codelist table.
-        code_column: The name of the code column in the codelist table.
-        term_column: The name of the term column in the codelist table.
-        measure: The measure ID.
-        low_count_threshold: Value to use as threshold for disclosure control.
-        rounding_base: Base to round to.
-        nrows: The number of rows to display.
-    Returns:
-        A table of the top `nrows` codes.
-    """
+    """Creates a table of the top 5 codes recorded with the number of events and % makeup of each code."""
 
     event_counts = group_low_values(df, "num", code_column, low_count_threshold)
     event_counts = event_counts.copy()
 
-    event_counts["num"] = event_counts["num"].apply(
-        lambda x: round_values(x, rounding_base)
-    )
-
-    # calculate % makeup of each code
-    total_events = event_counts["num"].sum()
-
-    event_counts["Proportion of codes (%)"] = round(
-        (event_counts["num"] / total_events) * 100, 2
-    )
-
-    # Gets the human-friendly description of the code for the given row
-    # e.g. "Systolic blood pressure".
-    code_df = code_df.set_index(code_column).rename(
-        columns={term_column: "Description"}
-    )
-
-    event_counts = event_counts.set_index(code_column).join(code_df).reset_index()
-
-    event_counts.loc[event_counts[code_column] == "Other", "Description"] = "-"
-
+    event_counts = apply_rounding(event_counts, rounding_base)
+    event_counts = calculate_proportion(event_counts)
+    event_counts = add_description(event_counts, code_df, code_column, term_column)
     event_counts.rename(columns={code_column: "Code"}, inplace=True)
+    event_counts = handle_edge_case_percentages(event_counts)
 
-    # because of rounding, some codes can appear as either 0.00% or 100.00%. If they are
-    # not truly 0.00% or 100.00%, we want to display them as <0.001% or >99.99% respectively
-    event_counts.loc[
-        (event_counts["Proportion of codes (%)"] == 0) & (event_counts["num"] > 0),
-        "Proportion of codes (%)",
-    ] = "<0.001"
-
-    event_counts.loc[
-        (event_counts["Proportion of codes (%)"] == 100)
-        & (event_counts["num"] < total_events),
-        "Proportion of codes (%)",
-    ] = ">99.99"
-
-    # sort by proportion of codes
-    event_counts = event_counts.sort_values(
+    event_counts_sorted = event_counts.sort_values(
         ascending=False, by="Proportion of codes (%)"
     )
 
-    event_counts_with_counts = event_counts.copy()
-
-    event_counts = event_counts.loc[
+    event_counts_with_counts = event_counts_sorted.copy()
+    event_counts = event_counts_sorted.loc[
         :, ["Code", "Description", "Proportion of codes (%)"]
     ]
-    # return top n rows
+
     return event_counts.head(nrows), event_counts_with_counts
 
 
