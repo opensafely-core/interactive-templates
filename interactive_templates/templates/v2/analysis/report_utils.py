@@ -45,16 +45,6 @@ def relabel_sex(df):
     return df
 
 
-def generate_expectations_codes(codelist, incidence=0.5):
-    if len(codelist) >= 10:
-        expectations = {str(x): (1 - incidence) / 10 for x in codelist[0:10]}
-    else:
-        expectations = {str(x): (1 - incidence) / len(codelist) for x in codelist}
-
-    expectations[None] = incidence
-    return expectations
-
-
 def save_to_json(d, filename: str):
     """Saves dictionary to json file"""
     with open(filename, "w") as f:
