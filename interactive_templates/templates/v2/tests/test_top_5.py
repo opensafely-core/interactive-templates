@@ -156,3 +156,44 @@ def test_handle_edge_case_percentages(df):
             assert (
                 row["Proportion of codes (%)"] == ">99.99"
             ), f"Expected '>99.99' but got {row['Proportion of codes (%)']} for num {row['num']}"
+
+
+@given(
+    df=df_strategy,
+    code_df=code_df_strategy,
+    code_column=st.just("code"),
+    term_column=st.just("term"),
+    low_count_threshold=st.integers(min_value=1, max_value=10),
+    rounding_base=st.integers(min_value=1, max_value=10),
+    nrows=st.integers(min_value=1, max_value=10),
+)
+def test_create_top_5_code_table(
+    df, code_df, code_column, term_column, low_count_threshold, rounding_base, nrows
+):
+    top_5, top_5_with_counts = create_top_5_code_table(
+        df, code_df, code_column, term_column, low_count_threshold, rounding_base, nrows
+    )
+
+    assert len(top_5) <= nrows
+
+    # Make sure that the order is correct based on proportion
+    if not top_5.empty:
+        assert list(top_5["Proportion of codes (%)"]) == sorted(
+            top_5["Proportion of codes (%)"], reverse=True
+        )
+
+    # Ensure the 'complete_counts' contains all rows or the max rows whichever is smaller
+    assert len(top_5_with_counts) <= len(df)
+
+    # The two results should share the same sorted order based on "Proportion of codes (%)"
+    if not top_5.empty and not top_5_with_counts.empty:
+        assert list(top_5["Code"]) == list(top_5_with_counts["Code"].head(len(top_5)))
+
+        # Ensure the have expected columns
+        assert list(top_5.columns) == ["Code", "Description", "Proportion of codes (%)"]
+        assert list(top_5_with_counts.columns) == [
+            "Code",
+            "num",
+            "Description",
+            "Proportion of codes (%)",
+        ]

@@ -143,6 +143,9 @@ def create_top_5_code_table(
     event_counts = event_counts_sorted.loc[
         :, ["Code", "Description", "Proportion of codes (%)"]
     ]
+    event_counts_with_counts = event_counts_with_counts.loc[
+        :, ["Code", "num", "Description", "Proportion of codes (%)"]
+    ]
 
     return event_counts.head(nrows), event_counts_with_counts
 
