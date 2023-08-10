@@ -111,6 +111,7 @@ def plot_measures(
                     palette=palette,
                     ax=ax,
                     label=unique_category,
+                    linewidth=1.5,
                 )
 
         else:
@@ -124,10 +125,11 @@ def plot_measures(
                     palette=palette,
                     ax=ax,
                     label=unique_category,
+                    linewidth=1.5,
                 )
 
     else:
-        ax.plot(df["date"], df[column_to_plot])
+        ax.plot(df["date"], df[column_to_plot], linewidth=1.5)
 
     ax.set(
         ylabel=y_label,
