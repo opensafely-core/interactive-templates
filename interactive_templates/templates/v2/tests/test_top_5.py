@@ -139,3 +139,20 @@ def test_add_description(event_counts, code_df):
 
     # Ensure that no rows were lost
     assert len(result) == len(event_counts)
+
+
+@given(df=df_strategy)
+def test_handle_edge_case_percentages(df):
+    df_with_proportions = calculate_proportion(df.copy())
+    result_df = handle_edge_case_percentages(df_with_proportions.copy())
+
+    for _, row in result_df.iterrows():
+        if (row["Proportion of codes (%)"] == 0) and (row["num"] > 0):
+            assert (
+                row["Proportion of codes (%)"] == "<0.001"
+            ), f"Expected '<0.001' but got {row['Proportion of codes (%)']} for num {row['num']}"
+
+        if (row["Proportion of codes (%)"] == 100) and (row["num"] < df["num"].sum()):
+            assert (
+                row["Proportion of codes (%)"] == ">99.99"
+            ), f"Expected '>99.99' but got {row['Proportion of codes (%)']} for num {row['num']}"
