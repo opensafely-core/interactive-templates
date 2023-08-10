@@ -2,6 +2,7 @@ from code_variables import generate_code_variables
 from cohortextractor import StudyDefinition, codelist_from_csv, patients
 from config import CONFIG
 
+
 ethnicity_codes = codelist_from_csv(
     filename="codelists/opensafely-ethnicity-snomed-0removed.csv",
     column="snomedcode",

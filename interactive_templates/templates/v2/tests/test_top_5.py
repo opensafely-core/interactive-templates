@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-
 from analysis.top_5 import (
     add_description,
     apply_rounding,
