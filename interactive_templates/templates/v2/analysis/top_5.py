@@ -109,6 +109,19 @@ def create_top_5_code_table(
 
     event_counts.rename(columns={code_column: "Code"}, inplace=True)
 
+    # because of rounding, some codes can appear as either 0.00% or 100.00%. If they are
+    # not truly 0.00% or 100.00%, we want to display them as <0.001% or >99.99% respectively
+    event_counts.loc[
+        (event_counts["Proportion of codes (%)"] == 0) & (event_counts["num"] > 0),
+        "Proportion of codes (%)",
+    ] = "<0.001"
+
+    event_counts.loc[
+        (event_counts["Proportion of codes (%)"] == 100)
+        & (event_counts["num"] < total_events),
+        "Proportion of codes (%)",
+    ] = ">99.99"
+
     # sort by proportion of codes
     event_counts = event_counts.sort_values(
         ascending=False, by="Proportion of codes (%)"
@@ -120,7 +133,7 @@ def create_top_5_code_table(
         :, ["Code", "Description", "Proportion of codes (%)"]
     ]
     # return top n rows
-    return event_counts.head(5), event_counts_with_counts
+    return event_counts.head(nrows), event_counts_with_counts
 
 
 def parse_args():
