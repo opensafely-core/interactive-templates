@@ -75,9 +75,15 @@ def apply_rounding(event_counts, rounding_base):
 
 def calculate_proportion(event_counts):
     total_events = event_counts["num"].sum()
-    event_counts["Proportion of codes (%)"] = round(
-        (event_counts["num"] / total_events) * 100, 2
-    )
+
+    # ensure total events is not 0
+    if total_events == 0:
+        event_counts["Proportion of codes (%)"] = np.nan
+
+    else:
+        event_counts["Proportion of codes (%)"] = round(
+            (event_counts["num"] / total_events) * 100, 2
+        )
     return event_counts
 
 

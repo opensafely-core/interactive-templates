@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 from analysis.top_5 import (
     add_description,
@@ -79,3 +80,30 @@ class TestRoundValues:
     def test_non_numeric_input(self, x):
         result = round_values(x)
         assert result == x, f"Expected {x} but got {result} for non-numeric input"
+
+
+@given(df=df_strategy, rounding_base=st.integers(1, 10))
+def test_apply_rounding(df, rounding_base):
+    result_df = apply_rounding(df.copy(), rounding_base)
+
+    # All numbers should be rounded to the nearest multiple of rounding_base
+    for num in result_df["num"]:
+        assert num % rounding_base == 0, f"{num} not rounded to nearest {rounding_base}"
+
+
+@given(df=df_strategy)
+def test_calculate_proportion(df):
+    result_df = calculate_proportion(df.copy())
+
+    total = result_df["num"].sum()
+
+    if total == 0:
+        assert all(
+            pd.isna(result_df["Proportion of codes (%)"])
+        ), "Proportion should be NaN when total is 0."
+    else:
+        for _, row in result_df.iterrows():
+            expected_proportion = round((row["num"] / total) * 100, 2)
+            assert (
+                row["Proportion of codes (%)"] == expected_proportion
+            ), f"Expected {expected_proportion} but got {row['Proportion of codes (%)']} for count {row['num']}"
