@@ -161,12 +161,12 @@
                     patients for the measure described above.
                 </p>
                 <figure>
-                    {{ display_image(population_plot.path, population_plot.data) }}
                     <figcaption>
                         <strong>Figure 1</strong>. The monthly rate per 1000 registered patients
                         in the selected population for the specified measure between
                         {{ start_date }} and {{ end_date }}.
                     </figcaption>
+                    {{ display_image(population_plot.path, population_plot.data) }}
                 </figure>
             </section>
 
@@ -193,12 +193,12 @@
 
 
                 <figure>
-                    {{ display_image(decile.path, decile.data) }}
                     <figcaption>
                         <strong>Figure 2</strong>. Practice level decile chart showing
                         practice level variation in the rate per 1000 registered patients who satisfy the
                         specified measure between {{ start_date }} and {{ end_date }}.
                     </figcaption>
+                    {{ display_image(decile.path, decile.data) }}
                 </figure>
             </section>
 
@@ -291,13 +291,13 @@
 
                     {% if b.figure.exists %}
                     <figure>
-                        {{ display_image(b.figure.path, b.figure.data) }}
                         <figcaption>
                             <strong>Figure {{ i.value }}</strong>. The rate
                             per 1000 patients in the selected population for
                             the measure of interest, broken down by
                             {{ b.title }}
                         </figcaption>
+                        {{ display_image(b.figure.path, b.figure.data) }}
                         {% set i.value = i.value +1 %}
                     </figure>
                     {% else %}
