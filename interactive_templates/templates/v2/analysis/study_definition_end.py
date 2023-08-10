@@ -1,6 +1,6 @@
+from code_variables import generate_code_variables
 from cohortextractor import StudyDefinition, codelist_from_csv, patients
 from config import CONFIG
-
 
 ethnicity_codes = codelist_from_csv(
     filename="codelists/opensafely-ethnicity-snomed-0removed.csv",
@@ -9,8 +9,21 @@ ethnicity_codes = codelist_from_csv(
     category_column="Grouping_6",
 )
 
-
+codelist_1_path = CONFIG["codelist_1"]["path"]
+codelist_1_type = CONFIG["codelist_1"]["type"]
+codelist_2_path = CONFIG["codelist_2"]["path"]
+codelist_2_type = CONFIG["codelist_2"]["type"]
+start_date = CONFIG["start_date"]
 end_date = CONFIG["end_date"]
+
+codelist_1 = codelist_from_csv(codelist_1_path, system="snomed", column="code")
+
+codelist_2 = codelist_from_csv(
+    codelist_2_path,
+    system="snomed",
+    column="code",
+)
+
 
 study = StudyDefinition(
     index_date=end_date,
@@ -63,5 +76,8 @@ study = StudyDefinition(
                 "incidence": 0.75,
             },
         ),
+    ),
+    **generate_code_variables(
+        codelist_1, codelist_1_type, codelist_2, codelist_2_type, start_date, end_date
     ),
 )

@@ -5,13 +5,13 @@ expectations:
 
 actions:
 
-  generate_study_population_ethnicity_{{ id }}:
+  generate_study_population_end_{{ id }}:
     run: cohortextractor:latest generate_cohort
-      --study-definition study_definition_ethnicity
+      --study-definition study_definition_end
       --output-dir output/{{ id }} --output-format=feather
     outputs:
       highly_sensitive:
-        cohort: output/{{ id }}/input_ethnicity.feather
+        cohort: output/{{ id }}/input_end.feather
 
   generate_study_population_weekly_{{ id }}:
     run: cohortextractor:latest generate_cohort
@@ -40,9 +40,9 @@ actions:
     run: >
       cohort-joiner:v0.0.38
         --lhs output/{{ id }}/input_20*.feather
-        --rhs output/{{ id }}/input_ethnicity.feather
+        --rhs output/{{ id }}/input_end.feather
         --output-dir output/{{ id }}/joined
-    needs: [generate_study_population_{{ id }}, generate_study_population_ethnicity_{{ id }}]
+    needs: [generate_study_population_{{ id }}, generate_study_population_end_{{ id }}]
     outputs:
       highly_sensitive:
         cohort: output/{{ id }}/joined/input_20*.feather
