@@ -1,3 +1,5 @@
+import numpy as np
+
 from analysis.top_5 import (
     add_description,
     apply_rounding,
@@ -52,3 +54,28 @@ class TestGroupLowValues:
             assert result.equals(
                 df
             ), "Redaction happened when all values were above the threshold."
+
+
+class TestRoundValues:
+    @given(x=st.floats(allow_nan=True, allow_infinity=False), base=st.integers(1, 10))
+    def test_rounding_floats(self, x, base):
+        result = round_values(x, base)
+
+        if np.isnan(x):
+            assert np.isnan(result), f"Expected NaN but got {result} for input {x}"
+        else:
+            expected = int(base * round(x / base))
+            assert (
+                result == expected
+            ), f"Expected {expected} but got {result} for input {x}"
+
+    @given(x=st.integers(min_value=0, max_value=100_000_000), base=st.integers(1, 10))
+    def test_rounding_integers(self, x, base):
+        result = round_values(x, base)
+        expected = int(base * round(x / base))
+        assert result == expected, f"Expected {expected} but got {result} for input {x}"
+
+    @given(x=st.text())
+    def test_non_numeric_input(self, x):
+        result = round_values(x)
+        assert result == x, f"Expected {x} but got {result} for non-numeric input"
