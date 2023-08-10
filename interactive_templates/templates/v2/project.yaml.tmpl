@@ -68,7 +68,7 @@ actions:
       --codelist-1-path="{{ codelist_1.path }}"
       --codelist-2-path="{{ codelist_2.path }}"
       --output-dir="output/{{ id }}"
-    needs: [generate_measures_{{ id }}]
+    needs: [generate_study_population_end_{{ id }}]
     outputs:
       moderately_sensitive:
         table_1: output/{{ id }}/top_5_code_table_1.csv

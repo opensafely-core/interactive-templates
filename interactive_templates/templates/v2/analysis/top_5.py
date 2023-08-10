@@ -84,8 +84,7 @@ def create_top_5_code_table(
     """
 
     event_counts = group_low_values(df, "num", code_column, low_count_threshold)
-
-    # round
+    event_counts = event_counts.copy()
 
     event_counts["num"] = event_counts["num"].apply(
         lambda x: round_values(x, rounding_base)
@@ -93,6 +92,7 @@ def create_top_5_code_table(
 
     # calculate % makeup of each code
     total_events = event_counts["num"].sum()
+
     event_counts["Proportion of codes (%)"] = round(
         (event_counts["num"] / total_events) * 100, 2
     )
@@ -105,10 +105,8 @@ def create_top_5_code_table(
 
     event_counts = event_counts.set_index(code_column).join(code_df).reset_index()
 
-    # set description of "Other column" to something readable
     event_counts.loc[event_counts[code_column] == "Other", "Description"] = "-"
 
-    # Rename the code column to something consistent
     event_counts.rename(columns={code_column: "Code"}, inplace=True)
 
     # sort by proportion of codes
@@ -118,7 +116,6 @@ def create_top_5_code_table(
 
     event_counts_with_counts = event_counts.copy()
 
-    # drop events column
     event_counts = event_counts.loc[
         :, ["Code", "Description", "Proportion of codes (%)"]
     ]
@@ -147,56 +144,43 @@ def main():
     args = parse_args()
     codelist_1_path = args.codelist_1_path
     codelist_2_path = args.codelist_2_path
-    measure_df = pd.read_csv(args.output_dir / "measure_all.csv")
-
-    code_df = measure_df.loc[measure_df["group"] == "event_1_code", :]
-    codelist = pd.read_csv(codelist_1_path, dtype={"code": str})
-
-    events_per_code = (
-        code_df.groupby("group_value")[["event_measure"]].sum().reset_index()
-    )
-    events_per_code.columns = ["code", "num"]
-
-    top_5_code_table, top_5_code_table_with_counts = create_top_5_code_table(
-        df=events_per_code,
-        code_df=codelist,
-        code_column="code",
-        term_column="term",
-        low_count_threshold=7,
-        rounding_base=7,
-    )
-    top_5_code_table.to_csv(args.output_dir / "top_5_code_table_1.csv", index=False)
 
     Path(args.output_dir / "for_checking").mkdir(parents=True, exist_ok=True)
 
-    top_5_code_table_with_counts.to_csv(
-        args.output_dir / "for_checking/top_5_code_table_with_counts_1.csv",
-        index=False,
-    )
+    input_df = pd.read_feather(args.output_dir / "input_end.feather")
 
-    code_df_2 = measure_df.loc[measure_df["group"] == "event_2_code", :]
+    use_cols = [col for col in input_df.columns if col.startswith("count")] + [
+        "patient_id"
+    ]
+    input_df = input_df.loc[:, use_cols]
+    code_counts = input_df.sum().reset_index()
+    code_counts.columns = ["code", "num"]
 
-    # TODO: support vpids?
-    codelist_2 = pd.read_csv(codelist_2_path, dtype={"code": str})
-    events_per_code = (
-        code_df_2.groupby("group_value")[["event_measure"]].sum().reset_index()
-    )
-    events_per_code.columns = ["code", "num"]
+    code_counts["code"] = code_counts["code"].str.replace("count_", "")
 
-    top_5_code_table, top_5_code_table_with_counts = create_top_5_code_table(
-        df=events_per_code,
-        code_df=codelist_2,
-        code_column="code",
-        term_column="term",
-        low_count_threshold=7,
-        rounding_base=7,
-    )
+    for codelist_path in [codelist_1_path, codelist_2_path]:
+        codelist = pd.read_csv(codelist_path, dtype={"code": str})
+        codes = codelist["code"].to_list()
+        code_counts_subset = code_counts.loc[code_counts["code"].isin(codes), :]
 
-    top_5_code_table.to_csv(args.output_dir / "top_5_code_table_2.csv", index=False)
-    top_5_code_table_with_counts.to_csv(
-        args.output_dir / "for_checking" / "top_5_code_table_with_counts_2.csv",
-        index=False,
-    )
+        top_5_code_table, top_5_code_table_with_counts = create_top_5_code_table(
+            df=code_counts_subset,
+            code_df=codelist,
+            code_column="code",
+            term_column="term",
+            low_count_threshold=7,
+            rounding_base=7,
+        )
+        codelist_number = codelist_path.split("/")[-1].split(".")[0].split("_")[-1]
+        top_5_code_table.to_csv(
+            args.output_dir / f"top_5_code_table_{codelist_number}.csv", index=False
+        )
+
+        top_5_code_table_with_counts.to_csv(
+            args.output_dir
+            / f"for_checking/top_5_code_table_with_counts_{codelist_number}.csv",
+            index=False,
+        )
 
 
 if __name__ == "__main__":
