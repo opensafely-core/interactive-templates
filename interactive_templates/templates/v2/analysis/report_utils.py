@@ -96,7 +96,7 @@ def plot_measures(
     if category:
         df[category] = df[category].fillna("Missing")
 
-    _, ax = plt.subplots(figsize=(15, 8))
+    _, ax = plt.subplots(figsize=(15, 12))
     palette = sns.color_palette("tab10")
 
     if category:
@@ -150,9 +150,10 @@ def plot_measures(
 
     if category:
         ax.legend(
-            bbox_to_anchor=(1.04, 1),
-            loc="upper left",
+            bbox_to_anchor=(0.5, 1.2),
+            loc="upper center",
             fontsize=20,
+            ncol=len(df[category]) if len(df[category]) < 4 else 4,
         )
 
     ax.margins(x=0)
@@ -255,7 +256,7 @@ def deciles_chart(df, filename, period_column=None, column=None, title="", ylabe
         ylabel: the label of the y-axis of the chart
     """
 
-    fig, ax = plt.subplots(figsize=(15, 8))
+    fig, ax = plt.subplots(figsize=(15, 12))
 
     linestyles = {
         "decile": {"line": "b--", "linewidth": 1, "label": "Decile"},
@@ -317,12 +318,13 @@ def deciles_chart(df, filename, period_column=None, column=None, title="", ylabe
     plt.xticks(sorted(df[period_column].unique()), rotation=90)
     ax.xaxis.set_major_locator(mdates.MonthLocator(interval=2))
     ax.legend(
-        bbox_to_anchor=(1.1, 0.8),
-        loc="center left",
-        ncol=1,
+        bbox_to_anchor=(0.5, 1.2),
+        loc="upper center",
+        ncol=3,
         fontsize=20,
         borderaxespad=0.0,
     )
+
     plt.tight_layout()
     plt.savefig(filename)
     plt.clf()
