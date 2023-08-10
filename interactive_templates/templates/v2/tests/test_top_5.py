@@ -25,6 +25,15 @@ df_strategy = data_frames(
     ]
 )
 
+description_strategy = st.text(min_size=1, max_size=20).map(str)
+
+code_df_strategy = data_frames(
+    [
+        column("code", elements=codes_strategy, unique=True),
+        column("term", elements=description_strategy),
+    ]
+)
+
 
 class TestGroupLowValues:
     @given(df=df_strategy)
@@ -107,3 +116,26 @@ def test_calculate_proportion(df):
             assert (
                 row["Proportion of codes (%)"] == expected_proportion
             ), f"Expected {expected_proportion} but got {row['Proportion of codes (%)']} for count {row['num']}"
+
+
+@given(event_counts=df_strategy, code_df=code_df_strategy)
+def test_add_description(event_counts, code_df):
+    result = add_description(event_counts, code_df, "code", "term")
+
+    # Ensure that the Description column exists
+    assert "Description" in result.columns
+
+    # Ensure that the 'Description' column is filled correctly
+    for _, row in result.iterrows():
+        if row["code"] == "Other":
+            assert row["Description"] == "-"
+        elif row["code"] in code_df["code"].values:
+            assert (
+                row["Description"]
+                == code_df[code_df["code"] == row["code"]]["term"].iloc[0]
+            )
+        else:
+            assert row["Description"] == "-"
+
+    # Ensure that no rows were lost
+    assert len(result) == len(event_counts)
