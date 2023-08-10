@@ -88,11 +88,20 @@ def calculate_proportion(event_counts):
 
 
 def add_description(event_counts, code_df, code_column, term_column):
+    if code_df.empty:
+        event_counts["Description"] = "-"
+        return event_counts
+
     code_df = code_df.set_index(code_column).rename(
         columns={term_column: "Description"}
     )
+
     event_counts = event_counts.set_index(code_column).join(code_df).reset_index()
     event_counts.loc[event_counts[code_column] == "Other", "Description"] = "-"
+
+    # For codes that did not find a match in code_df set a default value
+    event_counts["Description"].fillna("-", inplace=True)
+
     return event_counts
 
 
