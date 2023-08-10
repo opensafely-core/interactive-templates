@@ -164,7 +164,7 @@ def main():
     args = parse_args()
     breakdowns = args.breakdowns
 
-    breakdowns.extend(["practice", "event_1_code", "event_2_code"])
+    breakdowns.extend(["practice"])
 
     measure_df = pd.DataFrame(
         columns=["date", "event_measure", "population", "group", "group_value"]
