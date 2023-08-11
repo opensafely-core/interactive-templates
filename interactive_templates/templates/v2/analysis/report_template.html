@@ -132,8 +132,8 @@
                         who meet the measure criteria at some point during the study period, the total
                         number of event throughout the study period (up to one event, per patient, per month),
                         and the number of events in the latest complete month and complete week. <strong>Note:</strong>
-                        Counts less than 50 are suppressed to reduce the risk of disclosure of patient identifiable information.
-                        All other counts are rounded to the nearest 100 (except for counts of practices, which are rounded to
+                        Counts less than or equal to 10 are suppressed to reduce the risk of disclosure of patient identifiable information
+                        before being rounded to the nearest 100 (except for counts of practices, which are rounded to
                         the nearest 10).
                     </caption>
                     <thead>
@@ -218,8 +218,8 @@
                 <table>
                     <caption><strong>Table 2</strong>. The top 5 most common codes recorded for codelist 1 ({{ codelist_1_name }}).
                     <strong>Note:</strong>
-                        Codes with a count less than are suppressed to reduce the risk of disclosure of patient identifiable information.
-                        They are then rounded to the nearest 7, before being used to calculate the percetage make-up.
+                        Codes with a count less than or equal to 10 are suppressed to reduce the risk of disclosure of patient identifiable information.
+                        They are then rounded to the nearest 10, before being used to calculate the percetage make-up.
                     </caption>
                     </caption>
                     {% for row in top_5_1_data %}
@@ -247,8 +247,8 @@
                 <table>
                     <caption><strong>Table 3</strong>. The top 5 most common codes recorded for codelist 2 ({{ codelist_2_name }}).
                     <strong>Note:</strong>
-                        Codes with a count less than are suppressed to reduce the risk of disclosure of patient identifiable information.
-                        They are then rounded to the nearest 7, before being used to calculate the percetage make-up.
+                        Codes with a count less than or equal to 10 are suppressed to reduce the risk of disclosure of patient identifiable information.
+                        They are then rounded to the nearest 10, before being used to calculate the percetage make-up.
                     </caption>
                     {% for row in top_5_2_data %}
                         {% if loop.first %}
