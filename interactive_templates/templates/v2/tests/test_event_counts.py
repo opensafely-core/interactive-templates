@@ -5,20 +5,21 @@ from hypothesis import strategies as st
 
 
 @given(
-    st.integers(max_value=100_000_000, min_value=0), st.integers(min_value=1)
+    st.integers(max_value=100_000_000, min_value=0), st.sampled_from([10, 100])
 )  # Generate random integers for x and base (base > 0)
 # Possible values for x are clamped. For large numbers (much greater than the max value used here) the test will
 # fail due to the limited precision of floating-point arithmetic. The max value here is a reasonable upper bound for
 # the values of x we expect to see in practice.
-def test_round_to_nearest(x, base):
-    result = event_counts.round_to_nearest(x, base=base)
-
-    # Check if the result is a multiple of base
-    assert result % base == 0
+def test_redact_and_round(x, base):
+    result = event_counts.redact_and_round(x, base=base)
 
     # Check the result is rounded to the nearest value of base and not further away
     assert result - x >= -base / 2
     assert result - x <= base / 2
+
+    # Check that any x <= 10 is 0
+    if x <= 10:
+        assert result == 0
 
 
 def test_get_summary_stats():
