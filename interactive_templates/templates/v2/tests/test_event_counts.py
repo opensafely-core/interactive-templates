@@ -17,8 +17,8 @@ def test_redact_and_round(x, base):
     assert result - x >= -base / 2
     assert result - x <= base / 2
 
-    # Check that any x <= 10 is 0
-    if x <= 10:
+    # Check that any x < 10 is 0
+    if x < 10:
         assert result == 0
 
 

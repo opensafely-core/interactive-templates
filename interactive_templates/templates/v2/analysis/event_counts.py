@@ -13,7 +13,7 @@ from analysis.report_utils import (
 
 
 def redact_and_round(x, *, base):
-    """Redact values less-than or equal-to 10 and then round values to nearest specified base (either 10 or 100).
+    """Redact values less-than 10 and then round values to nearest specified base (either 10 or 100).
     Default behaviour is to round to nearest 10.
     """
 
@@ -24,7 +24,7 @@ def redact_and_round(x, *, base):
     else:
         decimals = -2
 
-    x = x if x > 10 else 0
+    x = x if x >= 10 else 0
     x = round(x, ndigits=decimals)
     return int(x)
 
