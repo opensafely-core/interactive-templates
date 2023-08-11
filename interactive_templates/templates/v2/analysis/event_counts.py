@@ -12,12 +12,25 @@ from analysis.report_utils import (
 )
 
 
-def round_to_nearest(x, *, base):
-    return base * round(x / base)
+def redact_and_round(x, *, base):
+    """Redact values less-than 10 and then round values to nearest specified base (either 10 or 100).
+    Default behaviour is to round to nearest 10.
+    """
+
+    assert base in {10, 100}
+
+    if base == 10:
+        decimals = -1
+    else:
+        decimals = -2
+
+    x = x if x >= 10 else 0
+    x = round(x, ndigits=decimals)
+    return int(x)
 
 
-round_to_nearest_100 = functools.partial(round_to_nearest, base=100)
-round_to_nearest_10 = functools.partial(round_to_nearest, base=10)
+redact_and_round_to_nearest_100 = functools.partial(redact_and_round, base=100)
+redact_and_round_to_nearest_10 = functools.partial(redact_and_round, base=10)
 
 
 def replace_zero_with_redacted(x):
@@ -99,25 +112,25 @@ def main():
     latest_week = max(events_weekly.keys())
     latest_month = max(events.keys())
     events_in_latest_week = replace_zero_with_redacted(
-        round_to_nearest_100(events_weekly[latest_week])
+        redact_and_round_to_nearest_100(events_weekly[latest_week])
     )
 
     total_events = replace_zero_with_redacted(
-        round_to_nearest_100(sum(events.values()))
+        redact_and_round_to_nearest_100(sum(events.values()))
     )
     total_patients = replace_zero_with_redacted(
-        round_to_nearest_100(len(np.unique(patients)))
+        redact_and_round_to_nearest_100(len(np.unique(patients)))
     )
     unique_patients_with_events = replace_zero_with_redacted(
-        round_to_nearest_100(len(np.unique(patients_with_events)))
+        redact_and_round_to_nearest_100(len(np.unique(patients_with_events)))
     )
 
-    total_practices = round_to_nearest_10(len(np.unique(practices)))
-    total_practices_with_events = round_to_nearest_10(
+    total_practices = redact_and_round_to_nearest_10(len(np.unique(practices)))
+    total_practices_with_events = redact_and_round_to_nearest_10(
         len(np.unique(practice_with_events))
     )
     events_in_latest_period = replace_zero_with_redacted(
-        round_to_nearest_100(events[max(events.keys())])
+        redact_and_round_to_nearest_100(events[max(events.keys())])
     )
 
     save_to_json(

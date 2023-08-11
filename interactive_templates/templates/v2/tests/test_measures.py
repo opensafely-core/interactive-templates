@@ -17,7 +17,7 @@ def data_frames_st(draw):
 def test_redact_and_round_column(data_frame):
     # The function modifies the data frame in place, so we create a boolean mask before
     # we pass the data frame to the function.
-    redact = data_frame["A"] <= 10
+    redact = data_frame["A"] < 10
 
     rounded_data_frame = measures.redact_and_round_column(data_frame, "A")
     redacted = rounded_data_frame["A"] == 0

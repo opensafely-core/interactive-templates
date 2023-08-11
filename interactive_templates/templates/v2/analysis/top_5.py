@@ -23,8 +23,8 @@ def group_low_values(df, count_column, code_column, threshold):
         A table with redacted counts
     """
 
-    # get sum of any values <= threshold
-    suppressed_count = df.loc[df[count_column] <= threshold, count_column].sum()
+    # get sum of any values < threshold
+    suppressed_count = df.loc[df[count_column] < threshold, count_column].sum()
     suppressed_df = df.loc[df[count_column] > threshold, count_column]
 
     # if suppressed values >0 ensure total suppressed count > threshold.
@@ -32,16 +32,16 @@ def group_low_values(df, count_column, code_column, threshold):
     if (suppressed_count > 0) | (
         (suppressed_count == 0) & (len(suppressed_df) != len(df))
     ):
-        # redact counts <= threshold
-        df.loc[df[count_column] <= threshold, count_column] = np.nan
+        # redact counts < threshold
+        df.loc[df[count_column] < threshold, count_column] = np.nan
 
         # If all values 0, suppress them
         if suppressed_count == 0:
             df.loc[df[count_column] == 0, :] = np.nan
 
         else:
-            # if suppressed count <= threshold redact further values
-            while suppressed_count <= threshold:
+            # if suppressed count < threshold redact further values
+            while suppressed_count < threshold:
                 suppressed_count += df[count_column].min()
                 df.loc[df[count_column].idxmin(), :] = np.nan
 
@@ -188,8 +188,8 @@ def main():
         code_df=codelist_2,
         code_column="code",
         term_column="term",
-        low_count_threshold=7,
-        rounding_base=7,
+        low_count_threshold=10,
+        rounding_base=10,
     )
 
     top_5_code_table.to_csv(args.output_dir / "top_5_code_table_2.csv", index=False)
