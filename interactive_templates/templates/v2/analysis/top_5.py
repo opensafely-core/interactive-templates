@@ -188,8 +188,8 @@ def main():
         code_df=codelist_2,
         code_column="code",
         term_column="term",
-        low_count_threshold=7,
-        rounding_base=7,
+        low_count_threshold=10,
+        rounding_base=10,
     )
 
     top_5_code_table.to_csv(args.output_dir / "top_5_code_table_2.csv", index=False)
