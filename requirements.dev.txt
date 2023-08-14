@@ -254,9 +254,9 @@ pathspec==0.11.0 \
     --hash=sha256:3a66eb970cbac598f9e5ccb5b2cf58930cd8e3ed86d393d541eaf2d8b1705229 \
     --hash=sha256:64d338d4e0914e91c1792321e6907b5a593f1ab1851de7fc269557a21b30ebbc
     # via black
-pip-tools==7.2.0 \
-    --hash=sha256:360b8d30bc9ee2531857494afb98c41e96534f2eec9dad6500ae2a71f7c631c4 \
-    --hash=sha256:616488b539e14b8aa85436ed597a33c291f4885c1d2e0bec97400abe5aff2c0d
+pip-tools==7.3.0 \
+    --hash=sha256:8717693288720a8c6ebd07149c93ab0be1fced0b5191df9e9decd3263e20d85e \
+    --hash=sha256:8e9c99127fe024c025b46a0b2d15c7bd47f18f33226cf7330d35493663fc1d1d
     # via -r requirements.dev.in
 platformdirs==3.0.0 \
     --hash=sha256:8a1228abb1ef82d788f74139988b137e78692984ec7b08eaa6c65f1723af28f9 \
