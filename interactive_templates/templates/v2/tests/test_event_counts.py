@@ -13,9 +13,14 @@ from hypothesis import strategies as st
 def test_redact_and_round(x, base):
     result = event_counts.redact_and_round(x, base=base)
 
-    # Check the result is rounded to the nearest value of base and not further away
-    assert result - x >= -base / 2
-    assert result - x <= base / 2
+    # Check the result is rounded to the nearest value of base
+    if base == 10:
+        assert result % 10 == 0
+    else:
+        assert result % 100 == 0
+
+    # Check the result is not further away from x than half the base
+    assert abs(result - x) <= base / 2
 
     # Check that any x < 10 is 0
     if x < 10:
