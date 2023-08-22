@@ -61,28 +61,21 @@ def save_to_json(d, filename: str):
         json.dump(d, f)
 
 
-def match_input_files(file: str, weekly=False) -> bool:
+def match_input_files(file: str) -> bool:
     """Checks if file name has format outputted by cohort extractor"""
-    if weekly:
-        pattern = (
-            r"^input_weekly_20\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])\.feather"
-        )
-    else:
-        pattern = r"^input_20\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])\.feather"
+
+    pattern = r"^input_20\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])\.feather"
     return True if re.match(pattern, file) else False
 
 
-def get_date_input_file(file: str, weekly=False) -> str:
+def get_date_input_file(file: str) -> str:
     """Gets the date in format YYYY-MM-DD from input file name string"""
     # check format
-    if not match_input_files(file, weekly=weekly):
+    if not match_input_files(file):
         raise Exception("Not valid input file format")
 
     else:
-        if weekly:
-            date = re.search(r"input_weekly_(.*).feather", file)
-        else:
-            date = re.search(r"input_(.*).feather", file)
+        date = re.search(r"input_(.*).feather", file)
         return date.group(1)
 
 

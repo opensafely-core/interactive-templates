@@ -61,6 +61,7 @@ def get_summary_stats(df, df_practices_dropped):
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--input-dir", type=str, required=True)
+    parser.add_argument("--input-dir-weekly", type=str, required=True)
     parser.add_argument("--output-dir", type=str, required=True)
     return parser.parse_args()
 
@@ -101,14 +102,14 @@ def main():
             practices.extend(summary_stats["unique_practices"])
             practice_with_events.extend(summary_stats["unique_practices_with_events"])
 
-        if match_input_files(file.name, weekly=True):
-            date = get_date_input_file(file.name, weekly=True)
+    for file in Path(args.input_dir_weekly).rglob("*"):
+        if match_input_files(file.name):
+            date = get_date_input_file(file.name)
             df = pd.read_feather(file)
             df["date"] = date
             num_events = df.loc[:, "event_measure"].sum()
             events_weekly[date] = num_events
 
-    # there should only be one key in events_weekly, but we take the max anyway
     latest_week = max(events_weekly.keys())
     latest_month = max(events.keys())
     events_in_latest_week = replace_zero_with_redacted(
