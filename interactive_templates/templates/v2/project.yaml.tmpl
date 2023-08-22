@@ -61,6 +61,17 @@ actions:
         measure: output/{{ id }}/measure_all.csv
         decile_measure: output/{{ id }}/measure_practice_rate_deciles.csv
 
+  generate_measures_weekly_{{ id }}:
+    run: >
+      python:latest -m analysis.measures_weekly
+        --input-dir="output/weekly/{{ id }}"
+        --output-dir="output/weekly/{{ id }}"
+
+    needs: [generate_study_population_weekly_{{ id }}]
+    outputs:
+      moderately_sensitive:
+        measure: output/weekly/{{ id }}/measure_all_weekly.csv
+
   top_5_table_{{ id }}:
     run: >
       python:latest python analysis/top_5.py
