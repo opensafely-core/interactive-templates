@@ -50,3 +50,7 @@ START_DATE = "2019-09-01"
 END_DATE = end_date(date_of_last_extract()).strftime("%Y-%m-%d")
 # TODO: this needs to not be cached at import time if being used in job-server
 WEEK_OF_LATEST_EXTRACT = week_of_latest_extract().strftime("%Y-%m-%d")
+
+WEEK_OF_LATEST_EXTRACT_7W = (week_of_latest_extract() - timedelta(weeks=7)).strftime(
+    "%Y-%m-%d"
+)

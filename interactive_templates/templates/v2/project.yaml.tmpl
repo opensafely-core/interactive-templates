@@ -18,13 +18,12 @@ actions:
       --study-definition study_definition
       --param codelist_1_frequency="weekly"
       --param breakdowns=""
-      --index-date_range="{{ week_of_latest_extract }} to {{ week_of_latest_extract }} by week"
-      --output-dir=output/{{ id }}
+      --index-date-range="{{ week_of_latest_extract_7w }} to {{ week_of_latest_extract }} by week"
+      --output-dir=output/weekly/{{ id }}
       --output-format=feather
-      --output-file=output/{{ id }}/input_weekly_{{week_of_latest_extract}}.feather
     outputs:
       highly_sensitive:
-        cohort: output/{{ id }}/input_weekly_{{ week_of_latest_extract }}.feather
+        cohort: output/weekly/{{ id }}/input_*.feather
 
   generate_study_population_{{ id }}:
     run: cohortextractor:latest generate_cohort

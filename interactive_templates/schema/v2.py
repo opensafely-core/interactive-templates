@@ -74,6 +74,9 @@ class Analysis:
     week_of_latest_extract: str = field(
         validator=date_string, default=dates.WEEK_OF_LATEST_EXTRACT
     )
+    week_of_latest_extract_7w: str = field(
+        validator=date_string, default=dates.WEEK_OF_LATEST_EXTRACT_7W
+    )
 
     # request data filled in later
     created_by: str | None = None
