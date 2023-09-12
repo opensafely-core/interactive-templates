@@ -134,6 +134,38 @@ test:
 #run all tests
 test-all: test-unit test-functional
 
+
+package-build: virtualenv
+    rm -rf dist
+
+    $PIP install build
+    $BIN/python -m build
+
+
+package-test type: package-build
+    #!/usr/bin/env bash
+    VENV="test-{{ type }}"
+    distribution_suffix="{{ if type == "wheel" { "whl" } else { "tar.gz" } }}"
+
+    # build a fresh venv
+    python -m venv $VENV
+
+    # clean up after ourselves, even if there are errors
+    trap 'rm -rf $VENV' EXIT
+
+    # ensure a modern pip
+    $VENV/bin/pip install pip --upgrade
+
+    # install the wheel distribution
+    $VENV/bin/pip install dist/*."$distribution_suffix"
+
+    # Minimal check that it has actually built correctly
+    $VENV/bin/python -c "import interactive_templates"
+
+    # check we haven't packaged tests with it
+    unzip -Z -1 dist/*.whl | grep -vq "^tests/"
+
+
 black *args=".": devenv
     $BIN/black --check {{ args }}
 
@@ -165,3 +197,19 @@ render analysis="v2" *args="": devenv
     else
         $BIN/python -m interactive_templates.render {{ analysis }} {{ args }}
     fi
+
+
+# Cut a release of this package
+release:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    CALVER=$(date -u +"%Y.%m.%d.%H%M%S")
+
+    git checkout main
+    git pull
+    git checkout -b release-$CALVER
+    echo $CALVER > version
+    git add version
+    git commit --message "Release $CALVER"
+    gh pr create --fill
