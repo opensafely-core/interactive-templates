@@ -49,3 +49,18 @@ jobs:
 
       - name: Check the sdist installs and runs
         run: just package-test sdist
+
+  tag-new-version:
+    needs: [check, test, test-package-build]
+    runs-on: ubuntu-20.04
+
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Tag new release
+        run: |
+          # ignore failures here to avoid merges into main without version
+          # bumps failing this job.
+          git tag "v$(cat version)" || exit
+          git push --tags
