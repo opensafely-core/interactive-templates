@@ -21,6 +21,9 @@ include-package-data = true
 [tool.setuptools.packages.find]
 include = ["interactive_templates*"]
 
+[tool.setuptools.dynamic]
+version = {file = "version"}
+
 [tool.coverage.run]
 branch = true
 dynamic_context = "test_function"
