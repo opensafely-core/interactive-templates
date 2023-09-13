@@ -21,13 +21,29 @@ jobs:
         with:
           repository: opensafely-core/job-server
 
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          path: interactive-templates-checkout
+
+      - name: Read version file
+        id: get-version
+        run: |
+          version=$(cat interactive-templates-checkout/version)
+          echo "Will try to update to version: $version"
+          echo "VERSION=v$version" >> "$GITHUB_OUTPUT"
+
+          # remove interactive-templates-checkout so it doesn't get picked up
+          # as a change to the job-server repo
+          rm -rf interactive-templates-checkout
+
       - uses: opensafely-core/setup-action@v1
         with:
           install-just: true
           python-version: "3.11"
 
       - name: Update requirement to latest
-        run: just update-interactive-templates "$GITHUB_SHA"
+        run: just update-interactive-templates ${{ steps.get-version.outputs.VERSION }}
 
       - name: Create a Pull Request if there are any changes
         id: create_pr
@@ -37,7 +53,7 @@ jobs:
           branch: bot/update-interactive-templates
           commit-message: "feat: Update interactive templates to latest version"
           title: "Update interactive templates to latest version"
-          body: "Update interative-templates to ${{ github.sha }}"
+          body: "Update interative-templates to ${{ steps.get-version.outputs.VERSION }}"
 
       # untested
       #- name: Enable automerge
