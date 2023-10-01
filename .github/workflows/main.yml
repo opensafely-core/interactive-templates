@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: "opensafely-core/setup-action@v1"
         with:
           python-version: "3.11"
@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: "opensafely-core/setup-action@v1"
         with:
           python-version: "3.11"
@@ -36,7 +36,7 @@ jobs:
 
     name: Test we can build a Python package
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: "opensafely-core/setup-action@v1"
@@ -57,7 +57,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Tag new release
         run: |
           # ignore failures here to avoid merges into main without version
