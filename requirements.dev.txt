@@ -211,9 +211,9 @@ freezegun==1.2.2 \
     --hash=sha256:cd22d1ba06941384410cd967d8a99d5ae2442f57dfafeff2fda5de8dc5c05446 \
     --hash=sha256:ea1b963b993cb9ea195adbd893a48d573fda951b0da64f60883d7e988b606c9f
     # via pytest-freezegun
-hypothesis==6.92.1 \
-    --hash=sha256:3cba76a7389bd7245c350fcf7234663314dc81a5be0bbef72a07d8c249bfc210 \
-    --hash=sha256:fa755ded526e50b7e2f642cdc5d64519f88d4e4ee71d9d29ec3eb2f2fddf1274
+hypothesis==6.92.2 \
+    --hash=sha256:841f89a486c43bdab55698de8929bd2635639ec20bf6ce98ccd75622d7ee6d41 \
+    --hash=sha256:d335044492acb03fa1fdb4edacb81cca2e578049fc7306345bc0e8947fef15a9
     # via -r requirements.dev.in
 identify==2.5.17 \
     --hash=sha256:7d526dd1283555aafcc91539acc061d8f6f59adb0a7bba462735b0a318bff7ed \
