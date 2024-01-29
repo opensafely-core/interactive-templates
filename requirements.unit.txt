@@ -6,9 +6,7 @@
 #
 attrs==22.2.0
     # via hypothesis
-exceptiongroup==1.2.0
-    # via hypothesis
-hypothesis==6.96.2
+hypothesis==6.97.1
     # via -r requirements.unit.in
 sortedcontainers==2.4.0
     # via hypothesis
