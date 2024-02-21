@@ -144,9 +144,11 @@ def plot_measures(
         xlabel="Date",
         ylim=(
             0,
-            1000
-            if df[column_to_plot].isnull().values.all()
-            else df[column_to_plot].max(),
+            (
+                1000
+                if df[column_to_plot].isnull().values.all()
+                else df[column_to_plot].max()
+            ),
         ),
     )
 
