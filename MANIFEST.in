@@ -12,6 +12,7 @@ exclude interactive_templates/templates/*/project.yaml
 exclude interactive_templates/templates/*/config.json
 # don't ship tests or project dev infra
 recursive-exclude tests *.py
+recursive-exclude docs *.md
 exclude *.md
 exclude requirements.*
 exclude Dockerfile justfile docker-compose.yaml
