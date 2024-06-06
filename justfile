@@ -8,7 +8,6 @@ export PIP := BIN + if os_family() == "unix" { "/python -m pip" } else { "/pytho
 export DEFAULT_PYTHON := if os_family() == "unix" { "python3.11" } else { "python" }
 
 export DOCKER_BUILDKIT := "1"
-export COMPOSE_DOCKER_CLI_BUILD := "1"
 
 export UID := `id -u`
 export GID := `id -g`
