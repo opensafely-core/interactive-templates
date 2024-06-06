@@ -59,7 +59,7 @@ requirements-unit *args:
     #!/usr/bin/env bash
     # exit if src file is older than dst file (-nt = 'newer than', but we negate with || to avoid error exit code)
     test "${FORCE:-}" = "true" -o requirements.unit.in -nt requirements.unit.txt || exit 0
-    docker-compose run unit-tests pip-compile requirements.unit.in {{ args }}
+    docker compose run unit-tests pip-compile requirements.unit.in {{ args }}
 
 
 # ensure prod requirements installed and up to date
@@ -106,7 +106,7 @@ test-functional *args: devenv
     $BIN/coverage report || $BIN/coverage html
 
 docker-build:
-    docker-compose build unit-tests
+    docker compose build unit-tests
 
 # Run unit tests for templated analysis code in templates/
 test-unit *args: requirements-unit docker-build
@@ -119,7 +119,7 @@ test-unit *args: requirements-unit docker-build
         path=interactive_templates/templates/$analysis
         test -d $path/tests || continue
         echo "Running unit tests for analysis $analysis in $path..."
-        docker-compose run -e PYTHONPATH=$path unit-tests env -C $path python -m pytest --disable-warnings
+        docker compose run -e PYTHONPATH=$path unit-tests env -C $path python -m pytest --disable-warnings
     done
 
 test:
