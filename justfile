@@ -8,7 +8,6 @@ export PIP := BIN + if os_family() == "unix" { "/python -m pip" } else { "/pytho
 export DEFAULT_PYTHON := if os_family() == "unix" { "python3.11" } else { "python" }
 
 export DOCKER_BUILDKIT := "1"
-export COMPOSE_DOCKER_CLI_BUILD := "1"
 
 export UID := `id -u`
 export GID := `id -g`
@@ -59,7 +58,7 @@ requirements-unit *args:
     #!/usr/bin/env bash
     # exit if src file is older than dst file (-nt = 'newer than', but we negate with || to avoid error exit code)
     test "${FORCE:-}" = "true" -o requirements.unit.in -nt requirements.unit.txt || exit 0
-    docker-compose run unit-tests pip-compile requirements.unit.in {{ args }}
+    docker compose run unit-tests pip-compile requirements.unit.in {{ args }}
 
 
 # ensure prod requirements installed and up to date
@@ -106,7 +105,7 @@ test-functional *args: devenv
     $BIN/coverage report || $BIN/coverage html
 
 docker-build:
-    docker-compose build unit-tests
+    docker compose build unit-tests
 
 # Run unit tests for templated analysis code in templates/
 test-unit *args: requirements-unit docker-build
@@ -119,7 +118,7 @@ test-unit *args: requirements-unit docker-build
         path=interactive_templates/templates/$analysis
         test -d $path/tests || continue
         echo "Running unit tests for analysis $analysis in $path..."
-        docker-compose run -e PYTHONPATH=$path unit-tests env -C $path python -m pytest --disable-warnings
+        docker compose run -e PYTHONPATH=$path unit-tests env -C $path python -m pytest --disable-warnings
     done
 
 test:
