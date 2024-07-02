@@ -4,6 +4,7 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
+from urllib.parse import urlparse
 
 from interactive_templates.render import render_analysis
 
@@ -61,7 +62,9 @@ def commit_and_push(working_dir, analysis, force=False):
 
 
 def get_repo_with_token(repo, token):
-    if repo.startswith("https://github.com"):
+    url = urlparse(repo)
+
+    if url.hostname == "github.com" and url.scheme == "https":
         return repo.replace("https://", f"https://interactive:{token}@")
     return repo
 
