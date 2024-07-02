@@ -4,6 +4,7 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
+from urllib.parse import urlparse, urlunparse
 
 from interactive_templates.render import render_analysis
 
@@ -61,8 +62,11 @@ def commit_and_push(working_dir, analysis, force=False):
 
 
 def get_repo_with_token(repo, token):
-    if repo.startswith("https://github.com"):
-        return repo.replace("https://", f"https://interactive:{token}@")
+    scheme, netloc, path, params, query, fragment = urlparse(repo)
+    if scheme == "https" and netloc == "github.com":
+        new_netloc = f"interactive:{token}@{netloc}"
+        return urlunparse((scheme, new_netloc, path, params, query, fragment))
+
     return repo
 
 
