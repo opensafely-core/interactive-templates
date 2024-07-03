@@ -177,6 +177,12 @@ def test_get_repo_with_token_returns_correct_url_with_token():
     assert create.get_repo_with_token(repo, "a_secure_token") == expected_repo
 
 
-@pytest.mark.parametrize("repo", ["/tmp/opensafely-test/my-test-repo"])
+@pytest.mark.parametrize(
+    "repo",
+    [
+        "/tmp/opensafely-test/my-test-repo",
+        "https://github.com.someothersite.net/opensafely-test/my-test-repo",
+    ],
+)
 def test_get_repo_with_token_returns_same_url_with_no_token(repo):
     assert create.get_repo_with_token(repo, "a_secure_token") == repo
