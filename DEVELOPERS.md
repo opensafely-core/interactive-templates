@@ -108,3 +108,15 @@ fine-grained nature means we can restrict it appropriately.
         1. Contents - Read and Write
         1. Pull Requests - Read and Write
 1. Add token value as repository secret `JOB_SERVER_PR_TOKEN`
+
+## Releasing a new version
+
+After merging some changes to `main` that you want to include in a new version:
+
+1. Run `just release` — this updates the [`version`](version) file and
+   creates a new branch named after the release date/time.
+1. Merge the pull request for that release branch.
+1. Ensure the build completes on `main` after merge,
+   and a new tag is generated for the release.
+1. To update the templates in job-server, update the requirements for
+   `interactive-templates` in the job-server repository to this newly created tag.
