@@ -58,6 +58,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Tag new release
         run: |
           # ignore failures here to avoid merges into main without version
