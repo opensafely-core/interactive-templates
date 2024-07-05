@@ -100,8 +100,8 @@ def test_calculate_total_counts(df):
 
     obs = measures.calculate_total_counts(df, date, group="total", group_value="total")
 
-    assert obs["group"].all() == "total"
-    assert obs["group_value"].all() == "total"
+    assert obs["group"].eq("total").all()
+    assert obs["group_value"].eq("total").all()
 
     assert len(obs) == 1
     assert obs.columns.tolist() == [
@@ -113,7 +113,7 @@ def test_calculate_total_counts(df):
     ]
 
     # assert date is correct
-    assert obs["date"].all() == date
+    assert obs["date"].eq(date).all()
 
     # assert that the sum of the event_measure and population columns is correct
     assert obs["event_measure"].iloc[0] == df["event_measure"].sum()
@@ -139,7 +139,7 @@ def test_calculate_group_counts(df):
     ]
 
     # assert date is correct
-    assert obs["date"].all() == date
+    assert obs["date"].eq(date).all()
 
     # assert that the sum of the event_measure and population columns is correct
     assert (
