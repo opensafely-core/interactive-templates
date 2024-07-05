@@ -118,5 +118,6 @@ After merging some changes to `main` that you want to include in a new version:
 1. Merge the pull request for that release branch.
 1. Ensure the build completes on `main` after merge,
    and a new tag is generated for the release.
-1. To update the templates in job-server, update the requirements for
-   `interactive-templates` in the job-server repository to this newly created tag.
+1. A successful build should also result in a pull request open on job-server
+   via the [`create-job-server-pr.yml`](.github/workflows/create-job-server-pr.yml) workflow.
+   Review and merge that pull request for job-server.
