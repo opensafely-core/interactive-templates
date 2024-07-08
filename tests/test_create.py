@@ -168,7 +168,7 @@ def test_create_commit(remote_repo, add_codelist, force):
     assert commit_in_remote(remote=remote_repo, commit=sha)
 
 
-def test_get_repo_with_token_returns_correct_url_with_token(monkeypatch):
+def test_get_repo_with_token_returns_correct_url_with_token():
     repo = "https://github.com/opensafely-test/my-test-repo"
     expected_repo = (
         "https://interactive:a_secure_token@github.com/opensafely-test/my-test-repo"
