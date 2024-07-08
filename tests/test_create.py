@@ -168,7 +168,7 @@ def test_create_commit(remote_repo, add_codelist, force):
     assert commit_in_remote(remote=remote_repo, commit=sha)
 
 
-def test_get_repo_with_token_returns_correct_url_with_token(monkeypatch):
+def test_get_repo_with_token_returns_correct_url_with_token():
     repo = "https://github.com/opensafely-test/my-test-repo"
     expected_repo = (
         "https://interactive:a_secure_token@github.com/opensafely-test/my-test-repo"
@@ -177,7 +177,12 @@ def test_get_repo_with_token_returns_correct_url_with_token(monkeypatch):
     assert create.get_repo_with_token(repo, "a_secure_token") == expected_repo
 
 
-def test_get_repo_with_token_returns_same_url_with_no_token():
-    repo = "/tmp/opensafely-test/my-test-repo"
-
+@pytest.mark.parametrize(
+    "repo",
+    [
+        "/tmp/opensafely-test/my-test-repo",
+        "https://github.com.someothersite.net/opensafely-test/my-test-repo",
+    ],
+)
+def test_get_repo_with_token_returns_same_url_with_no_token(repo):
     assert create.get_repo_with_token(repo, "a_secure_token") == repo
