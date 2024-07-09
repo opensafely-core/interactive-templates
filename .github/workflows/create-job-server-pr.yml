@@ -27,7 +27,8 @@ jobs:
           python-version: "3.12"
 
       - name: Update requirement to latest
-        run: just update-interactive-templates "$GITHUB_SHA"
+        run: |
+          just update-interactive-templates "$(git describe --tags)"
 
       - name: Create a Pull Request if there are any changes
         id: create_pr
