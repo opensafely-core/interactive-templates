@@ -24,7 +24,7 @@ jobs:
       - uses: opensafely-core/setup-action@v1
         with:
           install-just: true
-          python-version: "3.11"
+          python-version: "3.12"
 
       - name: Update requirement to latest
         run: just update-interactive-templates "$GITHUB_SHA"
