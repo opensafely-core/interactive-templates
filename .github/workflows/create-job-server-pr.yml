@@ -27,8 +27,11 @@ jobs:
           python-version: "3.12"
 
       - name: Update requirement to latest
+        id: update-requirement
         run: |
-          just update-interactive-templates "$(git describe --tags)"
+          just update-interactive-templates
+          updated_version="$(sed -n 's|^interactive_templates@https://github.com/opensafely-core/interactive-templates/archive/refs/tags/\(v[0-9.].*\).zip$|\1|p' requirements.prod.in)"
+          echo "UPDATED_VERSION=$updated_version" >> "$GITHUB_ENV"
 
       - name: Create a Pull Request if there are any changes
         id: create_pr
@@ -36,9 +39,9 @@ jobs:
         with:
           token: "${{ secrets.JOB_SERVER_PR_TOKEN }}"
           branch: bot/update-interactive-templates
-          commit-message: "feat: Update interactive templates to latest version"
-          title: "Update interactive templates to latest version"
-          body: "Update interative-templates to ${{ github.sha }}"
+          commit-message: "feat: Update interactive templates to ${{ env.UPDATED_VERSION }}"
+          title: "Update interactive templates to ${{ env.UPDATED_VERSION }}"
+          body: "Update interactive-templates to ${{ env.UPDATED_VERSION }}"
 
       # untested
       #- name: Enable automerge
