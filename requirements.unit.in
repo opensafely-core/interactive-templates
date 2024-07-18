@@ -1,2 +1,6 @@
+# exceptiongroup is a transitive dependency that we specify explicitly
+# to work around quirks with Dependabot and multiple Python versions.
+# It may be possible to remove it in future when the tests run with Python 3.11 or later.
+# See #379.
+exceptiongroup
 hypothesis
-
