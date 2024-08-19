@@ -12,9 +12,9 @@ exceptiongroup==1.2.2 \
     --hash=sha256:3111b9d131c238bec2f8f516e123e14ba243563fb135d3fe885990585aa7795b \
     --hash=sha256:47c2edf7c6738fafb49fd34290706d1a1a2f4d1c6df275526b62cbb4aa5393cc
     # via -r requirements.unit.in
-hypothesis==6.108.5 \
-    --hash=sha256:46fd0f0d022e812940e19ef24ed0b090cc17cf505e0998960aca20c5091425f5 \
-    --hash=sha256:a009d777542d64691a3d27c87e4b94b2256c0bfb47791100d9e45499c304e1b9
+hypothesis==6.111.1 \
+    --hash=sha256:6ab6185a858fa692bf125c0d0a936134edc318bee01c05e407c71c9ead0b61c5 \
+    --hash=sha256:9422adbac4b2104f6cf92dc6604b5c9df975efc08ffc7145ecc39bc617243835
     # via -r requirements.unit.in
 sortedcontainers==2.4.0 \
     --hash=sha256:25caa5a06cc30b6b83d11423433f65d1f9d76c4c6a0c90e3379eaa43b9bfdb88 \
