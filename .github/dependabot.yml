@@ -4,8 +4,10 @@ updates:
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     open-pull-requests-limit: 20
+    ignore:
+      - dependency-name: hypothesis
 
   - package-ecosystem: "github-actions"
     directory: "/"
